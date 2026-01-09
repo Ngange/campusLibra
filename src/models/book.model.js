@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
-// Define the User schema
+// Define the Book schema
 const bookSchema = new schema(
   {
     title: {
@@ -26,18 +26,19 @@ const bookSchema = new schema(
       type: String,
       trim: true,
     },
-    totalCopies: {
-      type: Number,
-      default: 1,
-      min: [0, 'Total copies cannot be negative'],
-    },
-    availableCopies: {
-      type: Number,
-      default: 1,
-      min: [0, 'Available copies cannot be negative'],
-    },
   },
   { timestamps: true }
 );
+
+// Virtual field to populate book copies associated with the book
+bookSchema.virtual('copies', {
+  ref: 'BookCopy',
+  localField: '_id', // Field in the Book model
+  foreignField: 'book', // Field in the BookCopy model
+  options: { sort: { createdAt: -1 } },
+});
+
+bookSchema.set('toObject', { virtuals: true });
+bookSchema.set('toJSON', { virtuals: true });
 
 module.exports = mongoose.model('Book', bookSchema);

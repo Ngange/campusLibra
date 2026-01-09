@@ -13,8 +13,15 @@ app.get('/', (req, res) => {
   res.send('CampusLibra API is running');
 });
 
-// Import and use auth routes
+// routes
 const authRoutes = require('./src/routes/auth.routes');
+const borrowRoutes = require('./src/routes/borrow.routes');
+const reservationRoutes = require('./src/routes/reservation.routes');
+const fineRoutes = require('./src/routes/fine.routes');
+
 app.use('/api/auth', authRoutes);
+app.use('/api/borrows', borrowRoutes);
+app.use('/api/reservations', reservationRoutes);
+app.use('/api/fines', fineRoutes);
 
 module.exports = app;

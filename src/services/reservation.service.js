@@ -1,0 +1,256 @@
+const Reservation = require('../models/reservation.model');
+const Book = require('../models/book.model');
+const BookCopy = require('../models/bookCopy.model');
+const Borrower = require('../models/borrow.model');
+const BookAudit = require('../models/bookAudit.model');
+const notificationService = require('./notification.service');
+
+// Function to create a book audit record
+const createBookAudit = async (
+  bookId,
+  bookCopyId,
+  action,
+  performedBy,
+  details = {}
+) => {
+  await BookAudit.create({
+    book: bookId,
+    bookCopy: bookCopyId,
+    action,
+    performedBy,
+    details,
+  });
+};
+
+// Service to create a new reservation
+const createReservation = async (userId, bookId) => {
+  // 1. Validate book exists
+  const book = await Book.findById(bookId);
+  if (!book) {
+    throw new Error('Book not found');
+  }
+
+  // 2. Check if user already has an active reservation for this book
+  const existing = await Reservation.findOne({
+    user: userId,
+    book: bookId,
+    status: { $in: ['pending', 'on_hold'] },
+  });
+  if (existing) {
+    throw new Error('You already have an active reservation for this book');
+  }
+
+  // 3. Check if book is actually available → should borrow instead
+  const availableCopies = await BookCopy.countDocuments({
+    book: bookId,
+    status: 'available',
+  });
+  if (availableCopies > 0) {
+    throw new Error('This book is available — please borrow it directly');
+  }
+
+  // 4. Calculate position in queue
+  const pendingCount = await Reservation.countDocuments({
+    book: bookId,
+    status: 'pending',
+  });
+  const position = pendingCount + 1;
+
+  // 5. Create reservation
+  const reservation = await Reservation.create({
+    user: userId,
+    book: bookId,
+    position,
+  });
+
+  // 6. Log audit
+  await createBookAudit(bookId, null, 'reservation_created', userId, {
+    reservationId: reservation._id,
+  });
+
+  // 7. Return populated reservation
+  return await reservation
+    .populate('user', 'name email')
+    .populate('book', 'title author');
+};
+
+// service to fulfill the next reservation when a book copy is returned
+const fulfillNextReservation = async (bookId) => {
+  // Find first pending reservation (lowest position)
+  const nextReservation = await Reservation.findOne({
+    book: bookId,
+    status: 'pending',
+  }).sort({ position: 1 });
+
+  if (nextReservation) {
+    // Notify this user If none, book stays available
+    await notifyReservationAvailable(nextReservation._id);
+  }
+};
+
+// Service to notify user that their reserved book is available
+const notifyReservationAvailable = async (reservationId) => {
+  // Fetch reservation with user and book
+  const reservation = await Reservation.findById(reservationId)
+    .populate('user', 'name email')
+    .populate('book', 'title author');
+
+  if (!reservation || reservation.status !== 'pending') {
+    throw new Error('Invalid reservation or not in pending state');
+  }
+
+  // Get hold duration from settings
+  const holdHours = await getSetting('RESERVATION_HOLD_HOURS');
+  const now = new Date();
+  const holdExpiresAt = new Date(now.getTime() + holdHours * 60 * 60 * 1000);
+
+  // Update reservation to 'on_hold'
+  reservation.status = 'on_hold';
+  reservation.holdStartAt = now;
+  reservation.holdExpiresAt = holdExpiresAt;
+  await reservation.save();
+
+  // create notification
+  await notificationService.createNotification(
+    reservation.user._id,
+    'Book Available for Pickup',
+    `Your reserved book "${reservation.book.title}" is now available! Please pick it up within ${holdHours} hours.`,
+    'reservation_available',
+    reservation._id,
+    'Reservation'
+  );
+
+  // Log audit
+  await createBookAudit(
+    reservation.book._id,
+    null,
+    'reservation_on_hold',
+    reservation.user._id,
+    { holdHours, reservationId: reservation._id }
+  );
+
+  return reservation;
+};
+
+// Service to fulfill a reservation when user picks up the book
+const fulfillReservationPickup = async (reservationId, librarianId) => {
+  const reservation = await Reservation.findById(reservationId)
+    .populate('user')
+    .populate('book');
+
+  if (!reservation) {
+    throw new Error('Reservation not found');
+  }
+
+  if (reservation.status !== 'on_hold') {
+    throw new Error('Reservation is not on hold');
+  }
+
+  if (new Date() > reservation.holdExpiresAt) {
+    throw new Error('Hold period has expired');
+  }
+
+  // Find an available copy
+  const bookCopy = await BookCopy.findOne({
+    book: reservation.book._id,
+    status: 'available',
+  });
+  if (!bookCopy) {
+    throw new Error('No available copy found for this book');
+  }
+
+  // Get loan period from settings
+  const loanDays = await getSetting('LOAN_PERIOD_DAYS');
+  const borrowDate = new Date();
+  const dueDate = new Date(borrowDate);
+  dueDate.setDate(dueDate.getDate() + loanDays);
+
+  // Create borrow record
+  const borrow = await Borrow.create({
+    user: reservation.user._id,
+    book: reservation.book._id,
+    bookCopy: bookCopy._id,
+    borrowDate,
+    dueDate,
+    status: 'active',
+  });
+
+  // Update book copy status
+  bookCopy.status = 'borrowed';
+  await bookCopy.save();
+
+  // Update reservation
+  reservation.bookCopy = bookCopy._id;
+  reservation.pickedUpBy = librarianId;
+  reservation.pickedUpAt = new Date();
+  reservation.status = 'fulfilled';
+  await reservation.save();
+
+  // Log audits
+  await createBookAudit(
+    reservation.book._id,
+    bookCopy._id,
+    'borrowed',
+    reservation.user._id,
+    { borrowId: borrow._id }
+  );
+
+  await createBookAudit(
+    reservation.book._id,
+    bookCopy._id,
+    'reservation_fulfilled',
+    librarianId,
+    { reservationId: reservation._id, borrowId: borrow._id }
+  );
+
+  return { reservation, borrow };
+};
+
+// Service to expire hold reservations that went beyond their hold period
+const expireHoldReservations = async () => {
+  const now = new Date();
+  const expiredReservations = await Reservation.find({
+    status: 'on_hold',
+    holdExpiresAt: { $lt: now },
+  })
+    .populate('user')
+    .populate('book');
+
+  for (const reservation of expiredReservations) {
+    // Mark as expired
+    reservation.status = 'expired';
+    await reservation.save();
+
+    // Notify user
+    await notificationService.createNotification(
+      reservation.user._id,
+      'Hold Expired',
+      `Your hold for "${reservation.book.title}" has expired. The book has been offered to the next person.`,
+      'hold_expired',
+      reservation._id,
+      'Reservation'
+    );
+
+    // Log audit
+    await createBookAudit(
+      reservation.book._id,
+      null,
+      'reservation_expired',
+      reservation.user._id,
+      { reason: 'hold_expired', reservationId: reservation._id }
+    );
+
+    // Offer book to next user
+    await fulfillNextReservation(reservation.book._id);
+  }
+
+  return expiredReservations.length;
+};
+
+module.exports = {
+  createReservation,
+  fulfillNextReservation,
+  notifyReservationAvailable,
+  fulfillReservationPickup,
+  expireHoldReservations,
+};
