@@ -23,7 +23,6 @@ const userSchema = new schema(
       required: [true, 'Password is required'],
       minlength: [6, 'Password must be at least 6 characters long'],
       select: false, // Exclude password from query results by default
-      match: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/, // at least one letter and one number
     },
     role: {
       type: mongoose.Schema.Types.ObjectId, // Reference to Role model
@@ -48,7 +47,6 @@ userSchema.pre('save', async function () {
 });
 
 // Indexes for performance
-userSchema.index({ email: 1 }); // Unique queries
 userSchema.index({ role: 1 }); // Filter by role
 
 module.exports = mongoose.model('User', userSchema);

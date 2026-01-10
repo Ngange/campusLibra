@@ -8,17 +8,19 @@ const bcrypt = require('bcryptjs');
 const registerUser = async (userData) => {
   const { name, email, password, role = 'member' } = userData;
 
+  // Validate password complexity (before hashing)
+  if (password.length < 6) {
+    throw new Error('Password must be at least 6 characters long');
+  }
+  if (!/(?=.*[A-Za-z])(?=.*\d)/.test(password)) {
+    throw new Error('Password must contain at least one letter and one number');
+  }
+
   // 1. Validate role
   const roleDoc = await Role.findOne({ name: role });
   if (!roleDoc) throw new Error('Invalid role');
 
-  // 2. Hash password (no DB write yet)
-  const hashedPassword = await bcrypt.hash(password, 12);
-
-  // 3. PREPARE notification (but don't send yet)
-  //    Actually, defer notification to AFTER success
-
-  // 4. CREATE USER
+  // 2. CREATE USER (password will be hashed by pre-save hook)
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     // Idempotency: If user exists, return success (don't fail!)
@@ -32,11 +34,11 @@ const registerUser = async (userData) => {
   const user = await User.create({
     name,
     email,
-    password: hashedPassword,
+    password, // Plain password - will be hashed by pre-save hook
     role: roleDoc._id,
   });
 
-  // 5. NOW send notification (after user is safely created)
+  // 3. NOW send notification (after user is safely created)
   try {
     await emitNotification(
       user._id,

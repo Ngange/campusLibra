@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const mongoSanitize = require('express-mongo-sanitize');
 const morgan = require('morgan');
 const logger = require('./src/config/logger');
 const { v4: uuidv4 } = require('uuid');
@@ -12,7 +11,38 @@ const app = express();
 
 // Security middleware
 app.use(helmet()); // Secure HTTP headers
-app.use(mongoSanitize()); // Prevent NoSQL injection
+
+// Custom NoSQL injection prevention middleware
+// Sanitize request data by checking for $ and . characters
+app.use((req, res, next) => {
+  const sanitizeData = (data) => {
+    if (typeof data === 'string') {
+      if (data.includes('$') || data.includes('.')) {
+        return data.replace(/\$/g, '_').replace(/\./g, '_');
+      }
+      return data;
+    } else if (typeof data === 'object' && data !== null) {
+      const sanitized = {};
+      for (const key in data) {
+        if (key.includes('$') || key.includes('.')) {
+          sanitized[key.replace(/\$/g, '_').replace(/\./g, '_')] = sanitizeData(
+            data[key]
+          );
+        } else {
+          sanitized[key] = sanitizeData(data[key]);
+        }
+      }
+      return sanitized;
+    }
+    return data;
+  };
+
+  // Sanitize body
+  if (req.body) {
+    req.body = sanitizeData(req.body);
+  }
+  next();
+});
 
 // Rate limiting - prevent brute force attacks
 const limiter = rateLimit({
