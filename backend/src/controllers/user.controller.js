@@ -23,7 +23,9 @@ const getUserById = async (req, res, next) => {
       .populate('role', 'name description');
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     res.json({ success: true, user });
@@ -43,7 +45,9 @@ const updateUser = async (req, res, next) => {
     if (roleName) {
       const role = await Role.findOne({ name: roleName });
       if (!role) {
-        return res.status(400).json({ message: 'Invalid role' });
+        const error = new Error('Invalid role');
+        error.statusCode = 400;
+        return next(error);
       }
       roleId = role._id;
     }
@@ -61,13 +65,17 @@ const updateUser = async (req, res, next) => {
       .populate('role', 'name');
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     res.json({ success: true, user });
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: 'Email already in use' });
+      const duplicateError = new Error('Email already in use');
+      duplicateError.statusCode = 409;
+      return next(duplicateError);
     }
     next(error);
   }
@@ -80,7 +88,9 @@ const deleteUser = async (req, res, next) => {
     const user = await User.findByIdAndDelete(id);
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     res.json({ success: true, message: 'User deleted successfully' });

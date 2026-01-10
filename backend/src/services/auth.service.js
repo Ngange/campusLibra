@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const Role = require('../models/role.model');
 const { generateToken } = require('../utils/jwt.util');
+const { emitNotification } = require('../utils/notification.util');
 const bcrypt = require('bcryptjs');
 
 // User registration service
@@ -37,7 +38,7 @@ const registerUser = async (userData) => {
 
   // 5. NOW send notification (after user is safely created)
   try {
-    await notificationService.createNotification(
+    await emitNotification(
       user._id,
       'Welcome!',
       'Your account has been created.',

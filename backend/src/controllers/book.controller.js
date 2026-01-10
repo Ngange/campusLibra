@@ -45,9 +45,6 @@ const getBookByIdHandler = async (req, res, next) => {
     const book = await getBookById(id);
     res.json({ success: true, book });
   } catch (error) {
-    if (error.message === 'Book not found') {
-      return res.status(404).json({ message: error.message });
-    }
     next(error);
   }
 };
@@ -61,9 +58,6 @@ const updateBookHandler = async (req, res, next) => {
     const book = await updateBook(id, req.body, performedBy);
     res.json({ success: true, book });
   } catch (error) {
-    if (error.message === 'Book not found') {
-      return res.status(404).json({ message: error.message });
-    }
     next(error);
   }
 };
@@ -77,9 +71,6 @@ const deleteBookHandler = async (req, res, next) => {
     await deleteBook(id, performedBy);
     res.json({ success: true, message: 'Book deleted successfully' });
   } catch (error) {
-    if (error.message === 'Book not found') {
-      return res.status(404).json({ message: error.message });
-    }
     next(error);
   }
 };

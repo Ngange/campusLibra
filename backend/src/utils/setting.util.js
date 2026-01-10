@@ -9,8 +9,8 @@ const defaultSettings = [
   },
   {
     key: 'BOOK_COPY_STATUSES',
-    value: ['available', 'borrowed', 'lost', 'damaged', 'reserved'],
-    description: 'Valid copy statuses',
+    value: ['available', 'borrowed', 'lost', 'damaged', 'reserved', 'on_hold'],
+    description: 'Valid statuses for physical copies',
   },
   {
     key: 'BORROW_STATUSES',
@@ -26,11 +26,6 @@ const defaultSettings = [
     key: 'RESERVATION_HOLD_HOURS',
     value: 48,
     description: 'Hours a user has to pick up a reserved book',
-  },
-  {
-    key: 'BOOK_COPY_STATUSES',
-    value: ['available', 'borrowed', 'lost', 'damaged', 'reserved', 'on_hold'],
-    description: 'Valid statuses for physical copies',
   },
 ];
 

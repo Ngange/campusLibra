@@ -16,15 +16,6 @@ const createReservationHandler = async (req, res, next) => {
     const reservation = await createReservation(userId, bookId);
     res.status(201).json({ success: true, reservation });
   } catch (error) {
-    if (error.message.includes('not found')) {
-      return res.status(404).json({ message: error.message });
-    }
-    if (
-      error.message.includes('already have') ||
-      error.message.includes('available')
-    ) {
-      return res.status(400).json({ message: error.message });
-    }
     next(error);
   }
 };
@@ -37,20 +28,6 @@ const fulfillPickupHandler = async (req, res, next) => {
     const result = await fulfillReservationPickup(id, librarianId);
     res.json({ success: true, data: result });
   } catch (error) {
-    if (error.message === 'Reservation not found') {
-      return res.status(404).json({ message: error.message });
-    }
-    if (
-      error.message.includes('not on hold') ||
-      error.message.includes('expired')
-    ) {
-      return res.status(400).json({ message: error.message });
-    }
-    if (error.message === 'No available copy found') {
-      return res
-        .status(500)
-        .json({ message: 'System error: no copy available' });
-    }
     next(error);
   }
 };

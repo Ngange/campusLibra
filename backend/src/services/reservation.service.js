@@ -1,27 +1,12 @@
 const Reservation = require('../models/reservation.model');
 const Book = require('../models/book.model');
 const BookCopy = require('../models/bookCopy.model');
-const Borrower = require('../models/borrow.model');
-const BookAudit = require('../models/bookAudit.model');
-const notificationService = require('./notification.service');
+const Borrow = require('../models/borrow.model');
 const { getSetting } = require('../utils/config.util');
-
-// Function to create a book audit record
-const createBookAudit = async (
-  bookId,
-  bookCopyId,
-  action,
-  performedBy,
-  details = {}
-) => {
-  await BookAudit.create({
-    book: bookId,
-    bookCopy: bookCopyId,
-    action,
-    performedBy,
-    details,
-  });
-};
+const { createBookAudit } = require('../utils/audit.util');
+const { calculateDueDate } = require('../utils/date.util');
+const { findAvailableBookCopy } = require('./bookCopy.service');
+const { emitNotification } = require('../utils/notification.util');
 
 // Service to create a new reservation
 const createReservation = async (userId, bookId) => {
@@ -114,8 +99,8 @@ const notifyReservationAvailable = async (reservationId) => {
   reservation.holdExpiresAt = holdExpiresAt;
   await reservation.save();
 
-  // create notification
-  await notificationService.createNotification(
+  // create notification with socket emit
+  await emitNotification(
     reservation.user._id,
     'Book Available for Pickup',
     `Your reserved book "${reservation.book.title}" is now available! Please pick it up within ${holdHours} hours.`,
@@ -155,19 +140,11 @@ const fulfillReservationPickup = async (reservationId, librarianId) => {
   }
 
   // Find an available copy
-  const bookCopy = await BookCopy.findOne({
-    book: reservation.book._id,
-    status: 'available',
-  });
-  if (!bookCopy) {
-    throw new Error('No available copy found for this book');
-  }
+  const bookCopy = await findAvailableBookCopy(reservation.book._id);
 
-  // Get loan period from settings
-  const loanDays = await getSetting('LOAN_PERIOD_DAYS');
+  // Calculate due date
   const borrowDate = new Date();
-  const dueDate = new Date(borrowDate);
-  dueDate.setDate(dueDate.getDate() + loanDays);
+  const dueDate = await calculateDueDate(borrowDate);
 
   // Create borrow record
   const borrow = await Borrow.create({
@@ -225,8 +202,8 @@ const expireHoldReservations = async () => {
     reservation.status = 'expired';
     await reservation.save();
 
-    // Notify user
-    await notificationService.createNotification(
+    // Notify user with socket emit
+    await emitNotification(
       reservation.user._id,
       'Hold Expired',
       `Your hold for "${reservation.book.title}" has expired. The book has been offered to the next person.`,

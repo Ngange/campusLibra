@@ -21,6 +21,7 @@ const fineRoutes = require('./src/routes/fine.routes');
 const bookRoutes = require('./src/routes/book.routes');
 const userRoutes = require('./src/routes/user.routes');
 const roleRoutes = require('./src/routes/role.routes');
+const dashboardRoutes = require('./src/routes/dashboard.routes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/borrows', borrowRoutes);
@@ -29,6 +30,7 @@ app.use('/api/fines', fineRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/roles', roleRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 
 // Global error handler
 const errorHandler = require('./src/middlewares/error.middleware');

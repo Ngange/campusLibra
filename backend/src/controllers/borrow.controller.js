@@ -13,13 +13,7 @@ const borrowBookHandler = async (req, res, next) => {
     const borrow = await borrowBook(userId, bookId);
     res.status(201).json({ success: true, data: borrow });
   } catch (error) {
-    if (error.message === 'No available copy of this book') {
-      return res.status(400).json({ message: error.message });
-    }
-    if (error.message === 'Book not found') {
-      return res.status(404).json({ message: error.message });
-    }
-    next(error); // Pass to global error handler
+    next(error);
   }
 };
 
@@ -31,12 +25,6 @@ const returnBookHandler = async (req, res, next) => {
     const result = await returnBook(id, librarianId);
     res.json({ success: true, data: result });
   } catch (error) {
-    if (error.message === 'Borrow record not found') {
-      return res.status(404).json({ message: error.message });
-    }
-    if (error.message === 'Book is already returned') {
-      return res.status(400).json({ message: error.message });
-    }
     next(error);
   }
 };

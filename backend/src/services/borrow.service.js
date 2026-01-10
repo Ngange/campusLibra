@@ -2,37 +2,12 @@ const Borrow = require('../models/borrow.model');
 const BookCopy = require('../models/bookCopy.model');
 const Book = require('../models/book.model');
 const Fine = require('../models/fine.model');
-const BookAudit = require('../models/bookAudit.model');
-const notificationService = require('./notification.service');
 const { getSetting } = require('../utils/config.util');
+const { createBookAudit } = require('../utils/audit.util');
+const { calculateDueDate } = require('../utils/date.util');
+const { findAvailableBookCopy } = require('./bookCopy.service');
+const { emitNotification } = require('../utils/notification.util');
 const { fulfillNextReservation } = require('./reservation.service');
-
-const findAvailableBookCopy = async (bookId) => {
-  const copy = await BookCopy.findOne({
-    book: bookId,
-    status: 'available',
-  });
-  if (!copy) {
-    throw new Error('No available copy of this book');
-  }
-  return copy;
-};
-
-const createBookAudit = async (
-  bookId,
-  bookCopyId,
-  action,
-  performedBy,
-  details = {}
-) => {
-  await BookAudit.create({
-    book: bookId,
-    bookCopy: bookCopyId,
-    action,
-    performedBy,
-    details,
-  });
-};
 
 const borrowBook = async (userId, bookId) => {
   // Validate book exists
@@ -44,11 +19,9 @@ const borrowBook = async (userId, bookId) => {
   // Find an available physical copy
   const bookCopy = await findAvailableBookCopy(bookId);
 
-  // Get loan period from settings
-  const loanDays = await getSetting('LOAN_PERIOD_DAYS');
+  // Calculate due date
   const borrowDate = new Date();
-  const dueDate = new Date(borrowDate);
-  dueDate.setDate(dueDate.getDate() + loanDays);
+  const dueDate = await calculateDueDate(borrowDate);
 
   // Create borrow record
   const borrow = await Borrow.create({
@@ -64,8 +37,8 @@ const borrowBook = async (userId, bookId) => {
   bookCopy.status = 'borrowed';
   await bookCopy.save();
 
-  // Send in-app notification
-  await notificationService.createNotification(
+  // Send in-app notification with socket emit
+  await emitNotification(
     userId,
     'Book Borrowed',
     `You have successfully borrowed "${book.title}" by ${
@@ -120,7 +93,7 @@ const calculateFine = async (borrowId) => {
   });
 
   // Notify user
-  await notificationService.createNotification(
+  await emitNotification(
     borrow.user,
     'Fine Applied',
     `A fine of $${amount} has been applied for returning "${borrow.book.title}" ${daysLate} day(s) late.`,
@@ -149,10 +122,6 @@ const returnBook = async (borrowId, librarianId) => {
     return { borrow, fine: existingFine };
   }
 
-  if (borrow.returnDate) {
-    throw new Error('Book is already returned');
-  }
-
   // Set return date
   const returnDate = new Date();
   borrow.returnDate = returnDate;
@@ -171,7 +140,7 @@ const returnBook = async (borrowId, librarianId) => {
   }
 
   // Notify user
-  await notificationService.createNotification(
+  await emitNotification(
     borrow.user._id,
     'Book Returned',
     `"${borrow.book.title}" has been successfully returned.`,

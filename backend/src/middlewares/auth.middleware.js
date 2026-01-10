@@ -14,9 +14,9 @@ const authMiddleware = (req, res, next) => {
   }
 
   if (!token) {
-    return res
-      .status(401)
-      .json({ message: 'Access denied. No token provided.' });
+    const error = new Error('Access denied. No token provided.');
+    error.statusCode = 401;
+    return next(error);
   }
 
   try {
@@ -25,7 +25,9 @@ const authMiddleware = (req, res, next) => {
     req.user = decoded; // Attach decoded user info to request object
     next(); // Proceed to the next middleware or route handler
   } catch (error) {
-    return res.status(401).json({ message: 'Invalid or expired token.' });
+    const authError = new Error('Invalid or expired token.');
+    authError.statusCode = 401;
+    return next(authError);
   }
 };
 

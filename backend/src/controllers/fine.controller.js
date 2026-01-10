@@ -1,7 +1,7 @@
 const Fine = require('../models/fine.model');
 const Borrow = require('../models/borrow.model');
 const Book = require('../models/book.model');
-const notificationService = require('../services/notification.service');
+const { emitNotification } = require('../utils/notification.util');
 
 const getUserFinesHandler = async (req, res, next) => {
   try {
@@ -34,7 +34,9 @@ const getFineByIdHandler = async (req, res, next) => {
       .populate('user', 'name');
 
     if (!fine) {
-      return res.status(404).json({ message: 'Fine not found' });
+      const error = new Error('Fine not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     res.json({ success: true, fine });
@@ -50,19 +52,23 @@ const payFineHandler = async (req, res, next) => {
 
     const fine = await Fine.findById(id);
     if (!fine) {
-      return res.status(404).json({ message: 'Fine not found' });
+      const error = new Error('Fine not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     if (fine.isPaid) {
-      return res.status(400).json({ message: 'Fine is already paid' });
+      const error = new Error('Fine is already paid');
+      error.statusCode = 400;
+      return next(error);
     }
 
     fine.isPaid = true;
     fine.paidAt = new Date();
     await fine.save();
 
-    // Optional: Notify user
-    await notificationService.createNotification(
+    // Optional: Notify user with socket emit
+    await emitNotification(
       fine.user,
       'Fine Paid',
       'Your fine has been marked as paid by library staff.',

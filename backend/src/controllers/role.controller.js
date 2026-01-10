@@ -16,7 +16,9 @@ const getRoleById = async (req, res, next) => {
     const { id } = req.params;
     const role = await Role.findById(id);
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      const error = new Error('Role not found');
+      error.statusCode = 404;
+      return next(error);
     }
     res.json({ success: true, role });
   } catch (error) {
@@ -32,16 +34,20 @@ const createRole = async (req, res, next) => {
     // Prevent creating system roles via API
     const systemRoles = ['admin', 'librarian', 'member'];
     if (systemRoles.includes(name)) {
-      return res.status(400).json({
-        message: 'Cannot create system roles via API. Use settings to modify.',
-      });
+      const error = new Error(
+        'Cannot create system roles via API. Use settings to modify.'
+      );
+      error.statusCode = 400;
+      return next(error);
     }
 
     const role = await Role.create({ name, description, permissions });
     res.status(201).json({ success: true, role });
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: 'Role name already exists' });
+      const duplicateError = new Error('Role name already exists');
+      duplicateError.statusCode = 409;
+      return next(duplicateError);
     }
     next(error);
   }
@@ -64,13 +70,17 @@ const updateRole = async (req, res, next) => {
     });
 
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      const error = new Error('Role not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     res.json({ success: true, role });
   } catch (error) {
     if (error.code === 11000) {
-      return res.status(409).json({ message: 'Role name already exists' });
+      const duplicateError = new Error('Role name already exists');
+      duplicateError.statusCode = 409;
+      return next(duplicateError);
     }
     next(error);
   }
@@ -84,14 +94,16 @@ const deleteRole = async (req, res, next) => {
     // Prevent deletion of system roles
     const role = await Role.findById(id);
     if (!role) {
-      return res.status(404).json({ message: 'Role not found' });
+      const error = new Error('Role not found');
+      error.statusCode = 404;
+      return next(error);
     }
 
     const systemRoles = ['admin', 'librarian', 'member'];
     if (systemRoles.includes(role.name)) {
-      return res.status(400).json({
-        message: 'Cannot delete system roles',
-      });
+      const error = new Error('Cannot delete system roles');
+      error.statusCode = 400;
+      return next(error);
     }
 
     await Role.findByIdAndDelete(id);

@@ -1,6 +1,6 @@
 const Book = require('../models/book.model');
 const BookCopy = require('../models/bookCopy.model');
-const BookAudit = require('../models/bookAudit.model');
+const { createBookAudit } = require('../utils/audit.util');
 
 const createBook = async (bookData, copyCount = 1, performedBy) => {
   // Create the book
@@ -17,11 +17,8 @@ const createBook = async (bookData, copyCount = 1, performedBy) => {
   }
 
   // Log audit
-  await BookAudit.create({
-    book: book._id,
-    action: 'book_created',
-    performedBy,
-    details: { copyCount },
+  await createBookAudit(book._id, null, 'book_created', performedBy, {
+    copyCount,
   });
 
   return { book, copies };
@@ -112,11 +109,8 @@ const updateBook = async (id, updateData, performedBy) => {
   const book = await Book.findByIdAndUpdate(id, updateData, { new: true });
   if (!book) throw new Error('Book not found');
 
-  await BookAudit.create({
-    book: id,
-    action: 'book_updated',
-    performedBy,
-    details: { updatedFields: Object.keys(updateData) },
+  await createBookAudit(id, null, 'book_updated', performedBy, {
+    updatedFields: Object.keys(updateData),
   });
 
   return book;
@@ -129,12 +123,7 @@ const deleteBook = async (id, performedBy) => {
   const book = await Book.findByIdAndDelete(id);
   if (!book) throw new Error('Book not found');
 
-  await BookAudit.create({
-    book: id,
-    action: 'book_deleted',
-    performedBy,
-    details: {},
-  });
+  await createBookAudit(id, null, 'book_deleted', performedBy, {});
 
   return book;
 };
