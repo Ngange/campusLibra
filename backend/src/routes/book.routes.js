@@ -7,19 +7,19 @@ const {
   deleteBookHandler,
 } = require('../controllers/book.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
-const authorizeRoles = require('../middlewares/role.middleware');
+const { authorizePermission } = require('../middlewares/permission.middleware'); // 👈 NEW
 
 const router = express.Router();
 
-// All book routes require authentication
+// All routes require authentication
 router.use(authMiddleware);
 
-// Admin/Librarian only
-router.post('/', authorizeRoles('admin', 'librarian'), createBookHandler);
-router.put('/:id', authorizeRoles('admin', 'librarian'), updateBookHandler);
-router.delete('/:id', authorizeRoles('admin', 'librarian'), deleteBookHandler);
+// Permission-based access (more granular)
+router.post('/', authorizePermission('book_create'), createBookHandler);
+router.put('/:id', authorizePermission('book_update'), updateBookHandler);
+router.delete('/:id', authorizePermission('book_delete'), deleteBookHandler);
 
-// Public read access
+// Read access: any authenticated user (members can browse)
 router.get('/', getAllBooksHandler);
 router.get('/:id', getBookByIdHandler);
 

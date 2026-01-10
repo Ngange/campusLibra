@@ -16,8 +16,8 @@ const roleSchema = new mongoose.Schema(
     },
     permissions: [
       {
-        resource: { type: String, required: true },
-        actions: ['read', 'create', 'delete', 'update'],
+        type: mongoose.Schema.ObjectId,
+        ref: 'Permission',
       },
     ],
   },
