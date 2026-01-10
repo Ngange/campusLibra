@@ -56,4 +56,10 @@ const reservationSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Indexes for performance
+reservationSchema.index({ user: 1, status: 1 }); // User's active reservations
+reservationSchema.index({ book: 1, status: 1, position: 1 }); // Queue management
+reservationSchema.index({ status: 1, holdExpiresAt: 1 }); // Expiry checks
+reservationSchema.index({ bookCopy: 1 }); // Track assigned copies
+
 module.exports = mongoose.model('Reservation', reservationSchema);

@@ -1,8 +1,23 @@
+const logger = require('../config/logger');
+
 const errorHandler = (err, req, res, next) => {
-  console.error('ERROR:', err.stack);
+  // Log error with request ID
+  logger.error('Error occurred:', {
+    requestId: req.id,
+    error: err.message,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+  });
 
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Something went wrong';
+
+  // Handle express-validator validation errors
+  if (err.validationErrors) {
+    statusCode = 400;
+    message = err.validationErrors.map((e) => e.msg).join(', ');
+  }
 
   // Handle all known error messages with proper status codes
   const errorMap = {

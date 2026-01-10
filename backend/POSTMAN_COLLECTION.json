@@ -1,0 +1,409 @@
+{
+  "info": {
+    "name": "CampusLibra API",
+    "description": "Complete API testing collection for CampusLibra Library Management System",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000/api",
+      "type": "string"
+    },
+    {
+      "key": "adminToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "librarianToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "memberToken",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "borrowId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "reservationId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Admin",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["baseUrl"],
+              "path": ["auth", "register"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Admin User\",\"email\":\"admin@campus.local\",\"password\":\"Admin@123\",\"role\":\"admin\"}"
+            }
+          }
+        },
+        {
+          "name": "Register Librarian",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["baseUrl"],
+              "path": ["auth", "register"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Librarian User\",\"email\":\"librarian@campus.local\",\"password\":\"Librarian@123\",\"role\":\"librarian\"}"
+            }
+          }
+        },
+        {
+          "name": "Register Member",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/register",
+              "host": ["baseUrl"],
+              "path": ["auth", "register"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Member User\",\"email\":\"member@campus.local\",\"password\":\"Member@123\",\"role\":\"member\"}"
+            }
+          }
+        },
+        {
+          "name": "Login Admin",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/login",
+              "host": ["baseUrl"],
+              "path": ["auth", "login"]
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"email\":\"admin@campus.local\",\"password\":\"Admin@123\"}"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Books",
+      "item": [
+        {
+          "name": "Create Book",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/books",
+              "host": ["baseUrl"],
+              "path": ["books"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{adminToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"title\":\"The Great Gatsby\",\"author\":\"F. Scott Fitzgerald\",\"isbn\":\"9780743273565\",\"category\":\"Fiction\",\"publishedYear\":1925,\"copyCount\":2}"
+            }
+          }
+        },
+        {
+          "name": "Get All Books",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books",
+              "host": ["baseUrl"],
+              "path": ["books"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Get Book by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/books/{{bookId}}",
+              "host": ["baseUrl"],
+              "path": ["books", "{{bookId}}"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Borrows",
+      "item": [
+        {
+          "name": "Borrow Book (Copy 1)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/borrows",
+              "host": ["baseUrl"],
+              "path": ["borrows"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"bookId\":\"{{bookId}}\"}"
+            }
+          }
+        },
+        {
+          "name": "Borrow Book (Copy 2)",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/borrows",
+              "host": ["baseUrl"],
+              "path": ["borrows"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"bookId\":\"{{bookId}}\"}"
+            }
+          }
+        },
+        {
+          "name": "Get My Borrows",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/borrows",
+              "host": ["baseUrl"],
+              "path": ["borrows"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Return Book",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/borrows/{{borrowId}}/return",
+              "host": ["baseUrl"],
+              "path": ["borrows", "{{borrowId}}", "return"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reservations",
+      "item": [
+        {
+          "name": "Create Reservation",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": ["baseUrl"],
+              "path": ["reservations"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"bookId\":\"{{bookId}}\"}"
+            }
+          }
+        },
+        {
+          "name": "Get My Reservations",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/reservations",
+              "host": ["baseUrl"],
+              "path": ["reservations"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Confirm Pickup",
+          "request": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/reservations/{{reservationId}}/pickup",
+              "host": ["baseUrl"],
+              "path": ["reservations", "{{reservationId}}", "pickup"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fines",
+      "item": [
+        {
+          "name": "Get My Fines",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/fines",
+              "host": ["baseUrl"],
+              "path": ["fines"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{memberToken}}"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Pay Fine",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/fines/{fineId}/pay",
+              "host": ["baseUrl"],
+              "path": ["fines", "{fineId}", "pay"]
+            },
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{librarianToken}}"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Health & Monitoring",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/health",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

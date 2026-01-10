@@ -7,6 +7,11 @@ const {
 } = require('../controllers/borrow.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
+const {
+  validateBorrow,
+  validateMongoId,
+  handleValidationErrors,
+} = require('../middlewares/validation.middleware');
 
 const router = express.Router();
 
@@ -15,6 +20,8 @@ router.post(
   '/',
   authMiddleware,
   authorizeRoles('member'), // Only members can initiate borrows
+  validateBorrow,
+  handleValidationErrors,
   borrowBookHandler
 );
 
@@ -23,6 +30,8 @@ router.patch(
   '/:id/return',
   authMiddleware,
   authorizeRoles('librarian', 'admin'), // Only staff can process returns
+  validateMongoId,
+  handleValidationErrors,
   returnBookHandler
 );
 

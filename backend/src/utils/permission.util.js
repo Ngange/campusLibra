@@ -43,6 +43,13 @@ const defaultPermissions = [
     description: 'Manage roles and permissions',
     category: 'role',
   },
+
+  // System permissions
+  {
+    name: 'system_manage',
+    description: 'Manage system configuration',
+    category: 'system',
+  },
 ];
 
 const createPermissionsIfNotExists = async () => {

@@ -7,7 +7,14 @@ const {
   deleteBookHandler,
 } = require('../controllers/book.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
-const { authorizePermission } = require('../middlewares/permission.middleware'); // 👈 NEW
+const { authorizePermission } = require('../middlewares/permission.middleware');
+const {
+  validateBookCreate,
+  validateBookUpdate,
+  validateMongoId,
+  validatePagination,
+  handleValidationErrors,
+} = require('../middlewares/validation.middleware');
 
 const router = express.Router();
 
@@ -15,12 +22,31 @@ const router = express.Router();
 router.use(authMiddleware);
 
 // Permission-based access (more granular)
-router.post('/', authorizePermission('book_create'), createBookHandler);
-router.put('/:id', authorizePermission('book_update'), updateBookHandler);
-router.delete('/:id', authorizePermission('book_delete'), deleteBookHandler);
+router.post(
+  '/',
+  authorizePermission('book_create'),
+  validateBookCreate,
+  handleValidationErrors,
+  createBookHandler
+);
+router.put(
+  '/:id',
+  authorizePermission('book_update'),
+  validateMongoId,
+  validateBookUpdate,
+  handleValidationErrors,
+  updateBookHandler
+);
+router.delete(
+  '/:id',
+  authorizePermission('book_delete'),
+  validateMongoId,
+  handleValidationErrors,
+  deleteBookHandler
+);
 
 // Read access: any authenticated user (members can browse)
-router.get('/', getAllBooksHandler);
-router.get('/:id', getBookByIdHandler);
+router.get('/', validatePagination, handleValidationErrors, getAllBooksHandler);
+router.get('/:id', validateMongoId, handleValidationErrors, getBookByIdHandler);
 
 module.exports = router;

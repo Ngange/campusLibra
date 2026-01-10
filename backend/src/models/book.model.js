@@ -41,4 +41,9 @@ bookSchema.virtual('copies', {
 bookSchema.set('toObject', { virtuals: true });
 bookSchema.set('toJSON', { virtuals: true });
 
+// Indexes for performance
+bookSchema.index({ title: 'text', author: 'text' }); // Text search
+bookSchema.index({ category: 1 }); // Filter by category
+bookSchema.index({ isbn: 1 }); // ISBN lookup (already unique, but explicit)
+
 module.exports = mongoose.model('Book', bookSchema);

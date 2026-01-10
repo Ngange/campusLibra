@@ -5,6 +5,15 @@ const createRolesIfNotExists = async () => {
   // Get all permissions first
   const permissions = await Permission.find();
 
+  // Always ensure admin has ALL current permissions
+  const adminExisting = await Role.findOne({ name: 'admin' });
+  if (adminExisting) {
+    const allPermIds = permissions.map((p) => p._id);
+    adminExisting.permissions = allPermIds;
+    await adminExisting.save();
+    console.log('Updated role: admin (synced permissions)');
+  }
+
   const roles = [
     {
       name: 'admin',

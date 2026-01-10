@@ -1,4 +1,11 @@
 require('dotenv').config(); // Load environment variables from .env file
+
+const { validateEnv } = require('./src/config/env.validator');
+const logger = require('./src/config/logger');
+
+// Validate environment variables before proceeding
+validateEnv();
+
 require('./src/jobs/expiredHolds.job'); // Starts cron job
 
 const connectDB = require('./src/config/db'); // Import database connection function
@@ -36,8 +43,27 @@ connectDB().then(async () => {
   global.emitNotification = emitNotification;
 
   // Start server
-  httpServer.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Socket.IO ready`);
+  const server = httpServer.listen(PORT, () => {
+    logger.info(`Server running on port ${PORT}`);
+    logger.info(`Socket.IO ready`);
+    logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
   });
+
+  // Graceful shutdown
+  const gracefulShutdown = (signal) => {
+    logger.info(`${signal} signal received: closing HTTP server gracefully`);
+    server.close(() => {
+      logger.info('HTTP server closed');
+      process.exit(0);
+    });
+
+    // Force shutdown after 10 seconds
+    setTimeout(() => {
+      logger.error('Forcing shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  };
+
+  process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+  process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 });

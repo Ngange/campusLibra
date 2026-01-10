@@ -40,4 +40,11 @@ const borrowSchema = new Schema(
   { timestamps: true }
 );
 
+// Indexes for performance
+borrowSchema.index({ user: 1, status: 1 }); // User's active/returned borrows
+borrowSchema.index({ book: 1, status: 1 }); // Book availability queries
+borrowSchema.index({ bookCopy: 1 }); // Track specific copy
+borrowSchema.index({ dueDate: 1, status: 1 }); // Overdue reports
+borrowSchema.index({ borrowDate: 1 }); // Date range queries
+
 module.exports = mongoose.model('Borrow', borrowSchema);

@@ -21,7 +21,7 @@ const registerUser = async (userData) => {
   // 4. CREATE USER
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    // ✅ Idempotency: If user exists, return success (don't fail!)
+    // Idempotency: If user exists, return success (don't fail!)
     const token = generateToken({
       id: existingUser._id,
       role: existingUser.role.name,

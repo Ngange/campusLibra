@@ -30,4 +30,9 @@ const fineSchema = new Schema(
   { timestamps: true }
 );
 
+// Indexes for performance
+fineSchema.index({ user: 1, isPaid: 1 }); // User's unpaid fines
+fineSchema.index({ borrow: 1 }); // Borrow-related fines
+fineSchema.index({ isPaid: 1, createdAt: -1 }); // Fine reports
+
 module.exports = mongoose.model('Fine', fineSchema);

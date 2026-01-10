@@ -47,4 +47,8 @@ userSchema.pre('save', async function () {
   this.password = await bcrypt.hash(this.password, 12);
 });
 
+// Indexes for performance
+userSchema.index({ email: 1 }); // Unique queries
+userSchema.index({ role: 1 }); // Filter by role
+
 module.exports = mongoose.model('User', userSchema);

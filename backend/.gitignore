@@ -1,3 +1,4 @@
 # Ignore configuration files
 /.env
 /node_modules/
+*.md
