@@ -216,3 +216,6 @@
 {"level":"info","message":"::1 - - [10/Jan/2026:20:03:34 +0000] \"GET /api/dashboard/book-popularity HTTP/1.1\" 200 130 \"-\" \"PostmanRuntime/7.39.1\"","timestamp":"2026-01-10 20:03:34"}
 {"level":"info","message":"::1 - - [10/Jan/2026:20:04:42 +0000] \"GET /api/dashboard/user-engagement HTTP/1.1\" 200 97 \"-\" \"PostmanRuntime/7.39.1\"","timestamp":"2026-01-10 20:04:42"}
 {"level":"info","message":"::1 - - [10/Jan/2026:20:06:38 +0000] \"GET /api/settings HTTP/1.1\" 200 836 \"-\" \"PostmanRuntime/7.39.1\"","timestamp":"2026-01-10 20:06:38"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-10 23:25:04"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-10 23:25:04"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-10 23:25:04"}
