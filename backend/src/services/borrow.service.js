@@ -82,10 +82,12 @@ const borrowBook = async (userId, bookId) => {
   });
 
   // Return populated borrow
-  return await borrow
+  const populatedBorrow = await Borrow.findById(borrow._id)
     .populate('user', 'name')
     .populate('book', 'title author')
     .populate('bookCopy', 'barcode location');
+
+  return populatedBorrow;
 };
 
 const calculateFine = async (borrowId) => {
@@ -139,6 +141,12 @@ const returnBook = async (borrowId, librarianId) => {
 
   if (!borrow) {
     throw new Error('Borrow record not found');
+  }
+
+  // If already returned, return existing data
+  if (borrow.returnDate) {
+    const existingFine = await Fine.findOne({ borrow: borrowId });
+    return { borrow, fine: existingFine };
   }
 
   if (borrow.returnDate) {

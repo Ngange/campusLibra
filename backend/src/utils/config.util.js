@@ -1,5 +1,6 @@
 const Setting = require('../models/setting.model');
 
+// Simple in-memory cache for settings
 let settingsCache = new Map();
 
 const getSetting = async (key) => {

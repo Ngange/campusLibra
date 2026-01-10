@@ -23,7 +23,7 @@ const borrowSchema = new Schema(
       required: [true, 'Borrow date is required'],
       default: Date.now,
     },
-    dateDue: {
+    dueDate: {
       type: Date,
       required: [true, 'Due date is required'],
     },
@@ -39,15 +39,5 @@ const borrowSchema = new Schema(
   },
   { timestamps: true }
 );
-
-// Pre-save hook to set default due date if not provided (service layer can also handle this)
-borrowSchema.pre('save', function (next) {
-  if (!this.dateDue && this.borrowDate) {
-    const due = new Date(this.borrowDate);
-    due.setDate(due.getDate() + 14); // Default due date is 14 days from borrow date
-    this.dateDue = due;
-  }
-  next();
-});
 
 module.exports = mongoose.model('Borrow', borrowSchema);

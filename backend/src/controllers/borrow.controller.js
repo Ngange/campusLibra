@@ -1,3 +1,4 @@
+const Borrow = require('../models/borrow.model');
 const { borrowBook, returnBook } = require('../services/borrow.service');
 
 const borrowBookHandler = async (req, res, next) => {
@@ -40,7 +41,19 @@ const returnBookHandler = async (req, res, next) => {
   }
 };
 
+const getBorrows = async (req, res, next) => {
+  try {
+    const borrows = await Borrow.find({ user: req.user.id })
+      .populate('book', 'title author')
+      .populate('bookCopy', 'status');
+    res.json({ success: true, borrows });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   borrowBookHandler,
   returnBookHandler,
+  getBorrows,
 };

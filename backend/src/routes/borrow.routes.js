@@ -3,6 +3,7 @@ const express = require('express');
 const {
   borrowBookHandler,
   returnBookHandler,
+  getBorrows,
 } = require('../controllers/borrow.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
@@ -24,5 +25,7 @@ router.patch(
   authorizeRoles('librarian', 'admin'), // Only staff can process returns
   returnBookHandler
 );
+
+router.get('/', authMiddleware, getBorrows);
 
 module.exports = router;

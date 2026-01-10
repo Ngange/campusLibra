@@ -19,11 +19,19 @@ const borrowRoutes = require('./src/routes/borrow.routes');
 const reservationRoutes = require('./src/routes/reservation.routes');
 const fineRoutes = require('./src/routes/fine.routes');
 const bookRoutes = require('./src/routes/book.routes');
+const userRoutes = require('./src/routes/user.routes');
+const roleRoutes = require('./src/routes/role.routes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/borrows', borrowRoutes);
 app.use('/api/reservations', reservationRoutes);
 app.use('/api/fines', fineRoutes);
 app.use('/api/books', bookRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/roles', roleRoutes);
+
+// Global error handler
+const errorHandler = require('./src/middlewares/error.middleware');
+app.use(errorHandler);
 
 module.exports = app;

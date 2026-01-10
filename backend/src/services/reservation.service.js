@@ -4,6 +4,7 @@ const BookCopy = require('../models/bookCopy.model');
 const Borrower = require('../models/borrow.model');
 const BookAudit = require('../models/bookAudit.model');
 const notificationService = require('./notification.service');
+const { getSetting } = require('../utils/config.util');
 
 // Function to create a book audit record
 const createBookAudit = async (
@@ -69,9 +70,12 @@ const createReservation = async (userId, bookId) => {
   });
 
   // 7. Return populated reservation
-  return await reservation
+  const populatedReservation = await reservation
+    .findById(reservation._id)
     .populate('user', 'name email')
     .populate('book', 'title author');
+
+  return populatedReservation;
 };
 
 // service to fulfill the next reservation when a book copy is returned

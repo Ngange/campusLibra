@@ -10,7 +10,6 @@ const SettingSchema = new Schema({
   bookCopy: {
     type: Schema.Types.ObjectId,
     ref: 'BookCopy',
-    required: [true, 'Audit must reference a book copy'],
   },
   action: {
     type: String,
