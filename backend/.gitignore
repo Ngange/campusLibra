@@ -1,5 +1,7 @@
 # Ignore configuration files
 /.env
 /node_modules/
+/logs
 /doc
+
 *.md
