@@ -1,12 +1,40 @@
 .home-container {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
+  padding: 0;
+  max-width: 100%;
+  margin: 0;
+}
+
+// Toolbar styles
+.app-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo {
+  height: 32px;
+  width: 32px;
+  margin-right: 1rem;
+  border-radius: 50%;
+  background: white;
+  padding: 0.25rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.toolbar-title {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: white;
+}
+
+.spacer {
+  flex: 1 1 auto;
 }
 
 .welcome-section {
   text-align: center;
-  margin-bottom: 3rem;
+  margin: 3rem 2rem;
 
   h1 {
     color: #333;
@@ -30,6 +58,10 @@
 }
 
 .quick-actions {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+
   h2 {
     text-align: center;
     margin-bottom: 2rem;
@@ -37,9 +69,82 @@
   }
 }
 
+.search-section {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  margin: 0 2rem 3rem 2rem;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+
+  h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+}
+
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 1.5rem auto;
+  display: block;
+}
+
+.category-filters {
+  text-align: center;
+  margin-bottom: 1.5rem;
+
+  .filter-label {
+    font-weight: bold;
+    margin-right: 1rem;
+    color: #333;
+  }
+}
+
+.category-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  mat-chip {
+    cursor: pointer;
+  }
+}
+
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+
+  .filter-tag {
+    background: #e3f2fd;
+    color: #1976d2;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    mat-icon {
+      cursor: pointer;
+      font-size: 14px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+}
+
 .featured-books {
-  margin: 3rem 0;
-  
+  padding: 0 2rem;
+  max-width: 1200px;
+  margin: 3rem auto;
+
   h2 {
     text-align: center;
     margin-bottom: 2rem;
@@ -68,7 +173,7 @@
 
 .browse-all {
   text-align: center;
-  
+
   button {
     min-width: 200px;
   }
@@ -88,7 +193,8 @@
 
 .logout-section {
   text-align: center;
-  margin-top: 3rem;
+  margin: 3rem 0;
+  padding: 2rem;
 
   button {
     color: #f44336;
@@ -99,6 +205,14 @@
 @media (max-width: 600px) {
   .home-container {
     padding: 1rem;
+  }
+
+  .search-section {
+    padding: 1rem;
+  }
+
+  .category-chips {
+    justify-content: flex-start;
   }
 
   .action-grid {

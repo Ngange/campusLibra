@@ -3,16 +3,23 @@ import { AuthService } from '../services/auth.service';
 import { BookService } from '../services/book.service';
 import { Book } from '../models/book.model';
 
-// Home page shows role-specific quick actions after login
 @Component({
   selector: 'app-home',
+  standalone: false,
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss']
 })
 export class HomeComponent implements OnInit {
   currentUser: any = null;
-  userRole = 'member';
-  books: Book[] = [];
+  userRole: string = 'member';
+
+  // Search & filter state
+  searchQuery: string = '';
+  selectedCategory: string = '';
+  categories: string[] = ['Fiction', 'Technology', 'Science', 'History', 'Biography', 'Mystery', 'Romance', 'Fantasy'];
+
+  // Books data
+  featuredBooks: Book[] = [];
   loadingBooks = false;
   error: string | null = null;
 
@@ -23,20 +30,32 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-    const roleValue = this.currentUser?.role;
-    this.userRole = typeof roleValue === 'string'
-      ? roleValue
-      : roleValue?.name || roleValue?.role || 'member';
+    const rawRole = this.currentUser?.role;
+    // Normalize role to a string to avoid TitleCase pipe errors when role is an object
+    this.userRole = typeof rawRole === 'string' ? rawRole : rawRole?.name || rawRole?.role || 'member';
     this.loadFeaturedBooks();
   }
 
-  private loadFeaturedBooks(): void {
+  // Load books based on current filters
+  loadFeaturedBooks(): void {
     this.loadingBooks = true;
     this.error = null;
 
-    this.bookService.getBooks({ availability: 'available', limit: 6 }).subscribe({
+    const filters: any = {
+      limit: 6
+    };
+
+    if (this.searchQuery) {
+      filters.title = this.searchQuery;
+    }
+
+    if (this.selectedCategory) {
+      filters.category = this.selectedCategory;
+    }
+
+    this.bookService.getBooks(filters).subscribe({
       next: (response) => {
-        this.books = response.books;
+        this.featuredBooks = response.books;
         this.loadingBooks = false;
       },
       error: (err) => {
@@ -45,6 +64,24 @@ export class HomeComponent implements OnInit {
         console.error('Book loading error:', err);
       }
     });
+  }
+
+  // Handle search input (debounced in template)
+  onSearchChange(): void {
+    this.loadFeaturedBooks();
+  }
+
+  // Handle category selection
+  onCategorySelect(category: string): void {
+    this.selectedCategory = category === this.selectedCategory ? '' : category;
+    this.loadFeaturedBooks();
+  }
+
+  // Clear all filters
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.selectedCategory = '';
+    this.loadFeaturedBooks();
   }
 
   logout(): void {

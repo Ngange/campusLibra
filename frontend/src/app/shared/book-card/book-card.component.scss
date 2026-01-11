@@ -1,15 +1,42 @@
 .book-card {
-  padding: 1rem;
+  padding: 0;
   border-radius: 8px;
   background: white;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  height: 100%;
+}
+
+.book-cover {
+  height: 200px;
+  background: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+}
+
+.cover-placeholder {
+  color: #999;
+  font-size: 3rem;
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .book-info {
   margin-bottom: 1rem;
+  padding: 1rem;
 }
 
 .book-title {
@@ -34,12 +61,12 @@
   display: flex;
   gap: 1rem;
   font-size: 0.9rem;
-  
+
   .copies-available {
     color: #4caf50;
     font-weight: bold;
   }
-  
+
   .total-copies {
     color: #666;
   }
@@ -47,22 +74,27 @@
 
 .book-actions {
   text-align: center;
-  
+  padding: 0 1rem 1rem 1rem;
+
   button {
     width: 100%;
     min-height: 40px;
   }
-  
+
   button:disabled {
     background: #bdbdbd;
   }
 }
 
 @media (max-width: 600px) {
-  .book-card {
+  .book-cover {
+    height: 150px;
+  }
+
+  .book-info {
     padding: 0.75rem;
   }
-  
+
   .book-title {
     font-size: 1.1rem;
   }

@@ -1,4 +1,16 @@
 <div class="book-card mat-elevation-z2">
+  <div class="book-cover">
+    <div class="cover-placeholder" *ngIf="!book.coverImage">
+      <mat-icon>menu_book</mat-icon>
+    </div>
+    <img
+      *ngIf="book.coverImage"
+      [src]="book.coverImage"
+      [alt]="book.title"
+      class="cover-image"
+    />
+  </div>
+
   <div class="book-info">
     <h3 class="book-title">{{ book.title }}</h3>
     <p class="book-author">by {{ book.author }}</p>
@@ -7,19 +19,17 @@
       <span class="copies-available">
         Available: {{ book.availableCopies || 0 }}
       </span>
-      <span class="total-copies">
-        Total: {{ book.totalCopies || 0 }}
-      </span>
+      <span class="total-copies"> Total: {{ book.totalCopies || 0 }} </span>
     </div>
   </div>
-  
+
   <div class="book-actions" *ngIf="showActions">
-    <button 
-      mat-raised-button 
+    <button
+      mat-raised-button
       color="primary"
       [disabled]="(book.availableCopies || 0) === 0"
     >
-      {{ (book.availableCopies || 0) > 0 ? 'Borrow' : 'Reserve' }}
+      {{ (book.availableCopies || 0) > 0 ? "Borrow" : "Reserve" }}
     </button>
   </div>
 </div>

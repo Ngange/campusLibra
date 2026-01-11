@@ -11,6 +11,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'books', loadChildren: () => import('./books/books.module').then(m => m.BooksModule) },
 
   // TODO: Create dashboard modules - commented out until modules are created
   // { path: 'member', loadChildren: () => import('./member/member.module').then(m => m.MemberModule) },

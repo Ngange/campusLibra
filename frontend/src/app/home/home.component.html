@@ -1,8 +1,105 @@
 <div class="home-container">
+  <!-- Toolbar with Logo -->
+  <mat-toolbar color="primary" class="app-toolbar">
+    <img src="assets/images/logo-32x32.png" alt="CampusLibra" class="logo" />
+    <span class="toolbar-title">CampusLibra</span>
+    <span class="spacer"></span>
+    <button mat-icon-button routerLink="/home" matTooltip="Home">
+      <mat-icon>home</mat-icon>
+    </button>
+    <button mat-icon-button (click)="logout()" matTooltip="Logout">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </mat-toolbar>
+
   <div class="welcome-section">
     <h1>Welcome to CampusLibra!</h1>
     <p>Hello, {{ currentUser?.name }}!</p>
-    <p class="role-badge">{{ (userRole || 'member') | titlecase }}</p>
+    <p class="role-badge">{{ userRole | titlecase }}</p>
+  </div>
+
+  <!-- Search & Filter Section -->
+  <div class="search-section mat-elevation-z1">
+    <h2>Find Your Next Read</h2>
+
+    <!-- Search Input -->
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Search books by title</mat-label>
+      <input
+        matInput
+        [value]="searchQuery"
+        (input)="searchQuery = $any($event.target).value; onSearchChange()"
+        placeholder="Enter book title..."
+      />
+      <button
+        matSuffix
+        mat-icon-button
+        *ngIf="searchQuery"
+        (click)="searchQuery = ''; onSearchChange()"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- Category Filters -->
+    <div class="category-filters">
+      <span class="filter-label">Categories:</span>
+      <div class="category-chips">
+        <mat-chip-listbox>
+          <mat-chip-option
+            *ngFor="let category of categories"
+            [selected]="selectedCategory === category"
+            (selectionChange)="onCategorySelect(category)"
+            color="primary"
+          >
+            {{ category }}
+          </mat-chip-option>
+        </mat-chip-listbox>
+      </div>
+    </div>
+
+    <!-- Active Filters -->
+    <div *ngIf="searchQuery || selectedCategory" class="active-filters">
+      <span *ngIf="searchQuery" class="filter-tag">
+        Title: "{{ searchQuery }}"
+        <mat-icon (click)="searchQuery = ''; onSearchChange()">close</mat-icon>
+      </span>
+      <span *ngIf="selectedCategory" class="filter-tag">
+        Category: {{ selectedCategory }}
+        <mat-icon (click)="selectedCategory = ''; onSearchChange()"
+          >close</mat-icon
+        >
+      </span>
+      <button mat-button (click)="clearFilters()" color="warn">
+        Clear All
+      </button>
+    </div>
+  </div>
+
+  <!-- Featured Books Section -->
+  <div class="featured-books">
+    <div *ngIf="loadingBooks" class="loading">Loading books...</div>
+
+    <div *ngIf="error" class="error">
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loadingBooks && !error" class="books-grid">
+      <app-book-card
+        *ngFor="let book of featuredBooks"
+        [book]="book"
+        [showActions]="true"
+      >
+      </app-book-card>
+
+      <div *ngIf="featuredBooks.length === 0" class="no-books">
+        No books found matching your criteria.
+      </div>
+    </div>
+
+    <div class="browse-all">
+      <button mat-stroked-button routerLink="/books">Browse All Books →</button>
+    </div>
   </div>
 
   <div class="quick-actions">
@@ -50,37 +147,6 @@
       <button mat-raised-button routerLink="/audit-trail">Audit Trail</button>
     </div>
   </div>
-
-    <!-- Featured Books Section -->
-    <div class="featured-books">
-      <h2>Available Books</h2>
-    
-      <div *ngIf="loadingBooks" class="loading">
-        Loading books...
-      </div>
-    
-      <div *ngIf="error" class="error">
-        {{ error }}
-      </div>
-    
-      <div *ngIf="!loadingBooks && !error" class="books-grid">
-        <app-book-card 
-          *ngFor="let book of books" 
-          [book]="book"
-          [showActions]="true">
-        </app-book-card>
-      
-        <div *ngIf="books.length === 0" class="no-books">
-          No available books at the moment.
-        </div>
-      </div>
-    
-      <div class="browse-all">
-        <button mat-stroked-button routerLink="/books">
-          Browse All Books
-        </button>
-      </div>
-    </div>
 
   <div class="logout-section">
     <button mat-stroked-button (click)="logout()">Logout</button>

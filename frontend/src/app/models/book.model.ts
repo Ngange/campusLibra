@@ -11,6 +11,7 @@ export interface Book {
   author: string;
   isbn: string;
   category: string;
+  coverImage?: string;
   totalCopies?: number;
   availableCopies?: number;
   copies?: BookCopy[];

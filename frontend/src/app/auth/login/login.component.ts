@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 // Login component with reactive form validation
 @Component({
   selector: 'app-login',
+  standalone: false,
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })

@@ -3,6 +3,7 @@ import { Book } from '../../models/book.model';
 
 @Component({
   selector: 'app-book-card',
+  standalone: false,
   templateUrl: './book-card.component.html',
   styleUrls: ['./book-card.component.scss']
 })

@@ -1,0 +1,108 @@
+<div class="books-page">
+  <div class="page-header">
+    <h1>Library Catalog</h1>
+    <p>Browse our collection of {{ totalBooks }} books</p>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="filters-section mat-elevation-z1">
+    <div class="filter-row">
+      <mat-form-field appearance="outline" class="search-filter">
+        <mat-label>Search by title</mat-label>
+        <input
+          matInput
+          [value]="searchQuery"
+          (keyup.enter)="onSearch()"
+          (input)="searchQuery = $any($event.target).value"
+        />
+        <button
+          matSuffix
+          mat-icon-button
+          *ngIf="searchQuery"
+          (click)="searchQuery = ''; onSearch()"
+        >
+          <mat-icon>close</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="category-filter">
+        <mat-label>Category</mat-label>
+        <mat-select
+          [value]="selectedCategory"
+          (selectionChange)="onCategorySelect($event.value)"
+        >
+          <mat-option value="">All Categories</mat-option>
+          <mat-option *ngFor="let category of categories" [value]="category">
+            {{ category }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="availability-filter">
+        <mat-label>Availability</mat-label>
+        <mat-select
+          [value]="availabilityFilter"
+          (selectionChange)="
+            availabilityFilter = $event.value; onAvailabilityChange()
+          "
+        >
+          <mat-option value="all">All Books</mat-option>
+          <mat-option value="available">Available Only</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <button
+        mat-button
+        (click)="clearFilters()"
+        *ngIf="searchQuery || selectedCategory || availabilityFilter !== 'all'"
+      >
+        Clear Filters
+      </button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div *ngIf="loading" class="loading">Loading books...</div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && !error" class="books-results">
+    <p *ngIf="books.length === 0" class="no-results">
+      No books found. Try adjusting your filters.
+    </p>
+
+    <div class="books-grid" *ngIf="books.length > 0">
+      <app-book-card
+        *ngFor="let book of books"
+        [book]="book"
+        [showActions]="true"
+      >
+      </app-book-card>
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination" *ngIf="totalPages > 1">
+      <button
+        mat-button
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        Previous
+      </button>
+
+      <span class="page-info">
+        Page {{ currentPage }} of {{ totalPages }}
+      </span>
+
+      <button
+        mat-button
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>

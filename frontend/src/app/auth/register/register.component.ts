@@ -6,6 +6,7 @@ import { AuthService } from '../../services/auth.service';
 // Registration component with reactive form validation
 @Component({
   selector: 'app-register',
+  standalone: false,
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
