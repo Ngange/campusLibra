@@ -13,6 +13,7 @@ import { filter, map } from 'rxjs/operators';
 })
 export class NavbarComponent implements OnInit {
   currentUser: any = null;
+  currentUserId: string | null = null;
   userRole: string = 'member';
   unreadNotifications: number = 0;
   notifications$: Observable<Notification[]>;
@@ -25,8 +26,13 @@ export class NavbarComponent implements OnInit {
     private notificationService: NotificationService
   ) {
     this.notifications$ = this.notificationService.notifications$;
+    // Filter unread notifications to only show those owned by current user
     this.unreadNotifications$ = this.notifications$.pipe(
-      map((notifications) => notifications.filter((n) => !n.isRead))
+      map((notifications) => {
+        const user = this.authService.getCurrentUser();
+        const userId = user ? (user._id || (user as any).id || null) : null;
+        return notifications.filter((n) => !n.isRead && n.userId === userId);
+      })
     );
 
     // Subscribe to unread notification count
@@ -46,6 +52,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
+    this.currentUserId = this.currentUser ? (this.currentUser._id || (this.currentUser as any).id || null) : null;
     const rawRole = this.currentUser?.role;
     this.userRole = typeof rawRole === 'string' ? rawRole : rawRole?.name || rawRole?.role || 'member';
   }
