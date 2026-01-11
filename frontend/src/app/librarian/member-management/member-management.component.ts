@@ -81,4 +81,12 @@ export class MemberManagementComponent implements OnInit {
       }
     });
   }
+
+  toggleBlockMember(member: any): void {
+    if (member.isBlocked) {
+      this.unblockMember(member._id);
+    } else {
+      this.blockMember(member._id);
+    }
+  }
 }

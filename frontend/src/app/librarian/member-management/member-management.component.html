@@ -56,11 +56,7 @@
         <button
           mat-stroked-button
           [color]="member.isBlocked ? 'accent' : 'warn'"
-          (click)="
-            member.isBlocked
-              ? unblockMember(member._id)
-              : blockMember(member._id)
-          "
+          (click)="toggleBlockMember(member)"
         >
           <mat-icon>{{ member.isBlocked ? "check_circle" : "block" }}</mat-icon>
           {{ member.isBlocked ? "Unblock" : "Block" }}

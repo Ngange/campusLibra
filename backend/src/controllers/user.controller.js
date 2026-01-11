@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const Role = require('../models/role.model');
 const { logUserAuditEvent } = require('../utils/audit.util');
+const { emitNotification } = require('../utils/notification.util');
 
 // List all users (admin only)
 const getAllUsers = async (req, res, next) => {
@@ -161,6 +162,34 @@ const blockUser = async (req, res, next) => {
       });
     }
 
+    // Notify the blocked user
+    await emitNotification(
+      id,
+      'Account Blocked',
+      'Your account has been blocked. Please contact support for assistance.',
+      'user_blocked',
+      id,
+      'User'
+    );
+
+    // Notify all admins
+    const adminRole = await Role.findOne({ name: 'admin' });
+    if (adminRole) {
+      const admins = await User.find({ role: adminRole._id, isBlocked: false });
+      for (const admin of admins) {
+        await emitNotification(
+          admin._id,
+          'User Blocked',
+          `User ${user.name} (${user.email}) has been blocked by a ${
+            req.user.role?.name || 'librarian'
+          }.`,
+          'user_blocked',
+          id,
+          'User'
+        );
+      }
+    }
+
     res.json({ success: true, user, message: 'User blocked successfully' });
   } catch (error) {
     next(error);
@@ -192,6 +221,34 @@ const unblockUser = async (req, res, next) => {
         userName: user.name,
         userEmail: user.email,
       });
+    }
+
+    // Notify the unblocked user
+    await emitNotification(
+      id,
+      'Account Unblocked',
+      'Your account has been unblocked. You can now access the system.',
+      'user_unblocked',
+      id,
+      'User'
+    );
+
+    // Notify all admins
+    const adminRole = await Role.findOne({ name: 'admin' });
+    if (adminRole) {
+      const admins = await User.find({ role: adminRole._id, isBlocked: false });
+      for (const admin of admins) {
+        await emitNotification(
+          admin._id,
+          'User Unblocked',
+          `User ${user.name} (${user.email}) has been unblocked by a ${
+            req.user.role?.name || 'librarian'
+          }.`,
+          'user_unblocked',
+          id,
+          'User'
+        );
+      }
     }
 
     res.json({ success: true, user, message: 'User unblocked successfully' });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ReservationService } from '../../services/reservation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -16,7 +16,8 @@ export class MyReservationsComponent implements OnInit, OnDestroy {
 
   constructor(
     private reservationService: ReservationService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -34,11 +35,13 @@ export class MyReservationsComponent implements OnInit, OnDestroy {
       next: (reservations) => {
         this.reservations = Array.isArray(reservations) ? reservations : [];
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.error = err.message || 'Failed to load your reservations.';
         this.loading = false;
         this.reservations = [];
+        this.cdr.markForCheck();
         this.snackBar.open(this.error, 'Close', { duration: 5000 });
       }
     });

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { BorrowService, Borrow } from '../../services/borrow.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
@@ -19,7 +19,8 @@ export class MyBorrowsComponent implements OnInit, OnDestroy {
 
   constructor(
     private borrowService: BorrowService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -42,12 +43,14 @@ export class MyBorrowsComponent implements OnInit, OnDestroy {
           // Ensure we always have an array
           this.borrows = Array.isArray(borrows) ? borrows : [];
           this.loading = false;
+          this.cdr.markForCheck();
         },
         error: (err) => {
           this.error = err.message || 'Failed to load your borrows.';
           this.loading = false;
           // Keep borrows as empty array on error
           this.borrows = [];
+          this.cdr.markForCheck();
           if (this.error) {
             this.snackBar.open(this.error, 'Close', { duration: 5000 });
           }
