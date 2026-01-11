@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { Borrow, BorrowService } from '../../services/borrow.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -6,7 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-borrow-card',
   standalone: false,
   templateUrl: './borrow-card.component.html',
-  styleUrls: ['./borrow-card.component.scss']
+  styleUrls: ['./borrow-card.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BorrowCardComponent {
   @Input() borrow!: Borrow;

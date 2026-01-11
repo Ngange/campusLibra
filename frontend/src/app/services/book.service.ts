@@ -59,17 +59,17 @@ export class BookService {
     return this.http.get<BookResponse>(`${this.apiUrl}/${id}`);
   }
 
-  // Create a new book with copy count
-  createBook(bookData: Partial<Book> & { copyCount?: number }): Observable<CreateBookResponse> {
-    return this.http.post<CreateBookResponse>(this.apiUrl, bookData);
+  // Create a new book (admin)
+  createBook(payload: Partial<Book> & { copyCount?: number }): Observable<CreateBookResponse> {
+    return this.http.post<CreateBookResponse>(this.apiUrl, payload);
   }
 
-  // Update an existing book
-  updateBook(id: string, bookData: Partial<Book>): Observable<BookResponse> {
-    return this.http.put<BookResponse>(`${this.apiUrl}/${id}`, bookData);
+  // Update an existing book (admin)
+  updateBook(id: string, payload: Partial<Book>): Observable<BookResponse> {
+    return this.http.put<BookResponse>(`${this.apiUrl}/${id}`, payload);
   }
 
-  // Delete a book
+  // Delete a book (admin)
   deleteBook(id: string): Observable<DeleteBookResponse> {
     return this.http.delete<DeleteBookResponse>(`${this.apiUrl}/${id}`);
   }

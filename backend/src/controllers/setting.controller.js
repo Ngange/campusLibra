@@ -5,7 +5,8 @@ const { clearSettingsCache } = require('../utils/config.util');
 const getAllSettings = async (req, res, next) => {
   try {
     const settings = await Setting.find().select('key value description');
-    res.json({ success: true, settings });
+    // Return array directly for frontend compatibility
+    res.json(settings);
   } catch (error) {
     next(error);
   }

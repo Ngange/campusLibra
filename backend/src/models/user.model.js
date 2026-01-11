@@ -28,6 +28,10 @@ const userSchema = new schema(
       type: mongoose.Schema.Types.ObjectId, // Reference to Role model
       ref: 'Role',
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     createdAt: {
       type: Date,
       default: Date.now,

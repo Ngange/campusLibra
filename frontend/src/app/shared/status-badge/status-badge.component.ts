@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-status-badge',
@@ -26,7 +26,8 @@ import { Component, Input } from '@angular/core';
     .cancelled { background-color: #ffebee; color: #c62828; }
     .paid { background-color: #e8f5e8; color: #2e7d32; }
     .outstanding { background-color: #ffebee; color: #c62828; }
-  `]
+  `],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StatusBadgeComponent {
   @Input() status: string = '';

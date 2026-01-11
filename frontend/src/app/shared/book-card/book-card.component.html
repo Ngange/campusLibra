@@ -1,13 +1,20 @@
 <div class="book-card mat-elevation-z2" [routerLink]="['/books', book._id]">
   <div class="book-cover">
-    <div class="cover-placeholder" *ngIf="!book.coverImage">
+    <div class="cover-skeleton" *ngIf="loading && !book.coverImage">
+      <div class="skeleton-shimmer"></div>
+    </div>
+
+    <div class="cover-placeholder" *ngIf="!book.coverImage && !loading">
       <mat-icon>menu_book</mat-icon>
     </div>
+
     <img
       *ngIf="book.coverImage"
       [src]="book.coverImage"
       [alt]="book.title"
       class="cover-image"
+      loading="lazy"
+      [attr.data-src]="book.coverImage"
     />
   </div>
 

@@ -50,11 +50,14 @@ export class UsersManageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (response) => {
-          this.users = response.data || response.users || [];
+          // Ensure array for MatTable
+          const usersData = response.data || response.users || response || [];
+          this.users = Array.isArray(usersData) ? usersData : [];
           this.applyFilter();
           this.loading = false;
         },
         error: (err) => {
+          this.users = []; // Always fallback to empty array
           this.error = 'Failed to load users.';
           this.loading = false;
         }

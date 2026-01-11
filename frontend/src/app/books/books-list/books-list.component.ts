@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { BookService } from '../../services/book.service';
 import { Book } from '../../models/book.model';
 
@@ -6,7 +6,8 @@ import { Book } from '../../models/book.model';
   selector: 'app-books-list',
   standalone: false,
   templateUrl: './books-list.component.html',
-  styleUrls: ['./books-list.component.scss']
+  styleUrls: ['./books-list.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BooksListComponent implements OnInit {
   books: Book[] = [];
@@ -78,6 +79,10 @@ export class BooksListComponent implements OnInit {
     this.selectedCategory = '';
     this.availabilityFilter = 'all';
     this.loadBooks(1);
+  }
+
+  trackByBookId(index: number, book: Book): string {
+    return book._id;
   }
 
   onPageChange(page: number): void {

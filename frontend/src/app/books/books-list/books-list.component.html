@@ -75,9 +75,10 @@
 
     <div class="books-grid" *ngIf="books.length > 0">
       <app-book-card
-        *ngFor="let book of books"
+        *ngFor="let book of books; trackBy: trackByBookId"
         [book]="book"
         [showActions]="true"
+        [loading]="loading"
       >
       </app-book-card>
     </div>

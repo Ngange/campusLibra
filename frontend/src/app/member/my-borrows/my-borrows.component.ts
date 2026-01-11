@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { BorrowService, Borrow } from '../../services/borrow.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
@@ -8,7 +8,8 @@ import { takeUntil } from 'rxjs/operators';
   selector: 'app-my-borrows',
   standalone: false,
   templateUrl: './my-borrows.component.html',
-  styleUrls: ['./my-borrows.component.scss']
+  styleUrls: ['./my-borrows.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyBorrowsComponent implements OnInit, OnDestroy {
   borrows: Borrow[] = [];
@@ -68,5 +69,9 @@ export class MyBorrowsComponent implements OnInit, OnDestroy {
 
   isOverdue(dueDate: Date): boolean {
     return new Date() > new Date(dueDate);
+  }
+
+  trackByBorrowId(index: number, borrow: Borrow): string {
+    return borrow._id;
   }
 }

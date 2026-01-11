@@ -39,10 +39,12 @@ export class AuditTrailComponent implements OnInit {
 
     this.auditService.getAuditTrail(filters).subscribe({
       next: (logs) => {
-        this.auditLogs = logs;
+        // Ensure array for MatTable
+        this.auditLogs = Array.isArray(logs) ? logs : [];
         this.loading = false;
       },
       error: (err) => {
+        this.auditLogs = []; // Fallback to empty array
         this.snackBar.open('Failed to load audit trail.', 'Close', { duration: 5000 });
         this.loading = false;
       }

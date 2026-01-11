@@ -26,8 +26,11 @@ export class NotificationService {
 
   constructor() {
     // Initialize Socket.IO connection
-    this.socket = io(environment.apiUrl || 'http://localhost:5000', {
-      autoConnect: false
+    const socketUrl = environment.socketUrl || environment.apiUrl?.replace(/\/api$/, '') || 'http://localhost:5000';
+
+    this.socket = io(socketUrl, {
+      autoConnect: false,
+      path: '/socket.io'
     });
 
     // Listen for new notifications

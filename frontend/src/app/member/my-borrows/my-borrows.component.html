@@ -37,7 +37,7 @@
   <div *ngIf="!loading && !error && borrows.length > 0" class="borrows-list">
     <mat-card
       class="borrow-card mat-elevation-z2"
-      *ngFor="let borrow of borrows"
+      *ngFor="let borrow of borrows; trackBy: trackByBorrowId"
     >
       <mat-card-content>
         <div class="card-layout">

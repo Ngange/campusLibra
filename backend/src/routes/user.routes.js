@@ -4,6 +4,8 @@ const {
   getUserById,
   updateUser,
   deleteUser,
+  blockUser,
+  unblockUser,
 } = require('../controllers/user.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
@@ -28,5 +30,12 @@ router.put(
   updateUser
 );
 router.delete('/:id', validateMongoId, handleValidationErrors, deleteUser);
+router.patch('/:id/block', validateMongoId, handleValidationErrors, blockUser);
+router.patch(
+  '/:id/unblock',
+  validateMongoId,
+  handleValidationErrors,
+  unblockUser
+);
 
 module.exports = router;

@@ -71,7 +71,7 @@ export class BookDetailsComponent implements OnInit {
           panelClass: 'success-snackbar'
         });
         // Redirect to My Borrows page
-        this.router.navigate(['/my-borrows']);
+        this.router.navigate(['/member/my-borrows']);
       },
       error: (err) => {
         this.borrowing = false;
@@ -94,7 +94,7 @@ export class BookDetailsComponent implements OnInit {
           duration: 3000,
           panelClass: 'success-snackbar'
         });
-        this.router.navigate(['/my-reservations']);
+        this.router.navigate(['/member/my-reservations']);
       },
       error: (err) => {
         this.reserving = false;

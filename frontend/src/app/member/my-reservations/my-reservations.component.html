@@ -30,7 +30,7 @@
 
     <div
       class="reservation-card mat-elevation-z2"
-      *ngFor="let reservation of reservations"
+      *ngFor="let reservation of reservations; trackBy: trackByReservationId"
     >
       <div class="book-info">
         <h3>{{ reservation.book?.title }}</h3>

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy } from '@angular/core';
 import { ReservationService } from '../../services/reservation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
@@ -6,7 +6,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   selector: 'app-my-reservations',
   standalone: false,
   templateUrl: './my-reservations.component.html',
-  styleUrls: ['./my-reservations.component.scss']
+  styleUrls: ['./my-reservations.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MyReservationsComponent implements OnInit, OnDestroy {
   reservations: any[] = [];
@@ -50,5 +51,9 @@ export class MyReservationsComponent implements OnInit, OnDestroy {
       case 'fulfilled': return 'accent';
       default: return 'primary';
     }
+  }
+
+  trackByReservationId(index: number, reservation: any): string {
+    return reservation._id;
   }
 }

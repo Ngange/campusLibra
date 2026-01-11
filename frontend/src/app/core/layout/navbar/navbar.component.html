@@ -18,19 +18,23 @@
       </button>
       <button
         mat-button
-        routerLink="/my-borrows"
+        routerLink="/member/my-borrows"
         routerLinkActive="active-link"
       >
         My Borrows
       </button>
       <button
         mat-button
-        routerLink="/my-reservations"
+        routerLink="/member/my-reservations"
         routerLinkActive="active-link"
       >
         Reservations
       </button>
-      <button mat-button routerLink="/my-fines" routerLinkActive="active-link">
+      <button
+        mat-button
+        routerLink="/member/my-fines"
+        routerLinkActive="active-link"
+      >
         Fines
       </button>
     </ng-container>
@@ -39,21 +43,21 @@
     <ng-container *ngIf="userRole === 'librarian'">
       <button
         mat-button
-        routerLink="/process-returns"
+        routerLink="/librarian/process-returns"
         routerLinkActive="active-link"
       >
         Process Returns
       </button>
       <button
         mat-button
-        routerLink="/pending-pickups"
+        routerLink="/librarian/pending-pickups"
         routerLinkActive="active-link"
       >
         Pending Pickups
       </button>
       <button
         mat-button
-        routerLink="/member-management"
+        routerLink="/librarian/member-management"
         routerLinkActive="active-link"
       >
         Members
@@ -67,28 +71,28 @@
     <ng-container *ngIf="userRole === 'admin'">
       <button
         mat-button
-        routerLink="/books/manage"
+        routerLink="/admin/books-manage"
         routerLinkActive="active-link"
       >
         Manage Books
       </button>
       <button
         mat-button
-        routerLink="/manage-users"
+        routerLink="/admin/users-manage"
         routerLinkActive="active-link"
       >
         Manage Users
       </button>
       <button
         mat-button
-        routerLink="/system-settings"
+        routerLink="/admin/system-settings"
         routerLinkActive="active-link"
       >
         Settings
       </button>
       <button
         mat-button
-        routerLink="/audit-trail"
+        routerLink="/admin/audit-trail"
         routerLinkActive="active-link"
       >
         Audit Trail
@@ -168,7 +172,7 @@
       <mat-icon>account_circle</mat-icon>
     </button>
     <mat-menu #userMenu="matMenu">
-      <button mat-menu-item routerLink="/profile">
+      <button mat-menu-item routerLink="/member/profile">
         <mat-icon>person</mat-icon>
         <span>Profile</span>
       </button>
@@ -211,19 +215,27 @@
           <mat-icon>book</mat-icon>
           Browse Books
         </button>
-        <button mat-button routerLink="/my-borrows" (click)="closeMobileMenu()">
+        <button
+          mat-button
+          routerLink="/member/my-borrows"
+          (click)="closeMobileMenu()"
+        >
           <mat-icon>library_books</mat-icon>
           My Borrows
         </button>
         <button
           mat-button
-          routerLink="/my-reservations"
+          routerLink="/member/my-reservations"
           (click)="closeMobileMenu()"
         >
           <mat-icon>event_seat</mat-icon>
           Reservations
         </button>
-        <button mat-button routerLink="/my-fines" (click)="closeMobileMenu()">
+        <button
+          mat-button
+          routerLink="/member/my-fines"
+          (click)="closeMobileMenu()"
+        >
           <mat-icon>attach_money</mat-icon>
           Fines
         </button>
@@ -233,7 +245,7 @@
       <ng-container *ngIf="userRole === 'librarian'">
         <button
           mat-button
-          routerLink="/process-returns"
+          routerLink="/librarian/process-returns"
           (click)="closeMobileMenu()"
         >
           <mat-icon>undo</mat-icon>
@@ -241,7 +253,7 @@
         </button>
         <button
           mat-button
-          routerLink="/pending-pickups"
+          routerLink="/librarian/pending-pickups"
           (click)="closeMobileMenu()"
         >
           <mat-icon>shopping_bag</mat-icon>
@@ -249,7 +261,7 @@
         </button>
         <button
           mat-button
-          routerLink="/member-management"
+          routerLink="/librarian/member-management"
           (click)="closeMobileMenu()"
         >
           <mat-icon>people</mat-icon>
@@ -265,7 +277,7 @@
       <ng-container *ngIf="userRole === 'admin'">
         <button
           mat-button
-          routerLink="/books/manage"
+          routerLink="/admin/books-manage"
           (click)="closeMobileMenu()"
         >
           <mat-icon>edit</mat-icon>
@@ -273,7 +285,7 @@
         </button>
         <button
           mat-button
-          routerLink="/users/manage"
+          routerLink="/admin/users-manage"
           (click)="closeMobileMenu()"
         >
           <mat-icon>manage_accounts</mat-icon>
@@ -281,7 +293,7 @@
         </button>
         <button
           mat-button
-          routerLink="/system-settings"
+          routerLink="/admin/system-settings"
           (click)="closeMobileMenu()"
         >
           <mat-icon>settings</mat-icon>
@@ -289,7 +301,7 @@
         </button>
         <button
           mat-button
-          routerLink="/audit-trail"
+          routerLink="/admin/audit-trail"
           (click)="closeMobileMenu()"
         >
           <mat-icon>history</mat-icon>
@@ -298,7 +310,11 @@
       </ng-container>
 
       <!-- Profile & Logout -->
-      <button mat-button routerLink="/profile" (click)="closeMobileMenu()">
+      <button
+        mat-button
+        routerLink="/member/profile"
+        (click)="closeMobileMenu()"
+      >
         <mat-icon>person</mat-icon>
         Profile
       </button>

@@ -97,24 +97,32 @@
       <button mat-raised-button color="primary" routerLink="/books">
         Browse Books
       </button>
-      <button mat-raised-button color="accent" routerLink="/my-borrows">
+      <button mat-raised-button color="accent" routerLink="/member/my-borrows">
         My Borrows
       </button>
-      <button mat-raised-button routerLink="/my-reservations">
+      <button mat-raised-button routerLink="/member/my-reservations">
         My Reservations
       </button>
-      <button mat-raised-button routerLink="/my-fines">My Fines</button>
+      <button mat-raised-button routerLink="/member/my-fines">My Fines</button>
     </div>
 
     <!-- Librarian Actions -->
     <div *ngIf="userRole === 'librarian'" class="action-grid">
-      <button mat-raised-button color="primary" routerLink="/process-returns">
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/librarian/process-returns"
+      >
         Process Returns
       </button>
-      <button mat-raised-button color="accent" routerLink="/pending-pickups">
+      <button
+        mat-raised-button
+        color="accent"
+        routerLink="/librarian/pending-pickups"
+      >
         Pending Pickups
       </button>
-      <button mat-raised-button routerLink="/member-management">
+      <button mat-raised-button routerLink="/librarian/member-management">
         Member Management
       </button>
       <button mat-raised-button routerLink="/books">Book Inventory</button>
@@ -122,16 +130,22 @@
 
     <!-- Admin Actions -->
     <div *ngIf="userRole === 'admin'" class="action-grid">
-      <button mat-raised-button color="primary" routerLink="/books/manage">
+      <button
+        mat-raised-button
+        color="primary"
+        routerLink="/admin/books-manage"
+      >
         Manage Books
       </button>
-      <button mat-raised-button color="accent" routerLink="/users/manage">
+      <button mat-raised-button color="accent" routerLink="/admin/users-manage">
         Manage Users
       </button>
-      <button mat-raised-button routerLink="/system-settings">
+      <button mat-raised-button routerLink="/admin/system-settings">
         System Settings
       </button>
-      <button mat-raised-button routerLink="/audit-trail">Audit Trail</button>
+      <button mat-raised-button routerLink="/admin/audit-trail">
+        Audit Trail
+      </button>
     </div>
   </div>
 </div>

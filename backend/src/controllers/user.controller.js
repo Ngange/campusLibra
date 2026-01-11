@@ -99,9 +99,59 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+// Block user
+const blockUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { isBlocked: true },
+      { new: true }
+    )
+      .select('-password')
+      .populate('role', 'name');
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.json({ success: true, user, message: 'User blocked successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Unblock user
+const unblockUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findByIdAndUpdate(
+      id,
+      { isBlocked: false },
+      { new: true }
+    )
+      .select('-password')
+      .populate('role', 'name');
+
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    res.json({ success: true, user, message: 'User unblocked successfully' });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   getAllUsers,
   getUserById,
   updateUser,
   deleteUser,
+  blockUser,
+  unblockUser,
 };

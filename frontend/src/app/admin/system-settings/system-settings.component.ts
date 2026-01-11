@@ -32,7 +32,10 @@ export class SystemSettingsComponent implements OnInit {
   loadSettings(): void {
     this.loading = true;
     this.settingService.getSettings().subscribe({
-      next: (settings) => {
+      next: (response) => {
+        // Ensure we always have an array
+        const settings = Array.isArray(response) ? response : [];
+
         const settingsMap: any = {};
         settings.forEach((setting: any) => {
           settingsMap[setting.key] = setting.value;
