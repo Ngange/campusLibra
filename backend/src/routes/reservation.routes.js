@@ -3,6 +3,7 @@ const {
   createReservationHandler,
   fulfillPickupHandler,
   getUserReservationsHandler,
+  getPendingPickupsHandler,
 } = require('../controllers/reservation.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
@@ -16,6 +17,7 @@ const router = express.Router();
 
 // Get current user's reservations
 router.get('/', authMiddleware, getUserReservationsHandler);
+router.get('/my', authMiddleware, getUserReservationsHandler); // Alias for consistency
 
 // Create new reservation
 router.post(
@@ -25,6 +27,14 @@ router.post(
   validateReservation,
   handleValidationErrors,
   createReservationHandler
+);
+
+// Get pending pickups (librarian only)
+router.get(
+  '/pending',
+  authMiddleware,
+  authorizeRoles('librarian', 'admin'),
+  getPendingPickupsHandler
 );
 
 // Confirm pickup (librarian only)

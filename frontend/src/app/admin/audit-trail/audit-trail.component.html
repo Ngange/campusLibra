@@ -1,0 +1,127 @@
+<div class="audit-trail-container">
+  <h1>Audit Trail</h1>
+
+  <!-- Filters -->
+  <mat-card class="filters-card">
+    <mat-card-header>
+      <mat-card-title>Filters</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="filterForm" class="filters-form">
+        <mat-form-field appearance="outline">
+          <mat-label>User ID</mat-label>
+          <input
+            matInput
+            formControlName="userId"
+            placeholder="Enter user ID"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Book ID</mat-label>
+          <input
+            matInput
+            formControlName="bookId"
+            placeholder="Enter book ID"
+          />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Action</mat-label>
+          <mat-select formControlName="action">
+            <mat-option value="">All Actions</mat-option>
+            <mat-option *ngFor="let action of actions" [value]="action">
+              {{ formatAction(action) }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Start Date</mat-label>
+          <input matInput type="date" formControlName="startDate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>End Date</mat-label>
+          <input matInput type="date" formControlName="endDate" />
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-raised-button color="primary" (click)="applyFilters()">
+            <mat-icon>filter_list</mat-icon>
+            Apply Filters
+          </button>
+          <button mat-button (click)="clearFilters()">
+            <mat-icon>clear</mat-icon>
+            Clear
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading audit logs...</p>
+  </div>
+
+  <!-- Audit Logs Table -->
+  <div class="table-container" *ngIf="!loading">
+    <table mat-table [dataSource]="auditLogs" class="mat-elevation-z2">
+      <!-- Timestamp Column -->
+      <ng-container matColumnDef="timestamp">
+        <th mat-header-cell *matHeaderCellDef>Timestamp</th>
+        <td mat-cell *matCellDef="let log">
+          {{ log.timestamp | date : "medium" }}
+        </td>
+      </ng-container>
+
+      <!-- Action Column -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let log">
+          <div class="action-cell">
+            <mat-icon>{{ getActionIcon(log.action) }}</mat-icon>
+            <span>{{ formatAction(log.action) }}</span>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- User Column -->
+      <ng-container matColumnDef="user">
+        <th mat-header-cell *matHeaderCellDef>User</th>
+        <td mat-cell *matCellDef="let log">
+          {{ log.userId?.name || log.userId || "N/A" }}
+        </td>
+      </ng-container>
+
+      <!-- Book Column -->
+      <ng-container matColumnDef="book">
+        <th mat-header-cell *matHeaderCellDef>Book</th>
+        <td mat-cell *matCellDef="let log">
+          {{ log.bookId?.title || log.bookId || "N/A" }}
+        </td>
+      </ng-container>
+
+      <!-- Details Column -->
+      <ng-container matColumnDef="details">
+        <th mat-header-cell *matHeaderCellDef>Details</th>
+        <td mat-cell *matCellDef="let log">
+          <span class="metadata" *ngIf="log.metadata">
+            {{ log.metadata | json }}
+          </span>
+          <span *ngIf="!log.metadata">—</span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+
+    <div *ngIf="auditLogs.length === 0" class="no-logs">
+      <mat-icon>history</mat-icon>
+      <p>No audit logs found matching your criteria.</p>
+    </div>
+  </div>
+</div>

@@ -1,4 +1,9 @@
-const { registerUser, loginUser } = require('../services/auth.service');
+const {
+  registerUser,
+  loginUser,
+  updateProfile,
+  changePassword,
+} = require('../services/auth.service');
 
 const register = async (req, res, next) => {
   try {
@@ -23,7 +28,30 @@ const login = async (req, res, next) => {
   }
 };
 
+const updateProfileHandler = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const result = await updateProfile(user.id, req.body);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const changePasswordHandler = async (req, res, next) => {
+  try {
+    const { user } = req;
+    const { currentPassword, newPassword } = req.body;
+    const result = await changePassword(user.id, currentPassword, newPassword);
+    res.json({ success: true, ...result });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   register,
   login,
+  updateProfileHandler,
+  changePasswordHandler,
 };

@@ -1,8 +1,16 @@
 const express = require('express');
-const { register, login } = require('../controllers/auth.controller');
+const {
+  register,
+  login,
+  updateProfileHandler,
+  changePasswordHandler,
+} = require('../controllers/auth.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
 const {
   validateUserRegistration,
   validateUserLogin,
+  validateProfileUpdate,
+  validatePasswordChange,
   handleValidationErrors,
 } = require('../middlewares/validation.middleware');
 
@@ -16,5 +24,20 @@ router.post(
   register
 );
 router.post('/login', validateUserLogin, handleValidationErrors, login);
+
+// Authenticated self-service routes
+router.use(authMiddleware);
+router.put(
+  '/profile',
+  validateProfileUpdate,
+  handleValidationErrors,
+  updateProfileHandler
+);
+router.post(
+  '/change-password',
+  validatePasswordChange,
+  handleValidationErrors,
+  changePasswordHandler
+);
 
 module.exports = router;

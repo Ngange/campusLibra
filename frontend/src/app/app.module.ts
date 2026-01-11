@@ -7,6 +7,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthInterceptor } from './core/interceptors/auth.interceptor';
+import { ErrorHandlerInterceptor } from './core/interceptors/error-handler.interceptor';
 import { HomeComponent } from './home/home.component';
 
 // Auth Components
@@ -31,6 +32,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatTableModule } from '@angular/material/table';
 import { LayoutModule } from './core/layout/layout.module';
 import { MyBorrowsComponent } from './member/my-borrows/my-borrows.component';
 import { MyReservationsComponent } from './member/my-reservations/my-reservations.component';
@@ -39,6 +41,11 @@ import { ProfileComponent } from './member/profile/profile.component';
 import { ProcessReturnsComponent } from './librarian/process-returns/process-returns.component';
 import { UsersManageComponent } from './admin/users-manage/users-manage.component';
 import { ReturnBookModalComponent } from './librarian/return-book-modal/return-book-modal.component';
+import { PendingPickupsComponent } from './librarian/pending-pickups/pending-pickups.component';
+import { MemberManagementComponent } from './librarian/member-management/member-management.component';
+import { BooksManageComponent } from './admin/books-manage/books-manage.component';
+import { SystemSettingsComponent } from './admin/system-settings/system-settings.component';
+import { AuditTrailComponent } from './admin/audit-trail/audit-trail.component';
 
 @NgModule({
   declarations: [
@@ -53,7 +60,12 @@ import { ReturnBookModalComponent } from './librarian/return-book-modal/return-b
     ProfileComponent,
     ProcessReturnsComponent,
     UsersManageComponent,
-    ReturnBookModalComponent
+    ReturnBookModalComponent,
+    PendingPickupsComponent,
+    MemberManagementComponent,
+    BooksManageComponent,
+    SystemSettingsComponent,
+    AuditTrailComponent
   ],
   imports: [
     BrowserModule,
@@ -77,6 +89,7 @@ import { ReturnBookModalComponent } from './librarian/return-book-modal/return-b
     MatMenuModule,
     MatSnackBarModule,
     MatDialogModule,
+    MatTableModule,
     LayoutModule
   ],
   providers: [
@@ -84,6 +97,12 @@ import { ReturnBookModalComponent } from './librarian/return-book-modal/return-b
     {
       provide: HTTP_INTERCEPTORS,
       useClass: AuthInterceptor,
+      multi: true
+    },
+    // Global error handler for HTTP errors
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerInterceptor,
       multi: true
     }
   ],

@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { ReservationService, Reservation } from '../../services/reservation.service';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { ReservationService } from '../../services/reservation.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-my-reservations',
@@ -10,82 +9,46 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./my-reservations.component.scss']
 })
 export class MyReservationsComponent implements OnInit, OnDestroy {
-  reservations: Reservation[] = [];
+  reservations: any[] = [];
   loading = false;
-  error: string | null = null;
-  cancelingId: string | null = null;
-  private destroy$ = new Subject<void>();
+  error = '';
 
-  constructor(private reservationService: ReservationService) {}
+  constructor(
+    private reservationService: ReservationService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
     this.loadMyReservations();
   }
 
   ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    // Cleanup if needed
   }
 
   loadMyReservations(): void {
     this.loading = true;
-    this.error = null;
-
-    this.reservationService.getMyReservations()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (response) => {
-          this.reservations = response.data || [];
-          this.loading = false;
-        },
-        error: (err) => {
-          this.error = err.error?.message || 'Failed to load your reservations.';
-          this.loading = false;
-        }
-      });
+    this.error = '';
+    this.reservationService.getMyReservations().subscribe({
+      next: (reservations) => {
+        this.reservations = Array.isArray(reservations) ? reservations : [];
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = err.message || 'Failed to load your reservations.';
+        this.loading = false;
+        this.reservations = [];
+        this.snackBar.open(this.error, 'Close', { duration: 5000 });
+      }
+    });
   }
 
-  cancelReservation(reservationId: string): void {
-    if (!confirm('Are you sure you want to cancel this reservation?')) return;
-
-    this.cancelingId = reservationId;
-    this.reservationService.cancelReservation(reservationId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          alert('Reservation cancelled successfully!');
-          this.cancelingId = null;
-          this.loadMyReservations();
-        },
-        error: (err) => {
-          this.cancelingId = null;
-          alert(err.error?.message || 'Failed to cancel reservation.');
-        }
-      });
-  }
-
-  confirmPickup(reservationId: string): void {
-    this.cancelingId = reservationId;
-    this.reservationService.confirmPickup(reservationId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          alert('Pickup confirmed! Book borrowed successfully.');
-          this.cancelingId = null;
-          this.loadMyReservations();
-        },
-        error: (err) => {
-          this.cancelingId = null;
-          alert(err.error?.message || 'Failed to confirm pickup.');
-        }
-      });
-  }
-
-  getActiveReservations(): Reservation[] {
-    return this.reservations.filter(r => r.status === 'pending' || r.status === 'on_hold');
-  }
-
-  getCancelledReservations(): Reservation[] {
-    return this.reservations.filter(r => r.status === 'cancelled' || r.status === 'fulfilled');
+  getStatusColor(status: string): string {
+    switch (status) {
+      case 'pending': return 'warn';
+      case 'on_hold': return 'primary';
+      case 'fulfilled': return 'accent';
+      default: return 'primary';
+    }
   }
 }

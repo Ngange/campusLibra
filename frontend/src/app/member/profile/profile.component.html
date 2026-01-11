@@ -1,8 +1,114 @@
-<div class="page-container">
-  <h1>My Profile</h1>
-  <p>Manage your account information.</p>
-  <div class="placeholder-card mat-elevation-z2">
-    <mat-icon>person</mat-icon>
-    <p>Profile management coming soon!</p>
+<div class="profile-container">
+  <div class="header">
+    <h1>My Profile</h1>
+    <p>Manage your account information</p>
+  </div>
+
+  <div class="cards">
+    <mat-card class="profile-card">
+      <mat-card-title>Account Details</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="profileForm" (ngSubmit)="updateProfile()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Name</mat-label>
+              <input matInput formControlName="name" placeholder="Your name" />
+              <mat-error *ngIf="formErrorService.hasError(profileForm.get('name'))">
+                {{ formErrorService.getErrorMessage(profileForm.get('name'), 'Name') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input
+                matInput
+                formControlName="email"
+                placeholder="you@example.com"
+              />
+              <mat-error *ngIf="formErrorService.hasError(profileForm.get('email'))">
+                {{ formErrorService.getErrorMessage(profileForm.get('email'), 'Email') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="profileForm.invalid || loadingStateService.isLoading('profileSave')"
+          >
+            {{ loadingStateService.isLoading('profileSave') ? 'Saving...' : 'Save Changes' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="profile-card">
+      <mat-card-title>Change Password</mat-card-title>
+      <mat-card-content>
+        <form [formGroup]="passwordForm" (ngSubmit)="changePassword()">
+          <div class="form-grid">
+            <mat-form-field appearance="outline">
+              <mat-label>Current Password</mat-label>
+              <input
+                matInput
+                type="password"
+                formControlName="currentPassword"
+              />
+              <mat-error *ngIf="formErrorService.hasError(passwordForm.get('currentPassword'))">
+                {{
+                  formErrorService.getErrorMessage(
+                    passwordForm.get('currentPassword'),
+                    'Current Password'
+                  )
+                }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>New Password</mat-label>
+              <input matInput type="password" formControlName="newPassword" />
+              <mat-error *ngIf="formErrorService.hasError(passwordForm.get('newPassword'))">
+                {{
+                  formErrorService.getErrorMessage(
+                    passwordForm.get('newPassword'),
+                    'New Password'
+                  )
+                }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Confirm Password</mat-label>
+              <input
+                matInput
+                type="password"
+                formControlName="confirmPassword"
+              />
+              <mat-error *ngIf="formErrorService.hasError(passwordForm.get('confirmPassword'))">
+                {{
+                  formErrorService.getErrorMessage(
+                    passwordForm.get('confirmPassword'),
+                    'Confirm Password'
+                  )
+                }}
+              </mat-error>
+              <mat-error *ngIf="passwordForm.hasError('passwordMismatch')">
+                {{ formErrorService.getPasswordMismatchError(passwordForm) }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <button
+            mat-raised-button
+            color="accent"
+            type="submit"
+            [disabled]="passwordForm.invalid || loadingStateService.isLoading('passwordChange')"
+          >
+            {{ loadingStateService.isLoading('passwordChange') ? 'Updating...' : 'Update Password' }}
+          </button>
+        </form>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>

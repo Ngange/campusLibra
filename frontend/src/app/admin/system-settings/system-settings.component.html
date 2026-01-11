@@ -1,0 +1,143 @@
+<div class="settings-container">
+  <h1>System Settings</h1>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading settings...</p>
+  </div>
+
+  <mat-card *ngIf="!loading">
+    <mat-card-header>
+      <mat-card-title>Library Configuration</mat-card-title>
+      <mat-card-subtitle
+        >Configure system-wide library settings</mat-card-subtitle
+      >
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="settingsForm" (ngSubmit)="saveSettings()">
+        <mat-form-field appearance="outline">
+          <mat-label>Loan Period (Days)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="LOAN_PERIOD_DAYS"
+            placeholder="Enter loan period in days"
+          />
+          <mat-hint>Number of days a book can be borrowed</mat-hint>
+          <mat-error
+            *ngIf="settingsForm.get('LOAN_PERIOD_DAYS')?.hasError('required')"
+            >Required</mat-error
+          >
+          <mat-error
+            *ngIf="settingsForm.get('LOAN_PERIOD_DAYS')?.hasError('min')"
+            >Must be at least 1</mat-error
+          >
+          <mat-error
+            *ngIf="settingsForm.get('LOAN_PERIOD_DAYS')?.hasError('max')"
+            >Cannot exceed 365</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fine Rate (Per Day)</mat-label>
+          <input
+            matInput
+            type="number"
+            step="0.01"
+            formControlName="FINE_RATE_PER_DAY"
+            placeholder="Enter fine rate"
+          />
+          <mat-hint>Fine amount charged per day for overdue books</mat-hint>
+          <mat-error
+            *ngIf="settingsForm.get('FINE_RATE_PER_DAY')?.hasError('required')"
+            >Required</mat-error
+          >
+          <mat-error
+            *ngIf="settingsForm.get('FINE_RATE_PER_DAY')?.hasError('min')"
+            >Must be at least 0.01</mat-error
+          >
+          <mat-error
+            *ngIf="settingsForm.get('FINE_RATE_PER_DAY')?.hasError('max')"
+            >Cannot exceed 10</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Reservation Hold (Hours)</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="RESERVATION_HOLD_HOURS"
+            placeholder="Enter hold period in hours"
+          />
+          <mat-hint>Hours a reserved book is held before cancellation</mat-hint>
+          <mat-error
+            *ngIf="
+              settingsForm.get('RESERVATION_HOLD_HOURS')?.hasError('required')
+            "
+            >Required</mat-error
+          >
+          <mat-error
+            *ngIf="settingsForm.get('RESERVATION_HOLD_HOURS')?.hasError('min')"
+            >Must be at least 1</mat-error
+          >
+          <mat-error
+            *ngIf="settingsForm.get('RESERVATION_HOLD_HOURS')?.hasError('max')"
+            >Cannot exceed 168 (1 week)</mat-error
+          >
+        </mat-form-field>
+
+        <div class="actions">
+          <button
+            mat-raised-button
+            color="primary"
+            type="submit"
+            [disabled]="settingsForm.invalid || saving"
+          >
+            <mat-icon>save</mat-icon>
+            {{ saving ? "Saving..." : "Save Settings" }}
+          </button>
+          <button
+            mat-button
+            type="button"
+            (click)="resetToDefaults()"
+            [disabled]="saving"
+          >
+            <mat-icon>restore</mat-icon>
+            Reset to Defaults
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card class="info-card">
+    <mat-card-header>
+      <mat-card-title>Current Configuration</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="config-item">
+        <mat-icon>event</mat-icon>
+        <div>
+          <strong>Loan Period:</strong>
+          {{ settingsForm.get("LOAN_PERIOD_DAYS")?.value || 14 }} days
+        </div>
+      </div>
+      <div class="config-item">
+        <mat-icon>attach_money</mat-icon>
+        <div>
+          <strong>Daily Fine Rate:</strong> ${{
+            settingsForm.get("FINE_RATE_PER_DAY")?.value || 0.5
+          }}
+        </div>
+      </div>
+      <div class="config-item">
+        <mat-icon>schedule</mat-icon>
+        <div>
+          <strong>Reservation Hold:</strong>
+          {{ settingsForm.get("RESERVATION_HOLD_HOURS")?.value || 48 }} hours
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

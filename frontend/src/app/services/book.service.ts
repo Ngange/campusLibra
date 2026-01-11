@@ -15,6 +15,18 @@ interface BookResponse {
   book: Book;
 }
 
+interface CreateBookResponse {
+  success: boolean;
+  data: {
+    book: Book;
+  };
+}
+
+interface DeleteBookResponse {
+  success: boolean;
+  message: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class BookService {
   private apiUrl = `${environment.apiUrl}/books`;
@@ -45,5 +57,20 @@ export class BookService {
   // Fetch single book by id
   getBookById(id: string): Observable<BookResponse> {
     return this.http.get<BookResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  // Create a new book with copy count
+  createBook(bookData: Partial<Book> & { copyCount?: number }): Observable<CreateBookResponse> {
+    return this.http.post<CreateBookResponse>(this.apiUrl, bookData);
+  }
+
+  // Update an existing book
+  updateBook(id: string, bookData: Partial<Book>): Observable<BookResponse> {
+    return this.http.put<BookResponse>(`${this.apiUrl}/${id}`, bookData);
+  }
+
+  // Delete a book
+  deleteBook(id: string): Observable<DeleteBookResponse> {
+    return this.http.delete<DeleteBookResponse>(`${this.apiUrl}/${id}`);
   }
 }

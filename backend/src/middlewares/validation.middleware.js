@@ -74,6 +74,41 @@ const validateUserUpdate = [
   body('role').optional().isString().withMessage('Role must be a string'),
 ];
 
+// Profile update validation (self-service)
+const validateProfileUpdate = [
+  body('name')
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage('Name must be between 2 and 50 characters'),
+  body('email')
+    .optional()
+    .trim()
+    .isEmail()
+    .withMessage('Invalid email format')
+    .normalizeEmail(),
+];
+
+// Password change validation (self-service)
+const validatePasswordChange = [
+  body('currentPassword')
+    .notEmpty()
+    .withMessage('Current password is required'),
+  body('newPassword')
+    .notEmpty()
+    .withMessage('New password is required')
+    .isLength({ min: 8 })
+    .withMessage('Password must be at least 8 characters long')
+    .matches(/(?=.*[A-Z])/)
+    .withMessage('Password must include an uppercase letter')
+    .matches(/(?=.*[a-z])/)
+    .withMessage('Password must include a lowercase letter')
+    .matches(/(?=.*\d)/)
+    .withMessage('Password must include a number')
+    .matches(/(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])/)
+    .withMessage('Password must include a special character'),
+];
+
 // Book creation validation
 const validateBookCreate = [
   body('title')
@@ -216,6 +251,8 @@ module.exports = {
   validateUserRegistration,
   validateUserLogin,
   validateUserUpdate,
+  validateProfileUpdate,
+  validatePasswordChange,
   validateBookCreate,
   validateBookUpdate,
   validateRole,

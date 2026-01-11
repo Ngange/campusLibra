@@ -76,10 +76,26 @@ const getBorrows = async (req, res, next) => {
   }
 };
 
+const getBorrowsByUser = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+
+    const borrows = await Borrow.find({ user: userId })
+      .populate('book', 'title author')
+      .populate('bookCopy', 'status')
+      .sort({ borrowDate: -1 });
+
+    res.json({ success: true, borrows });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   borrowBookHandler,
   returnBookHandler,
   renewBookHandler,
   getMyBorrows,
   getBorrows,
+  getBorrowsByUser,
 };

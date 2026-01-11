@@ -6,6 +6,7 @@ const {
   renewBookHandler,
   getBorrows,
   getMyBorrows,
+  getBorrowsByUser,
 } = require('../controllers/borrow.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
@@ -56,6 +57,14 @@ router.get(
   authMiddleware,
   authorizeRoles('admin', 'librarian'),
   getBorrows
+);
+
+// Get borrows by specific user (admin/librarian)
+router.get(
+  '/user/:userId',
+  authMiddleware,
+  authorizeRoles('admin', 'librarian'),
+  getBorrowsByUser
 );
 
 module.exports = router;

@@ -1,11 +1,58 @@
-<div class="page-container">
-  <h1>My Fines</h1>
-  <p>View and pay your library fines.</p>
-  <div class="placeholder-card mat-elevation-z2">
-    <mat-icon>attach_money</mat-icon>
-    <p>No fines. Great job returning books on time!</p>
-    <button mat-raised-button color="primary" routerLink="/books">
-      Browse Books
-    </button>
+<div class="fines-container">
+  <div class="header">
+    <h1>My Fines</h1>
+    <p>Total Outstanding: {{ totalOutstanding | currency }}</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading your fines...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadMyFines()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="fines-list">
+    <div *ngIf="fines.length === 0" class="no-fines">
+      <mat-icon>attach_money</mat-icon>
+      <h3>No Fines</h3>
+      <p>You have no outstanding fines.</p>
+    </div>
+
+    <div class="fine-card mat-elevation-z2" *ngFor="let fine of fines">
+      <div class="book-info">
+        <h3>{{ fine.borrow?.book?.title }}</h3>
+        <p class="author">by {{ fine.borrow?.book?.author }}</p>
+      </div>
+
+      <div class="fine-details">
+        <div class="detail-row">
+          <span>Amount:</span>
+          <span class="amount">{{ fine.amount | currency }}</span>
+        </div>
+        <div class="detail-row">
+          <span>Issued on:</span>
+          <span>{{ fine.createdAt | date : "mediumDate" }}</span>
+        </div>
+        <div class="detail-row">
+          <span>Status:</span>
+          <app-status-badge
+            [status]="fine.isPaid ? 'paid' : 'outstanding'"
+            [customText]="getStatusText(fine.isPaid)"
+          >
+          </app-status-badge>
+        </div>
+      </div>
+
+      <div class="fine-actions" *ngIf="!fine.isPaid">
+        <button mat-raised-button color="primary">
+          <mat-icon>payment</mat-icon>
+          Pay Fine
+        </button>
+      </div>
+    </div>
   </div>
 </div>

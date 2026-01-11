@@ -1,0 +1,72 @@
+.settings-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 24px;
+    color: #333;
+  }
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px;
+
+  p {
+    margin-top: 16px;
+    color: #666;
+  }
+}
+
+mat-card {
+  margin-bottom: 24px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    mat-form-field {
+      width: 100%;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+}
+
+.info-card {
+  .config-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+    }
+
+    mat-icon {
+      color: #666;
+    }
+
+    strong {
+      color: #333;
+      margin-right: 8px;
+    }
+  }
+}

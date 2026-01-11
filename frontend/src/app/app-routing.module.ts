@@ -16,9 +16,14 @@ import { ProfileComponent } from './member/profile/profile.component';
 
 // Librarian Components
 import { ProcessReturnsComponent } from './librarian/process-returns/process-returns.component';
+import { PendingPickupsComponent } from './librarian/pending-pickups/pending-pickups.component';
+import { MemberManagementComponent } from './librarian/member-management/member-management.component';
 
 // Admin Components
 import { UsersManageComponent } from './admin/users-manage/users-manage.component';
+import { BooksManageComponent } from './admin/books-manage/books-manage.component';
+import { SystemSettingsComponent } from './admin/system-settings/system-settings.component';
+import { AuditTrailComponent } from './admin/audit-trail/audit-trail.component';
 
 const routes: Routes = [
   // Public routes (no layout)
@@ -43,9 +48,14 @@ const routes: Routes = [
 
       // Librarian routes
       { path: 'process-returns', component: ProcessReturnsComponent, canActivate: [RoleGuard], data: { roles: ['librarian', 'admin'] } },
+      { path: 'pending-pickups', component: PendingPickupsComponent, canActivate: [RoleGuard], data: { roles: ['librarian', 'admin'] } },
+      { path: 'member-management', component: MemberManagementComponent, canActivate: [RoleGuard], data: { roles: ['librarian', 'admin'] } },
 
       // Admin routes
       { path: 'manage-users', component: UsersManageComponent, canActivate: [RoleGuard], data: { roles: ['admin'] } },
+      { path: 'books/manage', component: BooksManageComponent, canActivate: [RoleGuard], data: { roles: ['admin'] } },
+      { path: 'system-settings', component: SystemSettingsComponent, canActivate: [RoleGuard], data: { roles: ['admin'] } },
+      { path: 'audit-trail', component: AuditTrailComponent, canActivate: [RoleGuard], data: { roles: ['admin'] } },
     ]
   },
 

@@ -15,6 +15,7 @@ const router = express.Router();
 
 // Get current user's fines
 router.get('/', authMiddleware, getUserFinesHandler);
+router.get('/my', authMiddleware, getUserFinesHandler); // Alias for consistency
 
 // Get specific fine (user can view their own)
 router.get(

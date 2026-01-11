@@ -98,13 +98,70 @@
 
   <!-- User Section (desktop) -->
   <div class="user-section desktop-user" *ngIf="currentUser">
-    <!-- Notification Badge -->
-    <button mat-icon-button class="notification-button">
+    <!-- Notification Badge with Dropdown -->
+    <button
+      mat-icon-button
+      class="notification-button"
+      [matMenuTriggerFor]="notificationMenu"
+      aria-label="Notifications"
+      [attr.aria-badge]="unreadNotifications > 0 ? unreadNotifications : null"
+    >
       <mat-icon>notifications</mat-icon>
-      <span class="notification-badge" *ngIf="unreadNotifications > 0">
+      <span
+        class="notification-badge"
+        *ngIf="unreadNotifications > 0"
+        aria-live="polite"
+      >
         {{ unreadNotifications > 9 ? "9+" : unreadNotifications }}
       </span>
     </button>
+    <mat-menu #notificationMenu="matMenu" class="notification-menu">
+      <div class="notification-header">
+        <span>Notifications</span>
+        <button
+          mat-icon-button
+          (click)="markAllAsRead(); $event.stopPropagation()"
+          *ngIf="unreadNotifications > 0"
+        >
+          <mat-icon>done_all</mat-icon>
+        </button>
+      </div>
+
+      <div class="notifications-list">
+        <div
+          *ngIf="(notifications$ | async)?.length === 0"
+          class="no-notifications"
+        >
+          No new notifications
+        </div>
+
+        <button
+          mat-menu-item
+          *ngFor="let notification of notifications$ | async"
+          (click)="markNotificationAsRead(notification.id)"
+          [class.unread]="!notification.isRead"
+        >
+          <mat-icon
+            [color]="
+              notification.type === 'error'
+                ? 'warn'
+                : notification.type === 'success'
+                ? 'primary'
+                : ''
+            "
+          >
+            {{ getIconForType(notification.type) }}
+          </mat-icon>
+          <div class="notification-content">
+            <span class="notification-title">{{ notification.title }}</span>
+            <span class="notification-message">{{ notification.message }}</span>
+            <span class="notification-time">{{
+              notification.createdAt | date : "short"
+            }}</span>
+          </div>
+        </button>
+      </div>
+    </mat-menu>
 
     <!-- User Menu -->
     <button mat-icon-button [matMenuTriggerFor]="userMenu">
@@ -127,7 +184,9 @@
     mat-icon-button
     class="mobile-menu-button"
     (click)="toggleMobileMenu()"
-    *ngIf="currentUser"
+    *ngIf="currentUser && isMobileView()"
+    aria-label="Toggle mobile menu"
+    [attr.aria-expanded]="isMobileMenuOpen"
   >
     <mat-icon>{{ isMobileMenuOpen ? "close" : "menu" }}</mat-icon>
   </button>

@@ -45,8 +45,22 @@ const getUserReservationsHandler = async (req, res, next) => {
   }
 };
 
+const getPendingPickupsHandler = async (req, res, next) => {
+  try {
+    const reservations = await Reservation.find({ status: 'on_hold' })
+      .populate('user', 'name email')
+      .populate('book', 'title author')
+      .sort({ holdUntil: 1 }); // Soonest expiring first
+
+    res.json({ success: true, reservations });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createReservationHandler,
   fulfillPickupHandler,
   getUserReservationsHandler,
+  getPendingPickupsHandler,
 };

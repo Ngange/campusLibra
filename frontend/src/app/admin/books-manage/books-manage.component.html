@@ -1,0 +1,139 @@
+<div class="books-manage-container">
+  <h1>Books Management</h1>
+
+  <!-- Create Book Form -->
+  <mat-card class="create-book-card">
+    <mat-card-header>
+      <mat-card-title>Add New Book</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="bookForm" (ngSubmit)="createBook()" class="book-form">
+        <mat-form-field appearance="outline">
+          <mat-label>Title</mat-label>
+          <input
+            matInput
+            formControlName="title"
+            placeholder="Enter book title"
+          />
+          <mat-error *ngIf="formErrorService.hasError(bookForm.get('title'))">
+            {{
+              formErrorService.getErrorMessage(bookForm.get("title"), "Title")
+            }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Author</mat-label>
+          <input
+            matInput
+            formControlName="author"
+            placeholder="Enter author name"
+          />
+          <mat-error *ngIf="formErrorService.hasError(bookForm.get('author'))">
+            {{
+              formErrorService.getErrorMessage(bookForm.get("author"), "Author")
+            }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>ISBN (10 or 13 digits)</mat-label>
+          <input
+            matInput
+            formControlName="isbn"
+            placeholder="Enter ISBN-10 or ISBN-13"
+          />
+          <mat-error *ngIf="formErrorService.hasError(bookForm.get('isbn'))">
+            {{ formErrorService.getErrorMessage(bookForm.get("isbn"), "ISBN") }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Category</mat-label>
+          <mat-select formControlName="category">
+            <mat-option *ngFor="let category of categories" [value]="category">
+              {{ category }}
+            </mat-option>
+          </mat-select>
+          <mat-error
+            *ngIf="formErrorService.hasError(bookForm.get('category'))"
+          >
+            {{
+              formErrorService.getErrorMessage(
+                bookForm.get("category"),
+                "Category"
+              )
+            }}
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Number of Copies</mat-label>
+          <input
+            matInput
+            type="number"
+            formControlName="copyCount"
+            placeholder="Enter number of copies"
+          />
+          <mat-error
+            *ngIf="formErrorService.hasError(bookForm.get('copyCount'))"
+          >
+            {{
+              formErrorService.getErrorMessage(
+                bookForm.get("copyCount"),
+                "Number of Copies"
+              )
+            }}
+          </mat-error>
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="bookForm.invalid || loadingStateService.isLoading('createBook')"
+        >
+          <mat-icon>add</mat-icon>
+          {{ loadingStateService.isLoading('createBook') ? 'Creating...' : 'Create Book' }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Books List -->
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading books...</p>
+  </div>
+
+  <div class="books-list" *ngIf="!loading && books.length > 0">
+    <mat-card *ngFor="let book of books" class="book-item">
+      <mat-card-header>
+        <mat-card-title>{{ book.title }}</mat-card-title>
+        <mat-card-subtitle>by {{ book.author }}</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+        <p><strong>Category:</strong> {{ book.category }}</p>
+        <p><strong>Total Copies:</strong> {{ book.totalCopies }}</p>
+        <p><strong>Available:</strong> {{ book.availableCopies }}</p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button
+          mat-button
+          color="warn"
+          (click)="deleteBook(book._id, book.title)"
+          [disabled]="loadingStateService.isLoading('delete-' + book._id)"
+        >
+          <mat-icon>delete</mat-icon>
+          Delete
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!loading && books.length === 0" class="no-books">
+    <mat-icon>library_books</mat-icon>
+    <p>No books found. Create your first book above!</p>
+  </div>
+</div>

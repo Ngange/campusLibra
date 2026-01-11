@@ -12,6 +12,9 @@ const router = express.Router();
 router.use(authMiddleware);
 
 router.get('/', authorizePermission('system_manage'), getAllSettings);
+
+// Support both PUT and PATCH for updating settings
+router.put('/:key', authorizePermission('system_manage'), updateSetting);
 router.patch('/:key', authorizePermission('system_manage'), updateSetting);
 
 module.exports = router;

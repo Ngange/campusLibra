@@ -77,7 +77,78 @@ const loginUser = async (email, password) => {
   return { user, token };
 };
 
+// Update profile (name, email)
+const updateProfile = async (userId, updates) => {
+  const user = await User.findById(userId).populate('role', 'name');
+  if (!user) {
+    const error = new Error('User not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  // Enforce unique email if changed
+  if (updates.email) {
+    const emailInUse = await User.findOne({
+      email: updates.email.toLowerCase(),
+      _id: { $ne: userId },
+    });
+    if (emailInUse) {
+      const error = new Error('Email is already in use');
+      error.statusCode = 400;
+      throw error;
+    }
+    user.email = updates.email.toLowerCase();
+  }
+
+  if (updates.name) {
+    user.name = updates.name;
+  }
+
+  await user.save();
+  await user.populate('role', 'name');
+
+  const { password, ...userWithoutPassword } = user.toObject();
+  return { user: userWithoutPassword };
+};
+
+// Change password with current password verification
+const changePassword = async (userId, currentPassword, newPassword) => {
+  const user = await User.findById(userId).select('+password');
+  if (!user) {
+    const error = new Error('User not found');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const isMatch = await bcrypt.compare(currentPassword, user.password);
+  if (!isMatch) {
+    const error = new Error('Current password is incorrect');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  // Enforce strong password similar to frontend validator
+  const hasUpperCase = /[A-Z]/.test(newPassword);
+  const hasLowerCase = /[a-z]/.test(newPassword);
+  const hasNumeric = /[0-9]/.test(newPassword);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(newPassword);
+  const isLongEnough = newPassword.length >= 8;
+
+  if (!hasUpperCase || !hasLowerCase || !hasNumeric || !hasSpecialChar || !isLongEnough) {
+    const error = new Error('New password does not meet complexity requirements');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  user.password = newPassword;
+  await user.save();
+
+  return { message: 'Password updated successfully' };
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  updateProfile,
+  changePassword,
 };

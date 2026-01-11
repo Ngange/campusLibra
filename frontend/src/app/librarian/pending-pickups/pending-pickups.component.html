@@ -1,0 +1,62 @@
+<div class="pending-pickups-container">
+  <div class="header">
+    <h1>Pending Pickups</h1>
+    <p>{{ pendingReservations.length }} reservations waiting for pickup</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading pending pickups...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadPendingPickups()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="pickups-list">
+    <div *ngIf="pendingReservations.length === 0" class="no-pickups">
+      <mat-icon>done_all</mat-icon>
+      <h3>No Pending Pickups</h3>
+      <p>All reservations have been fulfilled.</p>
+    </div>
+
+    <div
+      class="pickup-card mat-elevation-z2"
+      *ngFor="let reservation of pendingReservations"
+    >
+      <div class="member-info">
+        <h3>{{ reservation.user?.name }}</h3>
+        <p class="email">{{ reservation.user?.email }}</p>
+      </div>
+
+      <div class="book-info">
+        <h4>{{ reservation.book?.title }}</h4>
+        <p class="author">by {{ reservation.book?.author }}</p>
+      </div>
+
+      <div class="reservation-details">
+        <div class="detail-row">
+          <span>Reserved on:</span>
+          <span>{{ reservation.createdAt | date : "medium" }}</span>
+        </div>
+        <div class="detail-row">
+          <span>Hold Until:</span>
+          <span>{{ reservation.holdUntil | date : "medium" }}</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="fulfillPickup(reservation._id)"
+        >
+          <mat-icon>check_circle</mat-icon>
+          Confirm Pickup
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

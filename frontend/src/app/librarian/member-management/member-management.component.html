@@ -1,0 +1,71 @@
+<div class="member-management-container">
+  <div class="header">
+    <h1>Member Management</h1>
+    <p>{{ members.length }} registered members</p>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner></mat-spinner>
+    <p>Loading members...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <mat-icon>error</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadMembers()">Retry</button>
+  </div>
+
+  <div *ngIf="!loading && !error" class="members-list">
+    <div *ngIf="members.length === 0" class="no-members">
+      <mat-icon>people</mat-icon>
+      <h3>No Members</h3>
+      <p>No members registered yet.</p>
+    </div>
+
+    <div class="member-card mat-elevation-z2" *ngFor="let member of members">
+      <div class="member-info">
+        <h3>{{ member.name }}</h3>
+        <p class="email">{{ member.email }}</p>
+        <p class="student-id" *ngIf="member.studentId">
+          ID: {{ member.studentId }}
+        </p>
+      </div>
+
+      <div class="member-stats">
+        <div class="stat">
+          <span class="label">Active Borrows:</span>
+          <span class="value">{{ member.activeBorrowCount || 0 }}</span>
+        </div>
+        <div class="stat">
+          <span class="label">Outstanding Fines:</span>
+          <span class="value">{{
+            member.outstandingFines || 0 | currency
+          }}</span>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="viewMemberDetails(member)"
+        >
+          <mat-icon>visibility</mat-icon>
+          View Details
+        </button>
+        <button
+          mat-stroked-button
+          [color]="member.isBlocked ? 'accent' : 'warn'"
+          (click)="
+            member.isBlocked
+              ? unblockMember(member._id)
+              : blockMember(member._id)
+          "
+        >
+          <mat-icon>{{ member.isBlocked ? "check_circle" : "block" }}</mat-icon>
+          {{ member.isBlocked ? "Unblock" : "Block" }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

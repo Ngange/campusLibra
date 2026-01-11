@@ -1,18 +1,30 @@
-.page-container {
-  max-width: 800px;
+.fines-container {
+  max-width: 1000px;
   margin: 0 auto;
+  padding: 24px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 32px;
 
   h1 {
     color: #333;
-    margin-bottom: 24px;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #666;
   }
 }
 
-.placeholder-card {
+.loading, .error, .no-fines {
   text-align: center;
   padding: 48px 24px;
-  border-radius: 8px;
-  background: white;
+
+  mat-spinner {
+    margin: 0 auto 16px auto;
+  }
 
   mat-icon {
     font-size: 48px;
@@ -22,8 +34,71 @@
     margin-bottom: 16px;
   }
 
+  h3 {
+    color: #333;
+    margin-bottom: 8px;
+  }
+
   p {
     color: #666;
     margin-bottom: 24px;
+  }
+}
+
+.error {
+  color: #f44336;
+
+  mat-icon {
+    color: #f44336;
+  }
+}
+
+.fines-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.fine-card {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+
+  .book-info {
+    margin-bottom: 16px;
+
+    h3 {
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    .author {
+      color: #666;
+      margin-bottom: 12px;
+    }
+  }
+
+  .fine-details {
+    margin-bottom: 16px;
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      color: #666;
+
+      .amount {
+        font-weight: bold;
+        color: #d32f2f;
+      }
+    }
+  }
+
+  .fine-actions {
+    text-align: center;
+
+    button {
+      min-width: 180px;
+    }
   }
 }
