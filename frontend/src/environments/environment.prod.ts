@@ -5,15 +5,15 @@ export const environment = {
   appName: 'CampusLibra',
   appVersion: '1.0.0',
 
-// TODO: update URL - Backend API endpoint, request timeout (ms)
-  apiUrl: 'https://api.campuslibra.example.com/api',
+// Backend API endpoint, request timeout (ms)
+  apiUrl: 'https://campuslibra.onrender.com/api',
   apiTimeout: 30000, // API request timeout (ms)
   tokenKey: 'auth_token',
   userKey: 'current_user',
   jwtExpiryHours: 3, // JWT expiration time (hours)
 
-  // TODO: update URL - Socket.IO server and Reconnection delay (ms)
-  socketUrl: 'https://api.campuslibra.example.com',
+  // Socket.IO server and Reconnection delay (ms)
+  socketUrl: 'https://campuslibra.onrender.com',
 
   socketReconnectDelay: 1000,
   itemsPerPage: 10, // Default pagination size
