@@ -9,19 +9,29 @@ const getUserNotifications = async (req, res, next) => {
     const page = Number(req.query.page) || 1;
     const limit = Math.min(Number(req.query.limit) || 20, 100);
 
-    // Determine scope: admins default to 'all', others to 'user'
+    // Determine scope: admins default to 'all', librarians to 'role', others to 'user'
     const scopeParam = (req.query.scope || '').toString().toLowerCase();
-    const scope = scopeParam || (role === 'admin' ? 'all' : 'user');
+    let scope;
+    if (scopeParam) {
+      scope = scopeParam;
+    } else if (role === 'admin') {
+      scope = 'all';
+    } else if (role === 'librarian') {
+      scope = 'role';
+    } else {
+      scope = 'user';
+    }
 
     let notifications;
-    if (role === 'admin') {
-      if (scope === 'all') {
+    if (role === 'admin' || role === 'librarian') {
+      if (scope === 'all' && role === 'admin') {
+        // Only admins can see all notifications
         notifications = await notificationService.getAllNotifications(
           page,
           limit
         );
       } else if (scope === 'role') {
-        // Role-relevant types for admins: use enum from model
+        // Role-relevant types for admins/librarians: use enum from model
         const typeEnum = Notification.schema.path('type').options.enum || [];
         notifications = await notificationService.getNotificationsByTypes(
           typeEnum,
@@ -37,7 +47,7 @@ const getUserNotifications = async (req, res, next) => {
         );
       }
     } else {
-      // Non-admin users: always own notifications
+      // Regular members: always own notifications
       notifications = await notificationService.getUserNotifications(
         userId,
         page,

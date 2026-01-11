@@ -9,6 +9,14 @@ const { v4: uuidv4 } = require('uuid');
 // Create Express app
 const app = express();
 
+// CORS - Must be configured FIRST before other middleware
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+    credentials: true,
+  })
+);
+
 // Security middleware
 app.use(helmet()); // Secure HTTP headers
 
@@ -47,20 +55,12 @@ app.use((req, res, next) => {
 // Rate limiting - prevent brute force attacks
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: process.env.NODE_ENV === 'production' ? 100 : 500, // Higher limit for development
   message: 'Too many requests from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
 });
 app.use('/api/', limiter);
-
-// CORS - restrict to your frontend
-app.use(
-  cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:4200',
-    credentials: true,
-  })
-);
 
 // Request ID tracking
 app.use((req, res, next) => {

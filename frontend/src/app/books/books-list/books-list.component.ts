@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { BookService } from '../../services/book.service';
 import { Book } from '../../models/book.model';
 
@@ -26,7 +26,7 @@ export class BooksListComponent implements OnInit {
   availabilityFilter: 'all' | 'available' = 'all';
   categories: string[] = ['Fiction', 'Technology', 'Science', 'History', 'Biography', 'Mystery', 'Romance', 'Fantasy'];
 
-  constructor(private bookService: BookService) {}
+  constructor(private bookService: BookService, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadBooks();
@@ -52,10 +52,12 @@ export class BooksListComponent implements OnInit {
         this.totalBooks = response.total || 0;
         this.totalPages = Math.ceil(this.totalBooks / this.limit);
         this.loading = false;
+        this.cdr.markForCheck(); // Trigger change detection
       },
       error: (err) => {
         this.error = 'Failed to load books.';
         this.loading = false;
+        this.cdr.markForCheck(); // Trigger change detection
         console.error('Books loading error:', err);
       }
     });

@@ -32,10 +32,10 @@
     <div class="category-filters">
       <span class="filter-label">Categories:</span>
       <div class="category-chips">
-        <mat-chip-listbox>
+        <mat-chip-listbox multiple>
           <mat-chip-option
             *ngFor="let category of categories"
-            [selected]="selectedCategory === category"
+            [selected]="selectedCategories.includes(category)"
             (selectionChange)="onCategorySelect(category)"
             color="primary"
           >
@@ -43,23 +43,6 @@
           </mat-chip-option>
         </mat-chip-listbox>
       </div>
-    </div>
-
-    <!-- Active Filters -->
-    <div *ngIf="searchQuery || selectedCategory" class="active-filters">
-      <span *ngIf="searchQuery" class="filter-tag">
-        Title: "{{ searchQuery }}"
-        <mat-icon (click)="searchQuery = ''; onSearchChange()">close</mat-icon>
-      </span>
-      <span *ngIf="selectedCategory" class="filter-tag">
-        Category: {{ selectedCategory }}
-        <mat-icon (click)="selectedCategory = ''; onSearchChange()"
-          >close</mat-icon
-        >
-      </span>
-      <button mat-button (click)="clearFilters()" color="warn">
-        Clear All
-      </button>
     </div>
   </div>
 

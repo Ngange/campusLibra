@@ -15,7 +15,7 @@ export class HomeComponent implements OnInit {
 
   // Search & filter state
   searchQuery: string = '';
-  selectedCategory: string = '';
+  selectedCategories: string[] = [];
   categories: string[] = ['Fiction', 'Technology', 'Science', 'History', 'Biography', 'Mystery', 'Romance', 'Fantasy'];
 
   // Books data
@@ -49,8 +49,8 @@ export class HomeComponent implements OnInit {
       filters.title = this.searchQuery;
     }
 
-    if (this.selectedCategory) {
-      filters.category = this.selectedCategory;
+    if (this.selectedCategories.length > 0) {
+      filters.category = this.selectedCategories.join(',');
     }
 
     this.bookService.getBooks(filters).subscribe({
@@ -73,14 +73,23 @@ export class HomeComponent implements OnInit {
 
   // Handle category selection
   onCategorySelect(category: string): void {
-    this.selectedCategory = category === this.selectedCategory ? '' : category;
+    const index = this.selectedCategories.indexOf(category);
+
+    if (index > -1) {
+      // Category is selected, remove it
+      this.selectedCategories.splice(index, 1);
+    } else {
+      // Category is not selected, add it
+      this.selectedCategories.push(category);
+    }
+
     this.loadFeaturedBooks();
   }
 
   // Clear all filters
   clearFilters(): void {
     this.searchQuery = '';
-    this.selectedCategory = '';
+    this.selectedCategories = [];
     this.loadFeaturedBooks();
   }
 

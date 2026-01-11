@@ -1,8 +1,12 @@
 <div class="notifications-page">
   <h1>Notifications</h1>
 
-  <!-- Admin scope toggle -->
-  <div class="scope-toggle" *ngIf="role === 'admin'" style="margin: 12px 0">
+  <!-- Admin/Librarian scope toggle -->
+  <div
+    class="scope-toggle"
+    *ngIf="role === 'admin' || role === 'librarian'"
+    style="margin: 12px 0"
+  >
     <mat-form-field appearance="outline" style="width: 280px">
       <mat-label>View</mat-label>
       <mat-select
@@ -11,7 +15,7 @@
       >
         <mat-option value="user">My notifications</mat-option>
         <mat-option value="role">Role-relevant</mat-option>
-        <mat-option value="all">All users</mat-option>
+        <mat-option value="all" *ngIf="role === 'admin'">All users</mat-option>
       </mat-select>
     </mat-form-field>
   </div>

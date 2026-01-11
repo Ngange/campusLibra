@@ -25,7 +25,14 @@ export class NotificationsComponent implements OnInit {
     const rawRole: any = user ? (user as any).role : null;
     const roleName: string | null = typeof rawRole === 'string' ? rawRole : (rawRole && rawRole.name) ? rawRole.name : null;
     this.role = roleName;
-    this.scope = roleName === 'admin' ? 'all' : 'user';
+    // Set default scope based on role: admin -> all, librarian -> role, member -> user
+    if (roleName === 'admin') {
+      this.scope = 'all';
+    } else if (roleName === 'librarian') {
+      this.scope = 'role';
+    } else {
+      this.scope = 'user';
+    }
     // If role unknown, use backend default by passing undefined
     this.notificationService.loadNotifications(roleName ? this.scope : undefined);
   }

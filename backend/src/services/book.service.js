@@ -44,7 +44,16 @@ const getAllBooks = async (filters = {}) => {
     query.author = { $regex: author, $options: 'i' };
   }
   if (category) {
-    query.category = { $regex: category, $options: 'i' };
+    // Support multiple categories separated by comma
+    const categories = category
+      .split(',')
+      .map((c) => c.trim())
+      .filter(Boolean);
+    if (categories.length > 1) {
+      query.category = { $in: categories };
+    } else {
+      query.category = { $regex: category, $options: 'i' };
+    }
   }
 
   // Build aggregation pipeline
