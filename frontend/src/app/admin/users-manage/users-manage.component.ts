@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserManagementService } from '../../services/user-management.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-users-manage',
@@ -24,7 +25,8 @@ export class UsersManageComponent implements OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private userService: UserManagementService
+    private userService: UserManagementService,
+    private dialogService: DialogService
   ) {
     this.editForm = this.fb.group({
       name: ['', Validators.required],
@@ -105,36 +107,41 @@ export class UsersManageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          alert('User updated successfully!');
+          this.dialogService.alert('User updated successfully!', 'Success');
           this.actionInProgress[this.editingUser._id] = false;
           this.editingUser = null;
           this.loadUsers();
         },
         error: (err) => {
           this.actionInProgress[this.editingUser._id] = false;
-          alert(err.error?.message || 'Failed to update user.');
+          this.dialogService.alert(err.error?.message || 'Failed to update user.', 'Error');
         }
       });
   }
 
   deleteUser(userId: string, userName: string): void {
-    if (!confirm(`Are you sure you want to delete ${userName}?`)) return;
+    this.dialogService.confirm(
+      `Are you sure you want to delete ${userName}?`,
+      'Delete User'
+    ).subscribe(confirmed => {
+      if (!confirmed) return;
 
-    this.actionInProgress[userId] = true;
+      this.actionInProgress[userId] = true;
 
-    this.userService.deleteUser(userId)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: () => {
-          alert('User deleted successfully!');
-          this.actionInProgress[userId] = false;
-          this.loadUsers();
-        },
-        error: (err) => {
-          this.actionInProgress[userId] = false;
-          alert(err.error?.message || 'Failed to delete user.');
-        }
-      });
+      this.userService.deleteUser(userId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            this.dialogService.alert('User deleted successfully!', 'Success');
+            this.actionInProgress[userId] = false;
+            this.loadUsers();
+          },
+          error: (err) => {
+            this.actionInProgress[userId] = false;
+            this.dialogService.alert(err.error?.message || 'Failed to delete user.', 'Error');
+          }
+        });
+    });
   }
 
   blockUser(userId: string): void {
@@ -144,13 +151,13 @@ export class UsersManageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          alert('User blocked successfully!');
+          this.dialogService.alert('User blocked successfully!', 'Success');
           this.actionInProgress[userId] = false;
           this.loadUsers();
         },
         error: (err) => {
           this.actionInProgress[userId] = false;
-          alert(err.error?.message || 'Failed to block user.');
+          this.dialogService.alert(err.error?.message || 'Failed to block user.', 'Error');
         }
       });
   }
@@ -162,13 +169,13 @@ export class UsersManageComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          alert('User unblocked successfully!');
+          this.dialogService.alert('User unblocked successfully!', 'Success');
           this.actionInProgress[userId] = false;
           this.loadUsers();
         },
         error: (err) => {
           this.actionInProgress[userId] = false;
-          alert(err.error?.message || 'Failed to unblock user.');
+          this.dialogService.alert(err.error?.message || 'Failed to unblock user.', 'Error');
         }
       });
   }

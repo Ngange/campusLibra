@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SettingService } from '../../services/setting.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-system-settings',
@@ -16,7 +17,8 @@ export class SystemSettingsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private settingService: SettingService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialogService: DialogService
   ) {
     this.settingsForm = this.fb.group({
       LOAN_PERIOD_DAYS: ['', [Validators.required, Validators.min(1), Validators.max(365)]],
@@ -81,12 +83,17 @@ export class SystemSettingsComponent implements OnInit {
   }
 
   resetToDefaults(): void {
-    if (confirm('Are you sure you want to reset all settings to defaults?')) {
-      this.settingsForm.patchValue({
-        LOAN_PERIOD_DAYS: 14,
-        FINE_RATE_PER_DAY: 0.50,
-        RESERVATION_HOLD_HOURS: 48
-      });
-    }
+    this.dialogService.confirm(
+      'Are you sure you want to reset all settings to defaults?',
+      'Reset Settings'
+    ).subscribe(confirmed => {
+      if (confirmed) {
+        this.settingsForm.patchValue({
+          LOAN_PERIOD_DAYS: 14,
+          FINE_RATE_PER_DAY: 0.50,
+          RESERVATION_HOLD_HOURS: 48
+        });
+      }
+    });
   }
 }

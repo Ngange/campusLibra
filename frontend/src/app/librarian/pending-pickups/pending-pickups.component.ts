@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ReservationService } from '../../services/reservation.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-pending-pickups',
@@ -14,7 +15,8 @@ export class PendingPickupsComponent implements OnInit {
 
   constructor(
     private reservationService: ReservationService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -40,16 +42,21 @@ export class PendingPickupsComponent implements OnInit {
   }
 
   fulfillPickup(reservationId: string): void {
-    if (!confirm('Confirm that this book has been picked up by the member?')) return;
+    this.dialogService.confirm(
+      'Confirm that this book has been picked up by the member?',
+      'Confirm Pickup'
+    ).subscribe(confirmed => {
+      if (!confirmed) return;
 
-    this.reservationService.confirmPickup(reservationId).subscribe({
+      this.reservationService.confirmPickup(reservationId).subscribe({
       next: () => {
         this.snackBar.open('Pickup fulfilled successfully!', 'Close', { duration: 3000 });
         this.loadPendingPickups();
       },
-      error: (err) => {
-        this.snackBar.open(err.message || 'Failed to fulfill pickup.', 'Close', { duration: 5000 });
-      }
+        error: (err) => {
+          this.snackBar.open(err.message || 'Failed to fulfill pickup.', 'Close', { duration: 5000 });
+        }
+      });
     });
   }
 }

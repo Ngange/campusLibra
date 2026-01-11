@@ -9,6 +9,7 @@ import { isbnValidator } from '../../shared/validators/custom-validators';
 import { finalize } from 'rxjs/operators';
 import { EditBookDialogComponent } from './edit-book-dialog/edit-book-dialog.component';
 import { CreateBookDialogComponent } from './create-book-dialog/create-book-dialog.component';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-books-manage',
@@ -28,7 +29,8 @@ export class BooksManageComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     public formErrorService: FormErrorService,
-    public loadingStateService: LoadingStateService
+    public loadingStateService: LoadingStateService,
+    private dialogService: DialogService
   ) {
     this.filterForm = this.fb.group({
       title: [''],
@@ -84,26 +86,26 @@ export class BooksManageComponent implements OnInit {
   }
 
   deleteBook(bookId: string, bookTitle: string): void {
-    if (!confirm(`Are you sure you want to delete "${bookTitle}"?`)) {
-      return;
-    }
+    this.dialogService.delete(bookTitle).subscribe(confirmed => {
+      if (!confirmed) return;
 
-    const loadingKey = `delete-${bookId}`;
-    this.loadingStateService.setLoading(loadingKey, true);
+      const loadingKey = `delete-${bookId}`;
+      this.loadingStateService.setLoading(loadingKey, true);
 
-    this.bookService
-      .deleteBook(bookId)
-      .pipe(finalize(() => this.loadingStateService.setLoading(loadingKey, false)))
-      .subscribe({
-        next: () => {
-          this.snackBar.open('Book deleted successfully!', 'Close', { duration: 3000 });
-          this.loadBooks();
-        },
-        error: (err) => {
-          const message = err?.error?.message || 'Failed to delete book.';
-          this.snackBar.open(message, 'Close', { duration: 4000 });
-        },
-      });
+      this.bookService
+        .deleteBook(bookId)
+        .pipe(finalize(() => this.loadingStateService.setLoading(loadingKey, false)))
+        .subscribe({
+          next: () => {
+            this.snackBar.open('Book deleted successfully!', 'Close', { duration: 3000 });
+            this.loadBooks();
+          },
+          error: (err) => {
+            const message = err?.error?.message || 'Failed to delete book.';
+            this.snackBar.open(message, 'Close', { duration: 4000 });
+          }
+        });
+    });
   }
 
   editBook(bookId: string): void {

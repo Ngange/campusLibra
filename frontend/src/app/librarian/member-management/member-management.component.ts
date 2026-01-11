@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { UserManagementService } from '../../services/user-management.service';
 import { BorrowService } from '../../services/borrow.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { DialogService } from '../../services/dialog.service';
 
 @Component({
   selector: 'app-member-management',
@@ -18,7 +19,8 @@ export class MemberManagementComponent implements OnInit {
   constructor(
     private userService: UserManagementService,
     private borrowService: BorrowService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialogService: DialogService
   ) {}
 
   ngOnInit(): void {
@@ -50,16 +52,21 @@ export class MemberManagementComponent implements OnInit {
   }
 
   blockMember(userId: string): void {
-    if (!confirm('Are you sure you want to block this member?')) return;
+    this.dialogService.confirm(
+      'Are you sure you want to block this member?',
+      'Block Member'
+    ).subscribe(confirmed => {
+      if (!confirmed) return;
 
-    this.userService.blockUser(userId).subscribe({
+      this.userService.blockUser(userId).subscribe({
       next: () => {
         this.snackBar.open('Member blocked successfully!', 'Close', { duration: 3000 });
         this.loadMembers();
       },
-      error: (err) => {
-        this.snackBar.open(err.message || 'Failed to block member.', 'Close', { duration: 5000 });
-      }
+        error: (err) => {
+          this.snackBar.open(err.message || 'Failed to block member.', 'Close', { duration: 5000 });
+        }
+      });
     });
   }
 

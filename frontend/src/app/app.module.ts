@@ -35,6 +35,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { LayoutModule } from './core/layout/layout.module';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { NotificationsComponent } from './notifications/notifications.component'
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    NotificationsComponent
+    NotificationsComponent,
+    ConfirmDialogComponent
   ],
   imports: [
     BrowserModule,
