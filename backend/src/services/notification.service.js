@@ -54,3 +54,30 @@ module.exports = {
   getUnreadCount,
   getUserNotifications,
 };
+
+// Admin helpers
+// Get all notifications (system-wide) with pagination
+const getAllNotifications = async (page = 1, limit = 10) => {
+  const skip = (page - 1) * limit;
+  return await Notification.find({})
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate('userId', 'name email')
+    .populate('relatedId');
+};
+
+// Get notifications filtered by type list (role-relevant)
+const getNotificationsByTypes = async (types = [], page = 1, limit = 10) => {
+  const query = types && types.length ? { type: { $in: types } } : {};
+  const skip = (page - 1) * limit;
+  return await Notification.find(query)
+    .sort({ createdAt: -1 })
+    .skip(skip)
+    .limit(limit)
+    .populate('userId', 'name email')
+    .populate('relatedId');
+};
+
+module.exports.getAllNotifications = getAllNotifications;
+module.exports.getNotificationsByTypes = getNotificationsByTypes;

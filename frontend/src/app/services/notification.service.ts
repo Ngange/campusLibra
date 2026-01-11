@@ -9,9 +9,9 @@ export interface Notification {
   userId: string;
   title: string;
   message: string;
-  type: 'info' | 'warning' | 'success' | 'error';
+  type: string; // backend supplies enum strings like 'borrow_confirmed'
   isRead: boolean;
-  createdAt: Date;
+  createdAt: string | Date;
 }
 
 @Injectable({
@@ -25,6 +25,7 @@ export class NotificationService {
 
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSubject.asObservable();
+  private lastScope: 'user' | 'role' | 'all' | undefined;
 
   constructor(private http: HttpClient) {
     // Initialize Socket.IO connection
@@ -36,7 +37,8 @@ export class NotificationService {
     });
 
     // Listen for new notifications
-    this.socket.on('newNotification', (notification: Notification) => {
+    this.socket.on('newNotification', (raw: any) => {
+      const notification = this.normalize(raw);
       const currentNotifications = this.notificationsSubject.value;
       const newNotifications = [notification, ...currentNotifications];
       this.notificationsSubject.next(newNotifications);
@@ -54,10 +56,19 @@ export class NotificationService {
   }
 
   loadInitialNotifications(): void {
-    this.http.get<{ success: boolean; notifications: Notification[]; unreadCount: number }>(this.apiUrl)
+    // Use backend defaults (admin -> all, others -> user)
+    this.loadNotifications(undefined);
+  }
+
+  // Load notifications with optional scope: 'user' | 'role' | 'all'
+  loadNotifications(scope: 'user' | 'role' | 'all' | undefined): void {
+    this.lastScope = scope;
+    const url = scope ? `${this.apiUrl}?scope=${scope}` : this.apiUrl;
+    this.http.get<{ success: boolean; notifications: any[]; unreadCount: number; scope?: string }>(url)
       .subscribe({
         next: (response) => {
-          const notifications = Array.isArray(response.notifications) ? response.notifications : [];
+          const raw = Array.isArray(response.notifications) ? response.notifications : [];
+          const notifications = raw.map((n) => this.normalize(n));
           this.notificationsSubject.next(notifications);
           this.unreadCountSubject.next(response.unreadCount ?? 0);
         },
@@ -65,6 +76,20 @@ export class NotificationService {
           console.error('Failed to load notifications:', error);
         }
       });
+  }
+
+  private normalize(n: any): Notification {
+    const id = n._id || n.id;
+    const userId = typeof n.userId === 'object' && n.userId !== null ? (n.userId._id || n.userId.id) : n.userId;
+    return {
+      id,
+      userId,
+      title: n.title,
+      message: n.message,
+      type: n.type,
+      isRead: !!n.isRead,
+      createdAt: n.createdAt,
+    };
   }
 
   connectUser(userId: string): void {

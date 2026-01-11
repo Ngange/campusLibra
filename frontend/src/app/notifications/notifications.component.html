@@ -1,6 +1,21 @@
 <div class="notifications-page">
   <h1>Notifications</h1>
 
+  <!-- Admin scope toggle -->
+  <div class="scope-toggle" *ngIf="role === 'admin'" style="margin: 12px 0">
+    <mat-form-field appearance="outline" style="width: 280px">
+      <mat-label>View</mat-label>
+      <mat-select
+        [value]="scope"
+        (selectionChange)="onScopeChange($event.value)"
+      >
+        <mat-option value="user">My notifications</mat-option>
+        <mat-option value="role">Role-relevant</mat-option>
+        <mat-option value="all">All users</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
   <div
     class="notifications-list"
     *ngIf="notifications$ | async as notifications"
@@ -19,7 +34,7 @@
       <button
         mat-button
         color="primary"
-        *ngIf="!notification.isRead"
+        *ngIf="!notification.isRead && notification.userId === currentUserId"
         (click)="markAsRead(notification.id)"
       >
         Mark as read
