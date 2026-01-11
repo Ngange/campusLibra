@@ -1,7 +1,12 @@
-const requiredEnvVars = ['PORT', 'MONGODB_URI', 'JWT_SECRET', 'NODE_ENV'];
+const requiredEnvVars = ['PORT', 'JWT_SECRET', 'NODE_ENV'];
 
 const validateEnv = () => {
   const missing = requiredEnvVars.filter((key) => !process.env[key]);
+
+  // Check for at least one MongoDB URI (Atlas or local)
+  if (!process.env.MONGODB_ATLAS_URI && !process.env.MONGODB_URI) {
+    missing.push('MONGODB_URI or MONGODB_ATLAS_URI');
+  }
 
   if (missing.length > 0) {
     console.error(
