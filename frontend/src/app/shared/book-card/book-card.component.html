@@ -1,4 +1,4 @@
-<div class="book-card mat-elevation-z2">
+<div class="book-card mat-elevation-z2" [routerLink]="['/books', book._id]">
   <div class="book-cover">
     <div class="cover-placeholder" *ngIf="!book.coverImage">
       <mat-icon>menu_book</mat-icon>
@@ -24,11 +24,7 @@
   </div>
 
   <div class="book-actions" *ngIf="showActions">
-    <button
-      mat-raised-button
-      color="primary"
-      [disabled]="(book.availableCopies || 0) === 0"
-    >
+    <button mat-raised-button color="primary" disabled class="visual-button">
       {{ (book.availableCopies || 0) > 0 ? "Borrow" : "Reserve" }}
     </button>
   </div>

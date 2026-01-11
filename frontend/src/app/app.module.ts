@@ -27,6 +27,18 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialogModule } from '@angular/material/dialog';
+import { LayoutModule } from './core/layout/layout.module';
+import { MyBorrowsComponent } from './member/my-borrows/my-borrows.component';
+import { MyReservationsComponent } from './member/my-reservations/my-reservations.component';
+import { MyFinesComponent } from './member/my-fines/my-fines.component';
+import { ProfileComponent } from './member/profile/profile.component';
+import { ProcessReturnsComponent } from './librarian/process-returns/process-returns.component';
+import { UsersManageComponent } from './admin/users-manage/users-manage.component';
+import { ReturnBookModalComponent } from './librarian/return-book-modal/return-book-modal.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +46,14 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     LandingComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    MyBorrowsComponent,
+    MyReservationsComponent,
+    MyFinesComponent,
+    ProfileComponent,
+    ProcessReturnsComponent,
+    UsersManageComponent,
+    ReturnBookModalComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +72,12 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     MatChipsModule,
     MatIconModule,
     MatToolbarModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatProgressSpinnerModule,
+    MatMenuModule,
+    MatSnackBarModule,
+    MatDialogModule,
+    LayoutModule
   ],
   providers: [
     // Attach JWT token to all HTTP requests

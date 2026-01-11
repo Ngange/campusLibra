@@ -1,0 +1,73 @@
+.book-info {
+  text-align: center;
+  margin-bottom: 24px;
+
+  h3 {
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: #666;
+    margin: 4px 0;
+  }
+}
+
+.fine-calculation {
+  margin-bottom: 16px;
+
+  h4 {
+    color: #333;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .fine-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+
+    &:last-child {
+      border-bottom: none;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+  }
+
+  .overdue {
+    color: #c62828;
+
+    .overdue-label {
+      color: #c62828;
+    }
+
+    .fine-amount {
+      color: #c62828;
+    }
+  }
+
+  .on-time {
+    color: #2e7d32;
+
+    .on-time-label {
+      color: #2e7d32;
+    }
+
+    .fine-amount {
+      color: #2e7d32;
+    }
+  }
+}
+
+.error-message {
+  color: #f44336;
+  text-align: center;
+  margin: 16px 0;
+}
+
+mat-dialog-actions {
+  button {
+    min-width: 120px;
+  }
+}

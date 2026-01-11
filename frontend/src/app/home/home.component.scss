@@ -1,40 +1,12 @@
 .home-container {
-  padding: 0;
-  max-width: 100%;
-  margin: 0;
-}
-
-// Toolbar styles
-.app-toolbar {
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.logo {
-  height: 32px;
-  width: 32px;
-  margin-right: 1rem;
-  border-radius: 50%;
-  background: white;
-  padding: 0.25rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-}
-
-.toolbar-title {
-  font-weight: bold;
-  font-size: 1.2rem;
-  color: white;
-}
-
-.spacer {
-  flex: 1 1 auto;
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .welcome-section {
   text-align: center;
-  margin: 3rem 2rem;
+  margin-bottom: 3rem;
 
   h1 {
     color: #333;
@@ -58,10 +30,6 @@
 }
 
 .quick-actions {
-  padding: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-
   h2 {
     text-align: center;
     margin-bottom: 2rem;
@@ -73,10 +41,7 @@
   background: white;
   padding: 2rem;
   border-radius: 8px;
-  margin: 0 2rem 3rem 2rem;
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin-bottom: 3rem;
 
   h2 {
     text-align: center;
@@ -141,9 +106,7 @@
 }
 
 .featured-books {
-  padding: 0 2rem;
-  max-width: 1200px;
-  margin: 3rem auto;
+  margin: 3rem 0;
 
   h2 {
     text-align: center;

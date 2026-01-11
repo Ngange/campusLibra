@@ -1,0 +1,212 @@
+.process-returns-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.search-form {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  align-items: end;
+
+  .search-input {
+    flex: 1;
+    max-width: 600px;
+  }
+
+  button {
+    height: 56px;
+  }
+}
+
+.main-content {
+  display: flex;
+  gap: 24px;
+
+  @media (max-width: 960px) {
+    flex-direction: column;
+  }
+}
+
+.borrows-section {
+  flex: 2;
+
+  h2 {
+    margin-bottom: 16px;
+    color: #333;
+  }
+}
+
+.borrows-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.borrow-item {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+
+  &:hover {
+    border-color: #e0e0e0;
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    border-color: #1976d2;
+    background-color: #f5f9ff;
+  }
+
+  .borrow-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 8px;
+
+    h3 {
+      color: #333;
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  }
+
+  .borrow-author {
+    color: #666;
+    margin: 4px 0;
+    font-style: italic;
+  }
+
+  .borrow-member {
+    color: #888;
+    margin: 4px 0;
+    font-size: 0.9rem;
+  }
+
+  .borrow-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    color: #666;
+    font-size: 0.85rem;
+  }
+}
+
+.return-section {
+  flex: 1;
+  position: sticky;
+  top: 24px;
+
+  @media (max-width: 960px) {
+    position: static;
+    order: -1; /* Show return panel first on mobile */
+  }
+}
+
+.return-details {
+  background: white;
+  border-radius: 8px;
+  padding: 24px;
+
+  h2 {
+    color: #333;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+
+  .book-info {
+    text-align: center;
+    margin-bottom: 24px;
+
+    h3 {
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #666;
+      margin: 4px 0;
+    }
+  }
+
+  .fine-calculation {
+    margin-bottom: 24px;
+
+    h4 {
+      color: #333;
+      margin-bottom: 16px;
+      text-align: center;
+    }
+
+    .fine-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+
+      &:last-child {
+        border-bottom: none;
+        font-weight: bold;
+        font-size: 1.1rem;
+      }
+    }
+
+    .overdue {
+      color: #c62828;
+
+      .overdue-label {
+        color: #c62828;
+      }
+
+      .fine-amount {
+        color: #c62828;
+      }
+    }
+
+    .on-time {
+      color: #2e7d32;
+
+      .on-time-label {
+        color: #2e7d32;
+      }
+
+      .fine-amount {
+        color: #2e7d32;
+      }
+    }
+  }
+
+  .process-button {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+.no-borrows {
+  text-align: center;
+  padding: 32px;
+  color: #666;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.error {
+  color: #f44336;
+}

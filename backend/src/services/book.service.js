@@ -93,16 +93,21 @@ const getBookById = async (id) => {
   const book = await Book.findById(id);
   if (!book) throw new Error('Book not found');
 
-  // Add copy counts
-  const [totalCopies, availableCopies] = await Promise.all([
-    BookCopy.countDocuments({ book: id }),
-    BookCopy.countDocuments({ book: id, status: 'available' }),
-  ]);
+  // Get all copies for this book
+  const copies = await BookCopy.find({ book: id });
 
-  book.totalCopies = totalCopies;
-  book.availableCopies = availableCopies;
+  // Calculate counts
+  const totalCopies = copies.length;
+  const availableCopies = copies.filter(
+    (copy) => copy.status === 'available'
+  ).length;
 
-  return book;
+  // Convert book to plain object and add copy counts
+  const bookObject = book.toObject();
+  bookObject.totalCopies = totalCopies;
+  bookObject.availableCopies = availableCopies;
+
+  return bookObject;
 };
 
 const updateBook = async (id, updateData, performedBy) => {

@@ -1,0 +1,158 @@
+<div class="reservations-container">
+  <div class="page-header">
+    <h1>My Reservations</h1>
+    <p>View and manage your book reservations</p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading mat-elevation-z1">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading reservations...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error mat-elevation-z1">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadMyReservations()">Try Again</button>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading && !error && reservations.length === 0"
+    class="empty-state mat-elevation-z1"
+  >
+    <mat-icon>event_seat</mat-icon>
+    <h3>No active reservations</h3>
+    <p>Start exploring our library and reserve books!</p>
+    <button mat-raised-button color="primary" routerLink="/books">
+      Browse Books
+    </button>
+  </div>
+
+  <!-- Content State -->
+  <div
+    *ngIf="!loading && !error && reservations.length > 0"
+    class="reservations-content"
+  >
+    <!-- Active Reservations Section -->
+    <section
+      *ngIf="getActiveReservations().length > 0"
+      class="reservations-section active-section"
+    >
+      <h2>
+        <mat-icon>schedule</mat-icon>
+        Active Reservations ({{ getActiveReservations().length }})
+      </h2>
+      <div class="reservations-grid">
+        <mat-card
+          class="reservation-card"
+          *ngFor="let reservation of getActiveReservations()"
+        >
+          <mat-card-content>
+            <div class="card-header">
+              <h3>{{ reservation.bookTitle }}</h3>
+              <app-status-badge
+                [status]="reservation.status"
+              ></app-status-badge>
+            </div>
+
+            <div class="reservation-info">
+              <div class="info-row">
+                <span class="label">Reserved on:</span>
+                <span class="value">{{
+                  reservation.createdAt | date : "MMM dd, yyyy"
+                }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Queue Position:</span>
+                <span class="value">#{{ reservation.queuePosition }}</span>
+              </div>
+              <div
+                class="info-row"
+                *ngIf="
+                  reservation.holdUntil && reservation.status === 'on_hold'
+                "
+              >
+                <span class="label">Hold Until:</span>
+                <span class="value">{{
+                  reservation.holdUntil | date : "MMM dd, yyyy"
+                }}</span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button
+                mat-raised-button
+                color="primary"
+                *ngIf="reservation.status === 'on_hold'"
+                (click)="confirmPickup(reservation._id)"
+                [disabled]="cancelingId === reservation._id"
+              >
+                <mat-icon>check_circle</mat-icon>
+                Confirm Pickup
+              </button>
+              <button
+                mat-stroked-button
+                color="warn"
+                (click)="cancelReservation(reservation._id)"
+                [disabled]="cancelingId === reservation._id"
+              >
+                <mat-icon>cancel</mat-icon>
+                Cancel
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+
+    <!-- Cancelled/Fulfilled Section -->
+    <section
+      *ngIf="getCancelledReservations().length > 0"
+      class="reservations-section history-section"
+    >
+      <h2>
+        <mat-icon>history</mat-icon>
+        Reservation History
+      </h2>
+      <div class="reservations-grid">
+        <mat-card
+          class="reservation-card"
+          *ngFor="let reservation of getCancelledReservations()"
+        >
+          <mat-card-content>
+            <div class="card-header">
+              <h3>{{ reservation.bookTitle }}</h3>
+              <app-status-badge
+                [status]="reservation.status"
+              ></app-status-badge>
+            </div>
+
+            <div class="reservation-info">
+              <div class="info-row">
+                <span class="label">Reserved on:</span>
+                <span class="value">{{
+                  reservation.createdAt | date : "MMM dd, yyyy"
+                }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Status:</span>
+                <span
+                  class="value"
+                  [ngClass]="
+                    reservation.status === 'fulfilled'
+                      ? 'fulfilled'
+                      : 'cancelled'
+                  "
+                >
+                  {{ reservation.status | titlecase }}
+                </span>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </section>
+  </div>
+</div>

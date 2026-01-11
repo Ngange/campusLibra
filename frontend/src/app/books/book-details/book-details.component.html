@@ -1,0 +1,52 @@
+<div class="book-details-container">
+  <div *ngIf="loading" class="loading">Loading book details...</div>
+
+  <div *ngIf="error" class="error">
+    {{ error }}
+    <button mat-button (click)="goBack()">← Back to Books</button>
+  </div>
+
+  <div *ngIf="book && !loading && !error" class="book-details">
+    <div class="book-header">
+      <h1>{{ book.title }}</h1>
+      <p class="book-author">by {{ book.author }}</p>
+      <p class="book-category">{{ book.category }}</p>
+      <p class="book-isbn">ISBN: {{ book.isbn }}</p>
+    </div>
+
+    <div class="book-stats">
+      <div class="stat-card">
+        <h3>Available Copies</h3>
+        <p class="stat-number">{{ book.availableCopies || 0 }}</p>
+      </div>
+      <div class="stat-card">
+        <h3>Total Copies</h3>
+        <p class="stat-number">{{ book.totalCopies || 0 }}</p>
+      </div>
+    </div>
+
+    <div class="book-actions">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="borrowBook()"
+        [disabled]="(book.availableCopies || 0) === 0 || borrowing"
+        *ngIf="book.availableCopies && book.availableCopies > 0"
+      >
+        {{ borrowing ? "Borrowing..." : "Borrow Book" }}
+      </button>
+
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="reserveBook()"
+        [disabled]="reserving"
+        *ngIf="!book.availableCopies || book.availableCopies === 0"
+      >
+        {{ reserving ? "Reserving..." : "Reserve Book" }}
+      </button>
+
+      <button mat-stroked-button (click)="goBack()">← Back to Books</button>
+    </div>
+  </div>
+</div>

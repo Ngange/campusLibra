@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>Process Book Return</h2>
+
+<mat-dialog-content>
+  <div class="book-info">
+    <h3>{{ data.borrow?.book?.title }}</h3>
+    <p>by {{ data.borrow?.book?.author }}</p>
+    <p>Borrowed by: {{ data.borrow?.user?.name }}</p>
+  </div>
+
+  <div class="fine-calculation">
+    <h4>Fine Calculation</h4>
+    <div class="fine-row">
+      <span>Due Date:</span>
+      <span>{{ data.borrow?.dueDate | date : "mediumDate" }}</span>
+    </div>
+    <div class="fine-row">
+      <span>Today's Date:</span>
+      <span>{{ today | date : "mediumDate" }}</span>
+    </div>
+    <div
+      class="fine-row"
+      [ngClass]="{ overdue: isOverdue, 'on-time': !isOverdue }"
+    >
+      <span *ngIf="isOverdue" class="overdue-label">OVERDUE!</span>
+      <span *ngIf="!isOverdue" class="on-time-label">✓ On Time</span>
+      <span class="fine-amount">{{ fineAmount | currency }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="processReturn()"
+    [disabled]="processing"
+  >
+    <span *ngIf="processing">Processing...</span>
+    <span *ngIf="!processing">
+      <mat-icon>check_circle</mat-icon>
+      Process Return
+    </span>
+  </button>
+</mat-dialog-actions>

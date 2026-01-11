@@ -1,0 +1,49 @@
+<div class="process-returns-container">
+  <h1>Process Book Returns</h1>
+
+  <!-- Search Form -->
+  <form [formGroup]="searchForm" (ngSubmit)="onSearch()" class="search-form">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Search by member name, email, or book title</mat-label>
+      <input matInput formControlName="searchTerm" type="text" />
+    </mat-form-field>
+    <button mat-raised-button color="primary" type="submit">Search</button>
+  </form>
+
+  <!-- Main Content Layout -->
+  <div class="main-content" *ngIf="!loading && !error">
+    <!-- Borrows List -->
+    <div class="borrows-section">
+      <h2>Active Borrows ({{ activeBorrows.length }})</h2>
+
+      <div class="borrows-grid">
+        <div
+          *ngFor="let borrow of activeBorrows"
+          class="borrow-item"
+          (click)="openReturnModal(borrow)"
+        >
+          <div class="borrow-header">
+            <h3>{{ borrow.book.title }}</h3>
+            <app-status-badge [status]="borrow.status"></app-status-badge>
+          </div>
+          <p class="borrow-author">by {{ borrow.book.author }}</p>
+          <p class="borrow-member">
+            {{ borrow.user.name }} ({{ borrow.user.email }})
+          </p>
+          <div class="borrow-dates">
+            <span>Borrowed: {{ borrow.borrowDate | date : "mediumDate" }}</span>
+            <span>Due: {{ borrow.dueDate | date : "mediumDate" }}</span>
+          </div>
+        </div>
+
+        <div *ngIf="activeBorrows.length === 0" class="no-borrows">
+          No active borrows found.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading/Error States -->
+  <div *ngIf="loading" class="loading">Loading active borrows...</div>
+  <div *ngIf="error" class="error">{{ error }}</div>
+</div>

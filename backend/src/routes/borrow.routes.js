@@ -3,7 +3,9 @@ const express = require('express');
 const {
   borrowBookHandler,
   returnBookHandler,
+  renewBookHandler,
   getBorrows,
+  getMyBorrows,
 } = require('../controllers/borrow.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
@@ -25,6 +27,19 @@ router.post(
   borrowBookHandler
 );
 
+// Get current user's borrows
+router.get('/my', authMiddleware, getMyBorrows);
+
+// Member renews a borrowed book
+router.patch(
+  '/:id/renew',
+  authMiddleware,
+  authorizeRoles('member'),
+  validateMongoId,
+  handleValidationErrors,
+  renewBookHandler
+);
+
 //  Librarian processes return
 router.patch(
   '/:id/return',
@@ -35,6 +50,12 @@ router.patch(
   returnBookHandler
 );
 
-router.get('/', authMiddleware, getBorrows);
+// Get all borrows (admin/librarian)
+router.get(
+  '/',
+  authMiddleware,
+  authorizeRoles('admin', 'librarian'),
+  getBorrows
+);
 
 module.exports = router;

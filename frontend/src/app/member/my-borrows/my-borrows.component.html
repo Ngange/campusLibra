@@ -1,0 +1,86 @@
+<div class="my-borrows-container">
+  <div class="header">
+    <h1>My Borrows</h1>
+    <p>
+      You have {{ borrows.length || 0 }} active
+      {{ borrows.length === 1 ? "borrow" : "borrows" }}
+    </p>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading mat-elevation-z1">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading your borrows...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error mat-elevation-z1">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadBorrows()">Retry</button>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    *ngIf="!loading && !error && borrows.length === 0"
+    class="no-borrows mat-elevation-z1"
+  >
+    <mat-icon>library_books</mat-icon>
+    <h3>No Active Borrows</h3>
+    <p>You haven't borrowed any books yet.</p>
+    <button mat-raised-button color="primary" routerLink="/books">
+      Browse Books
+    </button>
+  </div>
+
+  <!-- Content State -->
+  <div *ngIf="!loading && !error && borrows.length > 0" class="borrows-list">
+    <mat-card
+      class="borrow-card mat-elevation-z2"
+      *ngFor="let borrow of borrows"
+    >
+      <mat-card-content>
+        <div class="card-layout">
+          <div class="book-info">
+            <h3>{{ borrow.book?.title }}</h3>
+            <p class="author">by {{ borrow.book?.author }}</p>
+            <div class="book-stats">
+              <span
+                ><mat-icon>event</mat-icon> Borrowed:
+                {{ borrow.borrowDate | date : "mediumDate" }}</span
+              >
+              <span
+                ><mat-icon>schedule</mat-icon> Due:
+                {{ borrow.dueDate | date : "mediumDate" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="status-section">
+            <app-status-badge [status]="borrow.status"></app-status-badge>
+
+            <!-- Overdue warning -->
+            <div
+              *ngIf="isOverdue(borrow.dueDate) && borrow.status === 'active'"
+              class="overdue-warning"
+            >
+              <mat-icon>warning</mat-icon>
+              <span>This book is overdue!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="actions" *ngIf="borrow.status === 'active'">
+          <button mat-stroked-button color="primary">
+            <mat-icon>autorenew</mat-icon>
+            Renew
+          </button>
+          <button mat-stroked-button color="warn">
+            <mat-icon>report</mat-icon>
+            Report Issue
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

@@ -1,0 +1,252 @@
+<mat-toolbar color="primary">
+  <!-- Desktop Logo & Title -->
+  <div class="desktop-header">
+    <button mat-icon-button (click)="goToHome()" class="logo-button">
+      <img src="assets/images/logo-32x32.png" alt="CampusLibra" class="logo" />
+    </button>
+    <span class="app-title">CampusLibra</span>
+  </div>
+
+  <span class="spacer"></span>
+
+  <!-- Desktop Navigation (hidden on mobile) -->
+  <div class="nav-links desktop-nav" *ngIf="currentUser">
+    <!-- Member Navigation -->
+    <ng-container *ngIf="userRole === 'member'">
+      <button mat-button routerLink="/books" routerLinkActive="active-link">
+        Browse Books
+      </button>
+      <button
+        mat-button
+        routerLink="/my-borrows"
+        routerLinkActive="active-link"
+      >
+        My Borrows
+      </button>
+      <button
+        mat-button
+        routerLink="/my-reservations"
+        routerLinkActive="active-link"
+      >
+        Reservations
+      </button>
+      <button mat-button routerLink="/my-fines" routerLinkActive="active-link">
+        Fines
+      </button>
+    </ng-container>
+
+    <!-- Librarian Navigation -->
+    <ng-container *ngIf="userRole === 'librarian'">
+      <button
+        mat-button
+        routerLink="/process-returns"
+        routerLinkActive="active-link"
+      >
+        Process Returns
+      </button>
+      <button
+        mat-button
+        routerLink="/pending-pickups"
+        routerLinkActive="active-link"
+      >
+        Pending Pickups
+      </button>
+      <button
+        mat-button
+        routerLink="/member-management"
+        routerLinkActive="active-link"
+      >
+        Members
+      </button>
+      <button mat-button routerLink="/books" routerLinkActive="active-link">
+        Inventory
+      </button>
+    </ng-container>
+
+    <!-- Admin Navigation -->
+    <ng-container *ngIf="userRole === 'admin'">
+      <button
+        mat-button
+        routerLink="/books/manage"
+        routerLinkActive="active-link"
+      >
+        Manage Books
+      </button>
+      <button
+        mat-button
+        routerLink="/manage-users"
+        routerLinkActive="active-link"
+      >
+        Manage Users
+      </button>
+      <button
+        mat-button
+        routerLink="/system-settings"
+        routerLinkActive="active-link"
+      >
+        Settings
+      </button>
+      <button
+        mat-button
+        routerLink="/audit-trail"
+        routerLinkActive="active-link"
+      >
+        Audit Trail
+      </button>
+    </ng-container>
+  </div>
+
+  <!-- User Section (desktop) -->
+  <div class="user-section desktop-user" *ngIf="currentUser">
+    <!-- Notification Badge -->
+    <button mat-icon-button class="notification-button">
+      <mat-icon>notifications</mat-icon>
+      <span class="notification-badge" *ngIf="unreadNotifications > 0">
+        {{ unreadNotifications > 9 ? "9+" : unreadNotifications }}
+      </span>
+    </button>
+
+    <!-- User Menu -->
+    <button mat-icon-button [matMenuTriggerFor]="userMenu">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+    <mat-menu #userMenu="matMenu">
+      <button mat-menu-item routerLink="/profile">
+        <mat-icon>person</mat-icon>
+        <span>Profile</span>
+      </button>
+      <button mat-menu-item (click)="logout()">
+        <mat-icon>exit_to_app</mat-icon>
+        <span>Logout</span>
+      </button>
+    </mat-menu>
+  </div>
+
+  <!-- Mobile Menu Button -->
+  <button
+    mat-icon-button
+    class="mobile-menu-button"
+    (click)="toggleMobileMenu()"
+    *ngIf="currentUser"
+  >
+    <mat-icon>{{ isMobileMenuOpen ? "close" : "menu" }}</mat-icon>
+  </button>
+</mat-toolbar>
+
+<!-- Mobile Navigation Drawer -->
+<mat-drawer-container
+  class="mobile-drawer-container"
+  *ngIf="currentUser && isMobileMenuOpen"
+>
+  <mat-drawer mode="side" opened class="mobile-drawer">
+    <div class="mobile-user-info">
+      <h3>{{ currentUser?.name }}</h3>
+      <p>{{ userRole | titlecase }}</p>
+    </div>
+
+    <!-- Mobile Nav Links -->
+    <div class="mobile-nav-links">
+      <!-- Member Links -->
+      <ng-container *ngIf="userRole === 'member'">
+        <button mat-button routerLink="/books" (click)="closeMobileMenu()">
+          <mat-icon>book</mat-icon>
+          Browse Books
+        </button>
+        <button mat-button routerLink="/my-borrows" (click)="closeMobileMenu()">
+          <mat-icon>library_books</mat-icon>
+          My Borrows
+        </button>
+        <button
+          mat-button
+          routerLink="/my-reservations"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>event_seat</mat-icon>
+          Reservations
+        </button>
+        <button mat-button routerLink="/my-fines" (click)="closeMobileMenu()">
+          <mat-icon>attach_money</mat-icon>
+          Fines
+        </button>
+      </ng-container>
+
+      <!-- Librarian Links -->
+      <ng-container *ngIf="userRole === 'librarian'">
+        <button
+          mat-button
+          routerLink="/process-returns"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>undo</mat-icon>
+          Process Returns
+        </button>
+        <button
+          mat-button
+          routerLink="/pending-pickups"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>shopping_bag</mat-icon>
+          Pending Pickups
+        </button>
+        <button
+          mat-button
+          routerLink="/member-management"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>people</mat-icon>
+          Members
+        </button>
+        <button mat-button routerLink="/books" (click)="closeMobileMenu()">
+          <mat-icon>inventory_2</mat-icon>
+          Inventory
+        </button>
+      </ng-container>
+
+      <!-- Admin Links -->
+      <ng-container *ngIf="userRole === 'admin'">
+        <button
+          mat-button
+          routerLink="/books/manage"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>edit</mat-icon>
+          Manage Books
+        </button>
+        <button
+          mat-button
+          routerLink="/users/manage"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>manage_accounts</mat-icon>
+          Manage Users
+        </button>
+        <button
+          mat-button
+          routerLink="/system-settings"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>settings</mat-icon>
+          Settings
+        </button>
+        <button
+          mat-button
+          routerLink="/audit-trail"
+          (click)="closeMobileMenu()"
+        >
+          <mat-icon>history</mat-icon>
+          Audit Trail
+        </button>
+      </ng-container>
+
+      <!-- Profile & Logout -->
+      <button mat-button routerLink="/profile" (click)="closeMobileMenu()">
+        <mat-icon>person</mat-icon>
+        Profile
+      </button>
+      <button mat-button (click)="logoutAndClose()">
+        <mat-icon>exit_to_app</mat-icon>
+        Logout
+      </button>
+    </div>
+  </mat-drawer>
+</mat-drawer-container>

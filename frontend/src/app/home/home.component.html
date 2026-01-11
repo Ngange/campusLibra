@@ -1,17 +1,4 @@
 <div class="home-container">
-  <!-- Toolbar with Logo -->
-  <mat-toolbar color="primary" class="app-toolbar">
-    <img src="assets/images/logo-32x32.png" alt="CampusLibra" class="logo" />
-    <span class="toolbar-title">CampusLibra</span>
-    <span class="spacer"></span>
-    <button mat-icon-button routerLink="/home" matTooltip="Home">
-      <mat-icon>home</mat-icon>
-    </button>
-    <button mat-icon-button (click)="logout()" matTooltip="Logout">
-      <mat-icon>exit_to_app</mat-icon>
-    </button>
-  </mat-toolbar>
-
   <div class="welcome-section">
     <h1>Welcome to CampusLibra!</h1>
     <p>Hello, {{ currentUser?.name }}!</p>
@@ -146,9 +133,5 @@
       </button>
       <button mat-raised-button routerLink="/audit-trail">Audit Trail</button>
     </div>
-  </div>
-
-  <div class="logout-section">
-    <button mat-stroked-button (click)="logout()">Logout</button>
   </div>
 </div>

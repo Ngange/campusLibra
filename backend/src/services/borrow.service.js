@@ -56,7 +56,7 @@ const borrowBook = async (userId, bookId) => {
 
   // Return populated borrow
   const populatedBorrow = await Borrow.findById(borrow._id)
-    .populate('user', 'name')
+    .populate('user', 'name email')
     .populate('book', 'title author')
     .populate('bookCopy', 'barcode location');
 
@@ -125,7 +125,13 @@ const returnBook = async (borrowId, librarianId) => {
   // Set return date
   const returnDate = new Date();
   borrow.returnDate = returnDate;
-  borrow.status = 'returned';
+
+  // Set status based on return date vs due date
+  if (returnDate > borrow.dueDate) {
+    borrow.status = 'overdue'; // Still mark as overdue to indicate it was late
+  } else {
+    borrow.status = 'returned';
+  }
   await borrow.save();
 
   // Update book copy status
@@ -164,8 +170,88 @@ const returnBook = async (borrowId, librarianId) => {
   return { borrow, fine };
 };
 
+const renewBook = async (borrowId, userId) => {
+  // Fetch borrow with related data
+  const borrow = await Borrow.findById(borrowId)
+    .populate('book', 'title')
+    .populate('user', 'name');
+
+  if (!borrow) {
+    throw new Error('Borrow record not found');
+  }
+
+  // Only the user who borrowed can renew
+  if (borrow.user._id.toString() !== userId) {
+    throw new Error('Unauthorized: Only the borrower can renew this book');
+  }
+
+  // Cannot renew if already returned
+  if (borrow.returnDate) {
+    throw new Error('Cannot renew a returned book');
+  }
+
+  // Cannot renew if overdue
+  const today = new Date();
+  if (today > borrow.dueDate) {
+    throw new Error('Cannot renew an overdue book');
+  }
+
+  // Check if has unpaid fines
+  const hasFines = await Fine.findOne({
+    user: userId,
+    status: { $ne: 'paid' },
+  });
+
+  if (hasFines) {
+    throw new Error('Cannot renew while having unpaid fines');
+  }
+
+  // Calculate new due date
+  const renewDate = new Date();
+  const newDueDate = await calculateDueDate(renewDate);
+
+  // Update borrow
+  borrow.dueDate = newDueDate;
+  await borrow.save();
+
+  // Notify user
+  await emitNotification(
+    userId,
+    'Book Renewed',
+    `"${
+      borrow.book.title
+    }" has been renewed. New due date: ${newDueDate.toLocaleDateString()}.`,
+    'book_renewed',
+    borrowId,
+    'Borrow'
+  );
+
+  // Log audit
+  await createBookAudit(borrow.book._id, borrow.bookCopy, 'renewed', userId, {
+    borrowId,
+    newDueDate,
+  });
+
+  return borrow;
+};
+
+// Update overdue status for active borrows with past due dates
+const updateOverdueStatus = async () => {
+  const now = new Date();
+  await Borrow.updateMany(
+    {
+      status: 'active',
+      dueDate: { $lt: now },
+      returnDate: null,
+    },
+    { $set: { status: 'overdue' } }
+  );
+};
+
 module.exports = {
   borrowBook,
   returnBook,
+  renewBook,
   calculateFine,
+  updateOverdueStatus,
 };

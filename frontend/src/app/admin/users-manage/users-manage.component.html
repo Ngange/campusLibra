@@ -1,0 +1,153 @@
+<div class="users-manage-container">
+  <div class="page-header">
+    <h1>Manage Users</h1>
+    <p>View and manage system users</p>
+  </div>
+
+  <!-- Search Form -->
+  <div class="search-form mat-elevation-z1">
+    <mat-form-field appearance="outline" class="search-input">
+      <mat-label>Search by name or email</mat-label>
+      <input
+        matInput
+        type="text"
+        placeholder="Search..."
+        (input)="onSearchChange($any($event.target).value)"
+      />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading mat-elevation-z1">
+    <mat-spinner diameter="40"></mat-spinner>
+    <p>Loading users...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error && !loading" class="error mat-elevation-z1">
+    <mat-icon>error_outline</mat-icon>
+    <p>{{ error }}</p>
+    <button mat-button (click)="loadUsers()">Try Again</button>
+  </div>
+
+  <!-- Users Table -->
+  <div *ngIf="!loading && !error" class="users-section">
+    <h2>Users ({{ filteredUsers.length }})</h2>
+
+    <div *ngIf="filteredUsers.length === 0" class="no-users">
+      <p>No users found.</p>
+    </div>
+
+    <div *ngIf="filteredUsers.length > 0" class="users-table-wrapper">
+      <table class="users-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let user of filteredUsers"
+            [class.editing]="editingUser?._id === user._id"
+          >
+            <!-- View Mode -->
+            <ng-container *ngIf="editingUser?._id !== user._id">
+              <td>{{ user.name }}</td>
+              <td>{{ user.email }}</td>
+              <td>
+                <span
+                  class="role-badge"
+                  [ngClass]="getRoleDisplay(user).toLowerCase()"
+                >
+                  {{ getRoleDisplay(user) | titlecase }}
+                </span>
+              </td>
+              <td class="actions-cell">
+                <button
+                  mat-icon-button
+                  color="primary"
+                  (click)="startEdit(user)"
+                  title="Edit user"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="warn"
+                  (click)="deleteUser(user._id, user.name)"
+                  [disabled]="actionInProgress[user._id]"
+                  title="Delete user"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  (click)="blockUser(user._id)"
+                  *ngIf="!user.isBlocked"
+                  [disabled]="actionInProgress[user._id]"
+                  title="Block user"
+                >
+                  <mat-icon>block</mat-icon>
+                </button>
+                <button
+                  mat-icon-button
+                  color="accent"
+                  (click)="unblockUser(user._id)"
+                  *ngIf="user.isBlocked"
+                  [disabled]="actionInProgress[user._id]"
+                  title="Unblock user"
+                >
+                  <mat-icon>check_circle</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <!-- Edit Mode -->
+            <ng-container *ngIf="editingUser?._id === user._id">
+              <td colspan="4" class="edit-mode">
+                <form [formGroup]="editForm" class="edit-form">
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" type="email" />
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="form-field">
+                    <mat-label>Role</mat-label>
+                    <mat-select formControlName="role">
+                      <mat-option *ngFor="let role of roles" [value]="role">
+                        {{ role | titlecase }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+
+                  <div class="edit-actions">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="saveUser()"
+                      [disabled]="!editForm.valid || actionInProgress[user._id]"
+                    >
+                      Save
+                    </button>
+                    <button mat-stroked-button (click)="cancelEdit()">
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              </td>
+            </ng-container>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

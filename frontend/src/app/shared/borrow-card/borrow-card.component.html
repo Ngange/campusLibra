@@ -1,0 +1,50 @@
+<mat-card class="borrow-card">
+  <mat-card-content>
+    <div class="borrow-header">
+      <h3 class="book-title">{{ borrow.book?.title || "Unknown Book" }}</h3>
+      <app-status-badge [status]="borrow.status"></app-status-badge>
+    </div>
+
+    <div class="borrow-dates">
+      <div class="date-item">
+        <span class="label">Borrowed:</span>
+        <span class="value">{{
+          borrow.borrowDate | date : "MMM dd, yyyy"
+        }}</span>
+      </div>
+      <div class="date-item">
+        <span class="label">Due:</span>
+        <span class="value" [ngClass]="{ overdue: isOverdue() }">
+          {{ borrow.dueDate | date : "MMM dd, yyyy" }}
+        </span>
+        <span class="days-left" *ngIf="borrow.status === 'active'">
+          ({{ daysUntilDue() }} days)
+        </span>
+      </div>
+      <div class="date-item" *ngIf="borrow.returnDate">
+        <span class="label">Returned:</span>
+        <span class="value">{{
+          borrow.returnDate | date : "MMM dd, yyyy"
+        }}</span>
+      </div>
+    </div>
+
+    <div class="borrow-actions" *ngIf="borrow.status === 'active'">
+      <button
+        mat-raised-button
+        color="primary"
+        (click)="renewBook()"
+        [disabled]="renewing"
+      >
+        <mat-icon *ngIf="!renewing">refresh</mat-icon>
+        <span *ngIf="!renewing">Renew</span>
+        <span *ngIf="renewing">Renewing...</span>
+      </button>
+    </div>
+
+    <div *ngIf="renewError" class="renew-error">
+      <mat-icon>error_outline</mat-icon>
+      <span>{{ renewError }}</span>
+    </div>
+  </mat-card-content>
+</mat-card>

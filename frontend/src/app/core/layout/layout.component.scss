@@ -1,0 +1,8 @@
+.main-content {
+  min-height: calc(100vh - 64px); // Account for toolbar height
+  padding: 24px;
+
+  @media (max-width: 600px) {
+    padding: 16px;
+  }
+}

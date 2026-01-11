@@ -1,0 +1,92 @@
+.book-details-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.loading, .error {
+  text-align: center;
+  padding: 48px 24px;
+}
+
+.error {
+  color: #f44336;
+
+  button {
+    margin-top: 16px;
+  }
+}
+
+.book-details {
+  background: white;
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.book-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  h1 {
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .book-author {
+    font-style: italic;
+    color: #666;
+    margin-bottom: 4px;
+  }
+
+  .book-category, .book-isbn {
+    color: #888;
+    margin-bottom: 4px;
+  }
+}
+
+.book-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  margin-bottom: 32px;
+
+  .stat-card {
+    text-align: center;
+
+    h3 {
+      color: #666;
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #333;
+    }
+  }
+}
+
+.book-actions {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  button {
+    min-width: 150px;
+  }
+}
+
+@media (max-width: 600px) {
+  .book-stats {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .book-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+}
