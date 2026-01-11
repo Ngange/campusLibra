@@ -29,10 +29,25 @@ connectDB().then(async () => {
 
   // Create HTTP server for Socket.IO
   const httpServer = createServer(app);
+
+  // Allow both local dev and deployed frontend for websockets
+  const socketAllowedOrigins = [
+    'http://localhost:4200',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean);
+
   const io = new Server(httpServer, {
     cors: {
-      origin: process.env.FRONTEND_URL || 'http://localhost:4200',
+      origin: (origin, callback) => {
+        // Allow requests without origin (curl/mobile) or listed origins
+        if (!origin) return callback(null, true);
+        if (socketAllowedOrigins.includes(origin)) {
+          return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS (socket.io)'));
+      },
       methods: ['GET', 'POST'],
+      credentials: true,
     },
   });
 
