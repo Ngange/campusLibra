@@ -1,0 +1,88 @@
+<div class="home-container">
+  <div class="welcome-section">
+    <h1>Welcome to CampusLibra!</h1>
+    <p>Hello, {{ currentUser?.name }}!</p>
+    <p class="role-badge">{{ (userRole || 'member') | titlecase }}</p>
+  </div>
+
+  <div class="quick-actions">
+    <h2>Quick Actions</h2>
+
+    <!-- Member Actions -->
+    <div *ngIf="userRole === 'member'" class="action-grid">
+      <button mat-raised-button color="primary" routerLink="/books">
+        Browse Books
+      </button>
+      <button mat-raised-button color="accent" routerLink="/my-borrows">
+        My Borrows
+      </button>
+      <button mat-raised-button routerLink="/my-reservations">
+        My Reservations
+      </button>
+      <button mat-raised-button routerLink="/my-fines">My Fines</button>
+    </div>
+
+    <!-- Librarian Actions -->
+    <div *ngIf="userRole === 'librarian'" class="action-grid">
+      <button mat-raised-button color="primary" routerLink="/process-returns">
+        Process Returns
+      </button>
+      <button mat-raised-button color="accent" routerLink="/pending-pickups">
+        Pending Pickups
+      </button>
+      <button mat-raised-button routerLink="/member-management">
+        Member Management
+      </button>
+      <button mat-raised-button routerLink="/books">Book Inventory</button>
+    </div>
+
+    <!-- Admin Actions -->
+    <div *ngIf="userRole === 'admin'" class="action-grid">
+      <button mat-raised-button color="primary" routerLink="/books/manage">
+        Manage Books
+      </button>
+      <button mat-raised-button color="accent" routerLink="/users/manage">
+        Manage Users
+      </button>
+      <button mat-raised-button routerLink="/system-settings">
+        System Settings
+      </button>
+      <button mat-raised-button routerLink="/audit-trail">Audit Trail</button>
+    </div>
+  </div>
+
+    <!-- Featured Books Section -->
+    <div class="featured-books">
+      <h2>Available Books</h2>
+    
+      <div *ngIf="loadingBooks" class="loading">
+        Loading books...
+      </div>
+    
+      <div *ngIf="error" class="error">
+        {{ error }}
+      </div>
+    
+      <div *ngIf="!loadingBooks && !error" class="books-grid">
+        <app-book-card 
+          *ngFor="let book of books" 
+          [book]="book"
+          [showActions]="true">
+        </app-book-card>
+      
+        <div *ngIf="books.length === 0" class="no-books">
+          No available books at the moment.
+        </div>
+      </div>
+    
+      <div class="browse-all">
+        <button mat-stroked-button routerLink="/books">
+          Browse All Books
+        </button>
+      </div>
+    </div>
+
+  <div class="logout-section">
+    <button mat-stroked-button (click)="logout()">Logout</button>
+  </div>
+</div>

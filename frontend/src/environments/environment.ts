@@ -1,0 +1,20 @@
+// Development environment
+export const environment = {
+  production: false,
+  appName: 'CampusLibra',
+  appVersion: '1.0.0',
+  apiUrl: 'http://localhost:5000/api',
+  apiTimeout: 30000,
+  tokenKey: 'auth_token',
+  userKey: 'current_user',
+  jwtExpiryHours: 1,
+  socketUrl: 'http://localhost:5000',
+  socketReconnectDelay: 1000,
+  itemsPerPage: 10,
+  sessionTimeoutMinutes: 60,
+  enableLogging: true,
+  enableMockApi: false,
+  logLevel: 'debug',
+  defaultPageSize: 10,
+  maxPageSize: 100,
+};
