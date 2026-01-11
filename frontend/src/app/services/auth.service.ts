@@ -52,19 +52,9 @@ export class AuthService {
     );
   }
 
-  // POST to backend, auto-logs in user on registration success
+  // POST to backend; user will log in manually after registration
   register(userData: RegisterRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData).pipe(
-      tap(response => {
-        this.setSession(response.token, response.user);
-        // Connect to notifications after successful registration
-        const userId = response.user._id || response.user.id;
-        if (userId) {
-          this.notificationService.connectUser(userId);
-          this.notificationService.loadInitialNotifications();
-        }
-      })
-    );
+    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData);
   }
 
   // Clears token, user data, and redirects to home

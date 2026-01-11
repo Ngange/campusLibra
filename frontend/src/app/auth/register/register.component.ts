@@ -40,7 +40,8 @@ export class RegisterComponent {
     this.authService.register(userData).subscribe({
       next: () => {
         this.loading = false;
-        this.router.navigate(['/home']);
+        // Redirect to login so the user signs in manually after registration
+        this.router.navigate(['/login'], { queryParams: { registered: '1' } });
       },
       error: (err) => {
         this.loading = false;
