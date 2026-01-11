@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 
 export interface Notification {
@@ -17,6 +18,7 @@ export interface Notification {
   providedIn: 'root'
 })
 export class NotificationService {
+  private apiUrl = `${environment.apiUrl}/notifications`;
   private socket: Socket;
   private notificationsSubject = new BehaviorSubject<Notification[]>([]);
   public notifications$ = this.notificationsSubject.asObservable();
@@ -24,7 +26,7 @@ export class NotificationService {
   private unreadCountSubject = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSubject.asObservable();
 
-  constructor() {
+  constructor(private http: HttpClient) {
     // Initialize Socket.IO connection
     const socketUrl = environment.socketUrl || environment.apiUrl?.replace(/\/api$/, '') || 'http://localhost:5000';
 
@@ -51,6 +53,20 @@ export class NotificationService {
     });
   }
 
+  loadInitialNotifications(): void {
+    this.http.get<{ success: boolean; notifications: Notification[]; unreadCount: number }>(this.apiUrl)
+      .subscribe({
+        next: (response) => {
+          const notifications = Array.isArray(response.notifications) ? response.notifications : [];
+          this.notificationsSubject.next(notifications);
+          this.unreadCountSubject.next(response.unreadCount ?? 0);
+        },
+        error: (error) => {
+          console.error('Failed to load notifications:', error);
+        }
+      });
+  }
+
   connectUser(userId: string): void {
     if (!this.socket.connected) {
       this.socket.connect();
@@ -59,6 +75,19 @@ export class NotificationService {
   }
 
   markAsRead(notificationId: string): void {
+    // Persist read state to backend
+    this.http.patch<{ success: boolean; unreadCount: number }>(`${this.apiUrl}/${notificationId}/read`, {})
+      .subscribe({
+        next: (res) => {
+          if (typeof res.unreadCount === 'number') {
+            this.unreadCountSubject.next(res.unreadCount);
+          }
+        },
+        error: (error) => {
+          console.error('Failed to mark notification as read:', error);
+        }
+      });
+
     // Update local state
     const currentNotifications = this.notificationsSubject.value;
     const updatedNotifications = currentNotifications.map(notif =>
@@ -74,6 +103,7 @@ export class NotificationService {
   }
 
   markAllAsRead(): void {
+    // For now, just clear locally. Could add backend endpoint if needed.
     const currentNotifications = this.notificationsSubject.value;
     const updatedNotifications = currentNotifications.map(notif => ({ ...notif, isRead: true }));
     this.notificationsSubject.next(updatedNotifications);

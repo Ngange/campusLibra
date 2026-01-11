@@ -1,5 +1,6 @@
 const User = require('../models/user.model');
 const Role = require('../models/role.model');
+const { logUserAuditEvent } = require('../utils/audit.util');
 
 // List all users (admin only)
 const getAllUsers = async (req, res, next) => {
@@ -85,6 +86,16 @@ const updateUser = async (req, res, next) => {
       return next(error);
     }
 
+    // Log audit event
+    const performedBy = req.user?.id || req.user?._id;
+    if (performedBy) {
+      await logUserAuditEvent('USER_UPDATED', performedBy, id, {
+        userName: user.name,
+        userEmail: user.email,
+        changes: Object.keys(updateData),
+      });
+    }
+
     res.json({ success: true, user });
   } catch (error) {
     if (error.code === 11000) {
@@ -106,6 +117,15 @@ const deleteUser = async (req, res, next) => {
       const error = new Error('User not found');
       error.statusCode = 404;
       return next(error);
+    }
+
+    // Log audit event
+    const performedBy = req.user?.id || req.user?._id;
+    if (performedBy) {
+      await logUserAuditEvent('USER_DELETED', performedBy, id, {
+        userName: user.name,
+        userEmail: user.email,
+      });
     }
 
     res.json({ success: true, message: 'User deleted successfully' });
@@ -132,6 +152,15 @@ const blockUser = async (req, res, next) => {
       return next(error);
     }
 
+    // Log audit event
+    const performedBy = req.user?.id || req.user?._id;
+    if (performedBy) {
+      await logUserAuditEvent('USER_BLOCKED', performedBy, id, {
+        userName: user.name,
+        userEmail: user.email,
+      });
+    }
+
     res.json({ success: true, user, message: 'User blocked successfully' });
   } catch (error) {
     next(error);
@@ -154,6 +183,15 @@ const unblockUser = async (req, res, next) => {
       const error = new Error('User not found');
       error.statusCode = 404;
       return next(error);
+    }
+
+    // Log audit event
+    const performedBy = req.user?.id || req.user?._id;
+    if (performedBy) {
+      await logUserAuditEvent('USER_UNBLOCKED', performedBy, id, {
+        userName: user.name,
+        userEmail: user.email,
+      });
     }
 
     res.json({ success: true, user, message: 'User unblocked successfully' });

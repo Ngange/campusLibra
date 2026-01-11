@@ -10,6 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 
 import { SharedModule } from '../shared/shared.module';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -17,13 +19,17 @@ import { UsersManageComponent } from './users-manage/users-manage.component';
 import { BooksManageComponent } from './books-manage/books-manage.component';
 import { SystemSettingsComponent } from './system-settings/system-settings.component';
 import { AuditTrailComponent } from './audit-trail/audit-trail.component';
+import { EditBookDialogComponent } from './books-manage/edit-book-dialog/edit-book-dialog.component';
+import { CreateBookDialogComponent } from './books-manage/create-book-dialog/create-book-dialog.component';
 
 @NgModule({
   declarations: [
     UsersManageComponent,
     BooksManageComponent,
     SystemSettingsComponent,
-    AuditTrailComponent
+    AuditTrailComponent,
+    EditBookDialogComponent,
+    CreateBookDialogComponent
   ],
   imports: [
     CommonModule,
@@ -38,6 +44,8 @@ import { AuditTrailComponent } from './audit-trail/audit-trail.component';
     MatSelectModule,
     MatTableModule,
     MatMenuModule,
+    MatDialogModule,
+    MatAutocompleteModule,
     SharedModule,
     AdminRoutingModule
   ]

@@ -1,4 +1,5 @@
 const BookAudit = require('../models/bookAudit.model');
+const logger = require('../config/logger');
 
 const createBookAudit = async (
   bookId,
@@ -16,4 +17,40 @@ const createBookAudit = async (
   });
 };
 
-module.exports = { createBookAudit };
+/**
+ * Log a user audit event
+ * @param {string} action - Action type (e.g., 'USER_BLOCKED', 'USER_UNBLOCKED', 'USER_UPDATED')
+ * @param {string} userId - ID of user performing the action
+ * @param {string} targetUserId - ID of user being acted upon
+ * @param {object} details - Additional details about the action
+ */
+const logUserAuditEvent = async (
+  action,
+  userId,
+  targetUserId,
+  details = {}
+) => {
+  try {
+    const auditLog = new BookAudit({
+      book: null, // User events don't reference books
+      bookCopy: null,
+      action: action,
+      performedBy: userId,
+      details: {
+        targetUser: targetUserId,
+        eventType: 'USER_MANAGEMENT',
+        ...details,
+      },
+    });
+
+    await auditLog.save();
+    logger.info(
+      `Audit log created: ${action} by user ${userId} on user ${targetUserId}`
+    );
+  } catch (error) {
+    logger.error('Failed to log user audit event:', error);
+    // Don't throw - audit logging failure shouldn't break the main action
+  }
+};
+
+module.exports = { createBookAudit, logUserAuditEvent };

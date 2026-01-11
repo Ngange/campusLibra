@@ -9,6 +9,21 @@
   }
 }
 
+.header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.filters-card {
+  margin-bottom: 24px;
+}
+
 .create-book-card {
   margin-bottom: 32px;
 }

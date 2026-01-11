@@ -6,6 +6,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './core/layout/layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 const routes: Routes = [
   // Public routes (no layout)
@@ -34,6 +35,11 @@ const routes: Routes = [
       {
         path: 'admin',
         loadChildren: () => import('./admin/admin.module').then(m => m.AdminModule),
+        canActivate: [AuthGuard]
+      },
+      {
+        path: 'notifications',
+        component: NotificationsComponent,
         canActivate: [AuthGuard]
       },
     ]

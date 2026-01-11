@@ -9,21 +9,59 @@
     <mat-card-content>
       <form [formGroup]="filterForm" class="filters-form">
         <mat-form-field appearance="outline">
-          <mat-label>User ID</mat-label>
+          <mat-label>User Name</mat-label>
           <input
             matInput
-            formControlName="userId"
-            placeholder="Enter user ID"
+            formControlName="userName"
+            placeholder="Search user by name"
+            [matAutocomplete]="userAuto"
           />
+          <mat-autocomplete #userAuto="matAutocomplete">
+            <mat-option
+              *ngFor="let user of filteredUsers$ | async"
+              [value]="user"
+              (click)="onUserSelected(user)"
+            >
+              {{ user.name }}
+            </mat-option>
+          </mat-autocomplete>
+          <button
+            matSuffix
+            mat-icon-button
+            *ngIf="filterForm.get('userName')!.value"
+            (click)="clearUserFilter()"
+            type="button"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
         </mat-form-field>
 
         <mat-form-field appearance="outline">
-          <mat-label>Book ID</mat-label>
+          <mat-label>Book Title</mat-label>
           <input
             matInput
-            formControlName="bookId"
-            placeholder="Enter book ID"
+            formControlName="bookTitle"
+            placeholder="Search book by title"
+            [matAutocomplete]="bookAuto"
           />
+          <mat-autocomplete #bookAuto="matAutocomplete">
+            <mat-option
+              *ngFor="let book of filteredBooks$ | async"
+              [value]="book"
+              (click)="onBookSelected(book)"
+            >
+              {{ book.title }}
+            </mat-option>
+          </mat-autocomplete>
+          <button
+            matSuffix
+            mat-icon-button
+            *ngIf="filterForm.get('bookTitle')!.value"
+            (click)="clearBookFilter()"
+            type="button"
+          >
+            <mat-icon>close</mat-icon>
+          </button>
         </mat-form-field>
 
         <mat-form-field appearance="outline">

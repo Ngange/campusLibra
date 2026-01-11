@@ -34,6 +34,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
 import { LayoutModule } from './core/layout/layout.module';
+import { NotificationsComponent } from './notifications/notifications.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { LayoutModule } from './core/layout/layout.module';
     LandingComponent,
     LoginComponent,
     RegisterComponent,
-    HomeComponent
+    HomeComponent,
+    NotificationsComponent
   ],
   imports: [
     BrowserModule,

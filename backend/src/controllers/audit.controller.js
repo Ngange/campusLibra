@@ -4,13 +4,21 @@ const logger = require('../config/logger');
 /**
  * Get all audit logs with optional filtering
  * Supports filter by: userId, bookId, action, startDate, endDate
+ * Librarians see only book events they performed; admins see everything
  */
 const getAuditTrailHandler = async (req, res, next) => {
   try {
     const { userId, bookId, action, startDate, endDate } = req.query;
+    const currentUser = req.user;
 
     // Build filter object
     const filter = {};
+
+    // Librarians: only see book events they performed
+    if (currentUser?.role?.name === 'librarian') {
+      filter.performedBy = currentUser._id || currentUser.id;
+      filter['details.eventType'] = 'BOOK_MANAGEMENT';
+    }
 
     if (userId) {
       filter.performedBy = userId;

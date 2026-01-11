@@ -1,7 +1,7 @@
 <mat-toolbar color="primary">
   <!-- Desktop Logo & Title -->
-  <div class="desktop-header">
-    <button mat-icon-button (click)="goToHome()" class="logo-button">
+  <div class="desktop-header" (click)="goToHome()">
+    <button mat-icon-button class="logo-button">
       <img src="assets/images/logo-32x32.png" alt="CampusLibra" class="logo" />
     </button>
     <span class="app-title">CampusLibra</span>
@@ -120,8 +120,11 @@
       </span>
     </button>
     <mat-menu #notificationMenu="matMenu" class="notification-menu">
-      <div class="notification-header">
-        <span>Notifications</span>
+      <div
+        class="notification-header"
+        (click)="goToNotifications(); $event.stopPropagation()"
+      >
+        <span class="clickable">Notifications</span>
         <button
           mat-icon-button
           (click)="markAllAsRead(); $event.stopPropagation()"
@@ -133,7 +136,7 @@
 
       <div class="notifications-list">
         <div
-          *ngIf="(notifications$ | async)?.length === 0"
+          *ngIf="(unreadNotifications$ | async)?.length === 0"
           class="no-notifications"
         >
           No new notifications
@@ -141,7 +144,7 @@
 
         <button
           mat-menu-item
-          *ngFor="let notification of notifications$ | async"
+          *ngFor="let notification of unreadNotifications$ | async"
           (click)="markNotificationAsRead(notification.id)"
           [class.unread]="!notification.isRead"
         >

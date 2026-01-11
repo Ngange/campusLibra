@@ -3,7 +3,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 import { NotificationService, Notification } from '../../../services/notification.service';
 import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-navbar',
@@ -16,6 +16,7 @@ export class NavbarComponent implements OnInit {
   userRole: string = 'member';
   unreadNotifications: number = 0;
   notifications$: Observable<Notification[]>;
+  unreadNotifications$: Observable<Notification[]>;
   isMobileMenuOpen = false;
 
   constructor(
@@ -24,6 +25,9 @@ export class NavbarComponent implements OnInit {
     private notificationService: NotificationService
   ) {
     this.notifications$ = this.notificationService.notifications$;
+    this.unreadNotifications$ = this.notifications$.pipe(
+      map((notifications) => notifications.filter((n) => !n.isRead))
+    );
 
     // Subscribe to unread notification count
     this.notificationService.unreadCount$.subscribe(count => {
@@ -91,6 +95,10 @@ export class NavbarComponent implements OnInit {
 
   goToHome(): void {
     this.router.navigate(['/home']);
+  }
+
+  goToNotifications(): void {
+    this.router.navigate(['/notifications']);
   }
 
   markNotificationAsRead(notificationId: string): void {

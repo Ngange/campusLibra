@@ -46,6 +46,7 @@ export class AuthService {
         const userId = response.user._id || response.user.id;
         if (userId) {
           this.notificationService.connectUser(userId);
+          this.notificationService.loadInitialNotifications();
         }
       })
     );
@@ -60,6 +61,7 @@ export class AuthService {
         const userId = response.user._id || response.user.id;
         if (userId) {
           this.notificationService.connectUser(userId);
+          this.notificationService.loadInitialNotifications();
         }
       })
     );
@@ -133,6 +135,7 @@ export class AuthService {
         const userId = user._id || user.id;
         if (userId) {
           this.notificationService.connectUser(userId);
+          this.notificationService.loadInitialNotifications();
         }
       }
     }

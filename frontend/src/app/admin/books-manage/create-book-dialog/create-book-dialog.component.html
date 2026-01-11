@@ -1,0 +1,81 @@
+<h2 mat-dialog-title>Add New Book</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="bookForm" class="book-form">
+    <mat-form-field appearance="outline">
+      <mat-label>Title</mat-label>
+      <input matInput formControlName="title" placeholder="Enter book title" />
+      <mat-error *ngIf="formErrorService.hasError(bookForm.get('title'))">
+        {{ formErrorService.getErrorMessage(bookForm.get("title"), "Title") }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Author</mat-label>
+      <input
+        matInput
+        formControlName="author"
+        placeholder="Enter author name"
+      />
+      <mat-error *ngIf="formErrorService.hasError(bookForm.get('author'))">
+        {{ formErrorService.getErrorMessage(bookForm.get("author"), "Author") }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>ISBN (10 or 13 digits)</mat-label>
+      <input
+        matInput
+        formControlName="isbn"
+        placeholder="Enter ISBN-10 or ISBN-13"
+      />
+      <mat-error *ngIf="formErrorService.hasError(bookForm.get('isbn'))">
+        {{ formErrorService.getErrorMessage(bookForm.get("isbn"), "ISBN") }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Category</mat-label>
+      <mat-select formControlName="category">
+        <mat-option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </mat-option>
+      </mat-select>
+      <mat-error *ngIf="formErrorService.hasError(bookForm.get('category'))">
+        {{
+          formErrorService.getErrorMessage(bookForm.get("category"), "Category")
+        }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Number of Copies</mat-label>
+      <input
+        matInput
+        type="number"
+        formControlName="copyCount"
+        placeholder="Enter number of copies"
+      />
+      <mat-error *ngIf="formErrorService.hasError(bookForm.get('copyCount'))">
+        {{
+          formErrorService.getErrorMessage(
+            bookForm.get("copyCount"),
+            "Number of Copies"
+          )
+        }}
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="isLoading">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="onCreate()"
+    [disabled]="bookForm.invalid || isLoading"
+  >
+    {{ isLoading ? "Creating..." : "Create Book" }}
+  </button>
+</mat-dialog-actions>

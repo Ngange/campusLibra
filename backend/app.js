@@ -102,6 +102,7 @@ const roleRoutes = require('./src/routes/role.routes');
 const dashboardRoutes = require('./src/routes/dashboard.routes');
 const settingRoutes = require('./src/routes/setting.routes');
 const auditRoutes = require('./src/routes/audit.routes');
+const notificationRoutes = require('./src/routes/notification.routes');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/borrows', borrowRoutes);
@@ -113,6 +114,7 @@ app.use('/api/roles', roleRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/settings', settingRoutes);
 app.use('/api/audit', auditRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Global error handler
 const errorHandler = require('./src/middlewares/error.middleware');
