@@ -25,7 +25,8 @@ const SettingSchema = new Schema({
   },
   timestamp: {
     type: Date,
+    default: Date.now, // Always set timestamp on creation
   },
-});
+}, { timestamps: true }); // Also add createdAt/updatedAt
 
 module.exports = mongoose.model('BookAudit', SettingSchema);

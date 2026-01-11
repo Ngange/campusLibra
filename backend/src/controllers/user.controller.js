@@ -4,7 +4,22 @@ const Role = require('../models/role.model');
 // List all users (admin only)
 const getAllUsers = async (req, res, next) => {
   try {
-    const users = await User.find()
+    const { role } = req.query;
+
+    let filter = {};
+
+    // If role filter is provided, find role by name and filter users
+    if (role) {
+      const roleDoc = await Role.findOne({ name: role });
+      if (roleDoc) {
+        filter.role = roleDoc._id;
+      } else {
+        // Role doesn't exist, return empty array
+        return res.json({ success: true, users: [] });
+      }
+    }
+
+    const users = await User.find(filter)
       .select('-password') // Never return passwords
       .populate('role', 'name description');
 

@@ -46,7 +46,7 @@ const getAuditTrailHandler = async (req, res, next) => {
 
     res.json({
       success: true,
-      data: auditLogs,
+      auditLogs: auditLogs,
       count: auditLogs.length,
     });
   } catch (error) {

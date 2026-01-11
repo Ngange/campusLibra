@@ -14,6 +14,44 @@ const createRolesIfNotExists = async () => {
     console.log('Updated role: admin (synced permissions)');
   }
 
+  // Always ensure librarian has correct permissions
+  const librarianExisting = await Role.findOne({ name: 'librarian' });
+  if (librarianExisting) {
+    const librarianPermIds = permissions
+      .filter(
+        (p) =>
+          p.category === 'book' ||
+          p.category === 'borrow' ||
+          p.category === 'reservation' ||
+          p.category === 'fine' ||
+          p.name === 'user_view' ||
+          p.name === 'user_manage' // Can manage (block/unblock) users
+      )
+      .map((p) => p._id);
+    librarianExisting.permissions = librarianPermIds;
+    await librarianExisting.save();
+    console.log('Updated role: librarian (synced permissions)');
+  }
+
+  // Always ensure member has correct permissions
+  const memberExisting = await Role.findOne({ name: 'member' });
+  if (memberExisting) {
+    const memberPermIds = permissions
+      .filter(
+        (p) =>
+          p.name === 'book_view' ||
+          p.name === 'borrow_create' ||
+          p.name === 'borrow_view' ||
+          p.name === 'reservation_create' ||
+          p.name === 'reservation_view' ||
+          p.name === 'fine_view'
+      )
+      .map((p) => p._id);
+    memberExisting.permissions = memberPermIds;
+    await memberExisting.save();
+    console.log('Updated role: member (synced permissions)');
+  }
+
   const roles = [
     {
       name: 'admin',
@@ -30,7 +68,8 @@ const createRolesIfNotExists = async () => {
             p.category === 'borrow' ||
             p.category === 'reservation' ||
             p.category === 'fine' ||
-            p.name === 'user_view' // Can view users but not manage
+            p.name === 'user_view' ||
+            p.name === 'user_manage' // Can manage (block/unblock) users
         )
         .map((p) => p._id),
     },

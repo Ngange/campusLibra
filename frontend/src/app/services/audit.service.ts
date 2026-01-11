@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
 export interface AuditLog {
@@ -39,14 +40,20 @@ export class AuditService {
       if (filters.endDate) params = params.set('endDate', filters.endDate);
     }
 
-    return this.http.get<AuditLog[]>(this.apiUrl, { params });
+    return this.http.get<{ success: boolean; auditLogs: any[] }>(this.apiUrl, { params }).pipe(
+      map(response => Array.isArray(response.auditLogs) ? response.auditLogs : [])
+    );
   }
 
   getAuditLogsByUser(userId: string): Observable<AuditLog[]> {
-    return this.http.get<AuditLog[]>(`${this.apiUrl}/user/${userId}`);
+    return this.http.get<{ success: boolean; data: any[] }>(`${this.apiUrl}/user/${userId}`).pipe(
+      map(response => Array.isArray(response.data) ? response.data : [])
+    );
   }
 
   getAuditLogsByBook(bookId: string): Observable<AuditLog[]> {
-    return this.http.get<AuditLog[]>(`${this.apiUrl}/book/${bookId}`);
+    return this.http.get<{ success: boolean; data: any[] }>(`${this.apiUrl}/book/${bookId}`).pipe(
+      map(response => Array.isArray(response.data) ? response.data : [])
+    );
   }
 }
