@@ -13,8 +13,15 @@
             <mat-form-field appearance="outline">
               <mat-label>Name</mat-label>
               <input matInput formControlName="name" placeholder="Your name" />
-              <mat-error *ngIf="formErrorService.hasError(profileForm.get('name'))">
-                {{ formErrorService.getErrorMessage(profileForm.get('name'), 'Name') }}
+              <mat-error
+                *ngIf="formErrorService.hasError(profileForm.get('name'))"
+              >
+                {{
+                  formErrorService.getErrorMessage(
+                    profileForm.get("name"),
+                    "Name"
+                  )
+                }}
               </mat-error>
             </mat-form-field>
 
@@ -25,8 +32,15 @@
                 formControlName="email"
                 placeholder="you@example.com"
               />
-              <mat-error *ngIf="formErrorService.hasError(profileForm.get('email'))">
-                {{ formErrorService.getErrorMessage(profileForm.get('email'), 'Email') }}
+              <mat-error
+                *ngIf="formErrorService.hasError(profileForm.get('email'))"
+              >
+                {{
+                  formErrorService.getErrorMessage(
+                    profileForm.get("email"),
+                    "Email"
+                  )
+                }}
               </mat-error>
             </mat-form-field>
           </div>
@@ -35,9 +49,16 @@
             mat-raised-button
             color="primary"
             type="submit"
-            [disabled]="profileForm.invalid || loadingStateService.isLoading('profileSave')"
+            [disabled]="
+              profileForm.invalid ||
+              loadingStateService.isLoading('profileSave')
+            "
           >
-            {{ loadingStateService.isLoading('profileSave') ? 'Saving...' : 'Save Changes' }}
+            {{
+              loadingStateService.isLoading("profileSave")
+                ? "Saving..."
+                : "Save Changes"
+            }}
           </button>
         </form>
       </mat-card-content>
@@ -55,11 +76,15 @@
                 type="password"
                 formControlName="currentPassword"
               />
-              <mat-error *ngIf="formErrorService.hasError(passwordForm.get('currentPassword'))">
+              <mat-error
+                *ngIf="
+                  formErrorService.hasError(passwordForm.get('currentPassword'))
+                "
+              >
                 {{
                   formErrorService.getErrorMessage(
-                    passwordForm.get('currentPassword'),
-                    'Current Password'
+                    passwordForm.get("currentPassword"),
+                    "Current Password"
                   )
                 }}
               </mat-error>
@@ -68,11 +93,15 @@
             <mat-form-field appearance="outline">
               <mat-label>New Password</mat-label>
               <input matInput type="password" formControlName="newPassword" />
-              <mat-error *ngIf="formErrorService.hasError(passwordForm.get('newPassword'))">
+              <mat-error
+                *ngIf="
+                  formErrorService.hasError(passwordForm.get('newPassword'))
+                "
+              >
                 {{
                   formErrorService.getErrorMessage(
-                    passwordForm.get('newPassword'),
-                    'New Password'
+                    passwordForm.get("newPassword"),
+                    "New Password"
                   )
                 }}
               </mat-error>
@@ -85,11 +114,15 @@
                 type="password"
                 formControlName="confirmPassword"
               />
-              <mat-error *ngIf="formErrorService.hasError(passwordForm.get('confirmPassword'))">
+              <mat-error
+                *ngIf="
+                  formErrorService.hasError(passwordForm.get('confirmPassword'))
+                "
+              >
                 {{
                   formErrorService.getErrorMessage(
-                    passwordForm.get('confirmPassword'),
-                    'Confirm Password'
+                    passwordForm.get("confirmPassword"),
+                    "Confirm Password"
                   )
                 }}
               </mat-error>
@@ -103,9 +136,16 @@
             mat-raised-button
             color="accent"
             type="submit"
-            [disabled]="passwordForm.invalid || loadingStateService.isLoading('passwordChange')"
+            [disabled]="
+              passwordForm.invalid ||
+              loadingStateService.isLoading('passwordChange')
+            "
           >
-            {{ loadingStateService.isLoading('passwordChange') ? 'Updating...' : 'Update Password' }}
+            {{
+              loadingStateService.isLoading("passwordChange")
+                ? "Updating..."
+                : "Update Password"
+            }}
           </button>
         </form>
       </mat-card-content>

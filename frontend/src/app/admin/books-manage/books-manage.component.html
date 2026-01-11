@@ -91,10 +91,16 @@
           mat-raised-button
           color="primary"
           type="submit"
-          [disabled]="bookForm.invalid || loadingStateService.isLoading('createBook')"
+          [disabled]="
+            bookForm.invalid || loadingStateService.isLoading('createBook')
+          "
         >
           <mat-icon>add</mat-icon>
-          {{ loadingStateService.isLoading('createBook') ? 'Creating...' : 'Create Book' }}
+          {{
+            loadingStateService.isLoading("createBook")
+              ? "Creating..."
+              : "Create Book"
+          }}
         </button>
       </form>
     </mat-card-content>

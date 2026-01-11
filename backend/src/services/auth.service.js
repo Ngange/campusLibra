@@ -131,11 +131,21 @@ const changePassword = async (userId, currentPassword, newPassword) => {
   const hasUpperCase = /[A-Z]/.test(newPassword);
   const hasLowerCase = /[a-z]/.test(newPassword);
   const hasNumeric = /[0-9]/.test(newPassword);
-  const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(newPassword);
+  const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]/.test(
+    newPassword
+  );
   const isLongEnough = newPassword.length >= 8;
 
-  if (!hasUpperCase || !hasLowerCase || !hasNumeric || !hasSpecialChar || !isLongEnough) {
-    const error = new Error('New password does not meet complexity requirements');
+  if (
+    !hasUpperCase ||
+    !hasLowerCase ||
+    !hasNumeric ||
+    !hasSpecialChar ||
+    !isLongEnough
+  ) {
+    const error = new Error(
+      'New password does not meet complexity requirements'
+    );
     error.statusCode = 400;
     throw error;
   }

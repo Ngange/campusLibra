@@ -380,3 +380,11 @@
 {"level":"info","message":"Server running on port 5000","timestamp":"2026-01-11 15:18:13"}
 {"level":"info","message":"Socket.IO ready","timestamp":"2026-01-11 15:18:13"}
 {"level":"info","message":"Environment: development","timestamp":"2026-01-11 15:18:13"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-11 15:18:18"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-11 15:18:18"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-11 15:18:18"}
+{"level":"info","message":"::1 - - [11/Jan/2026:15:18:27 +0000] \"GET /api/books?page=1&limit=12 HTTP/1.1\" 304 - \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36\"","timestamp":"2026-01-11 15:18:27"}
+{"level":"info","message":"::1 - - [11/Jan/2026:15:18:32 +0000] \"GET /api/books?page=1&limit=12 HTTP/1.1\" 304 - \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36\"","timestamp":"2026-01-11 15:18:32"}
+{"level":"info","message":"::1 - - [11/Jan/2026:15:18:47 +0000] \"GET /api/books?page=1&limit=12 HTTP/1.1\" 304 - \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36\"","timestamp":"2026-01-11 15:18:47"}
+{"level":"info","message":"::1 - - [11/Jan/2026:15:19:17 +0000] \"GET /api/books?page=1&limit=12 HTTP/1.1\" 304 - \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36\"","timestamp":"2026-01-11 15:19:17"}
+{"level":"info","message":"::1 - - [11/Jan/2026:15:19:26 +0000] \"GET /api/books?page=1&limit=12 HTTP/1.1\" 304 - \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36\"","timestamp":"2026-01-11 15:19:26"}
