@@ -167,7 +167,13 @@
 
 .mobile-menu-button {
   color: white;
-  margin-left: auto;
+  margin-left: 8px;
+}
+
+.mobile-notification {
+  color: white;
+  margin-left: 8px;
+  position: relative;
 }
 
 // Mobile drawer styles
@@ -242,12 +248,13 @@
 }
 
 @media (min-width: 769px) {
-  .mobile-menu-button {
-    display: none;
+  .mobile-menu-button,
+  .mobile-notification {
+    display: none !important;
   }
 
   .mobile-drawer-container {
-    display: none;
+    display: none !important;
   }
 }
 
