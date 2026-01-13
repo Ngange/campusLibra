@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { environment } from '../../../environments/environment';
 
 // Login component with reactive form validation
 @Component({
@@ -10,7 +11,7 @@ import { AuthService } from '../../services/auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   loginForm: FormGroup;
   loading = false;
   error: string | null = null;
@@ -25,6 +26,17 @@ export class LoginComponent {
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
+  }
+
+  ngOnInit(): void {
+    // Clear expired token from localStorage when user is on login page
+    // This prevents the login modal from appearing after logout
+    const token = localStorage.getItem(environment.tokenKey);
+    if (token) {
+      // Token exists but user navigated to login page - clear it
+      localStorage.removeItem(environment.tokenKey);
+      localStorage.removeItem(environment.userKey);
+    }
   }
 
   // Submit login credentials to backend

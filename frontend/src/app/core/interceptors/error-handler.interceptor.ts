@@ -26,8 +26,14 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     return next.handle(request).pipe(
       catchError((error: HttpErrorResponse) => {
-        // Handle 401 Unauthorized errors with login modal
-        if (error.status === 401 && !request.url.includes('/auth/login')) {
+        // Check if current route is a public auth route
+        const isPublicAuthRoute =
+          this.router.url.includes('/login') ||
+          this.router.url.includes('/register') ||
+          this.router.url === '/';
+
+        // Handle 401 Unauthorized errors with login modal (only on protected routes)
+        if (error.status === 401 && !isPublicAuthRoute && !request.url.includes('/auth/login')) {
           return this.handle401Error(request, next);
         }
 
