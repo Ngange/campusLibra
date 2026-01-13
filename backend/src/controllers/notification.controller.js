@@ -113,4 +113,9 @@ const markAllAsRead = async (req, res, next) => {
   }
 };
 
-module.exports = { getUserNotifications, markAsRead, markAsUnread, markAllAsRead };
+module.exports = {
+  getUserNotifications,
+  markAsRead,
+  markAsUnread,
+  markAllAsRead,
+};
