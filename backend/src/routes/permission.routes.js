@@ -29,6 +29,7 @@ router.get('/:id', getPermissionByIdHandler);
 router.post(
   '/',
   validationMiddleware.validatePermission,
+  validationMiddleware.handleValidationErrors,
   createPermissionHandler
 );
 
@@ -36,6 +37,7 @@ router.post(
 router.put(
   '/:id',
   validationMiddleware.validatePermissionUpdate,
+  validationMiddleware.handleValidationErrors,
   updatePermissionHandler
 );
 

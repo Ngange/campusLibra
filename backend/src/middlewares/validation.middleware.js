@@ -271,7 +271,6 @@ const validatePermission = [
     .withMessage(
       'Category must be one of: book, user, borrow, reservation, fine, role, system'
     ),
-  handleValidationErrors,
 ];
 
 const validatePermissionUpdate = [
@@ -287,7 +286,6 @@ const validatePermissionUpdate = [
     .withMessage(
       'Category must be one of: book, user, borrow, reservation, fine, role, system'
     ),
-  handleValidationErrors,
 ];
 
 module.exports = {

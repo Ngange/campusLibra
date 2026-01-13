@@ -8,7 +8,7 @@ const roleSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
-      enum: ['admin', 'librarian', 'member'], // enforce these roles for now
+      // Allow both system roles and custom roles
     },
     description: {
       type: String,
