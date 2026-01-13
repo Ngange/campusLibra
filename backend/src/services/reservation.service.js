@@ -75,8 +75,7 @@ const createReservation = async (userId, bookId) => {
   });
 
   // 7. Return populated reservation
-  const populatedReservation = await Reservation
-    .findById(reservation._id)
+  const populatedReservation = await Reservation.findById(reservation._id)
     .populate('user', 'name email')
     .populate('book', 'title author');
 
