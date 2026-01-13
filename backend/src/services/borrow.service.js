@@ -6,7 +6,7 @@ const { getSetting } = require('../utils/config.util');
 const { createBookAudit } = require('../utils/audit.util');
 const { calculateDueDate } = require('../utils/date.util');
 const { findAvailableBookCopy } = require('./bookCopy.service');
-const { emitNotification } = require('../utils/notification.util');
+const { emitNotification, emitNotificationWithStaff } = require('../utils/notification.util');
 const { fulfillNextReservation } = require('./reservation.service');
 
 const borrowBook = async (userId, bookId) => {
@@ -37,13 +37,21 @@ const borrowBook = async (userId, bookId) => {
   bookCopy.status = 'borrowed';
   await bookCopy.save();
 
+  // Populate user for notification
+  const populatedUser = await require('../models/user.model').findById(userId).select('name');
+  const userName = populatedUser?.name || 'A user';
+
   // Send in-app notification with socket emit
-  await emitNotification(
+  await emitNotificationWithStaff(
     userId,
     'Book Borrowed',
     `You have successfully borrowed "${book.title}" by ${
       book.author
     }. Please return by ${dueDate.toLocaleDateString()}.`,
+    'Book Borrowed',
+    `${userName} has borrowed "${book.title}" by ${
+      book.author
+    }. Due date: ${dueDate.toLocaleDateString()}.`,
     'borrow_confirmed',
     borrow._id,
     'Borrow'
@@ -145,11 +153,13 @@ const returnBook = async (borrowId, librarianId) => {
     fine = await calculateFine(borrowId);
   }
 
-  // Notify user
-  await emitNotification(
+  // Notify user and staff
+  await emitNotificationWithStaff(
     borrow.user._id,
     'Book Returned',
     `"${borrow.book.title}" has been successfully returned.`,
+    'Book Returned',
+    `${borrow.user.name} has returned "${borrow.book.title}".`,
     'book_returned',
     borrowId,
     'Borrow'
@@ -214,13 +224,17 @@ const renewBook = async (borrowId, userId) => {
   borrow.dueDate = newDueDate;
   await borrow.save();
 
-  // Notify user
-  await emitNotification(
+  // Notify user and staff
+  await emitNotificationWithStaff(
     userId,
     'Book Renewed',
     `"${
       borrow.book.title
     }" has been renewed. New due date: ${newDueDate.toLocaleDateString()}.`,
+    'Book Renewed',
+    `${borrow.user.name} has renewed "${
+      borrow.book.title
+    }". New due date: ${newDueDate.toLocaleDateString()}.`,
     'book_renewed',
     borrowId,
     'Borrow'

@@ -6,7 +6,7 @@ const { getSetting } = require('../utils/config.util');
 const { createBookAudit } = require('../utils/audit.util');
 const { calculateDueDate } = require('../utils/date.util');
 const { findAvailableBookCopy } = require('./bookCopy.service');
-const { emitNotification } = require('../utils/notification.util');
+const { emitNotification, emitNotificationWithStaff } = require('../utils/notification.util');
 
 // Service to create a new reservation
 const createReservation = async (userId, bookId) => {
@@ -48,6 +48,23 @@ const createReservation = async (userId, bookId) => {
     book: bookId,
     position,
   });
+
+  // Get user name for staff notifications
+  const User = require('../models/user.model');
+  const user = await User.findById(userId).select('name');
+  const userName = user?.name || 'A user';
+
+  // Notify user and staff about new reservation
+  await emitNotificationWithStaff(
+    userId,
+    'Reservation Created',
+    `You have reserved "${book.title}" by ${book.author}. Position in queue: ${position}`,
+    'New Reservation',
+    `${userName} has reserved "${book.title}" by ${book.author}. Position in queue: ${position}`,
+    'reservation_created',
+    reservation._id,
+    'Reservation'
+  );
 
   // 6. Log audit
   await createBookAudit(bookId, null, 'reservation_created', userId, {
@@ -166,6 +183,18 @@ const fulfillReservationPickup = async (reservationId, librarianId) => {
   reservation.pickedUpAt = new Date();
   reservation.status = 'fulfilled';
   await reservation.save();
+
+  // Notify user and staff about pickup
+  await emitNotificationWithStaff(
+    reservation.user._id,
+    'Book Picked Up',
+    `You have picked up "${reservation.book.title}". Please return by ${dueDate.toLocaleDateString()}.`,
+    'Book Picked Up',
+    `${reservation.user.name} has picked up "${reservation.book.title}". Due date: ${dueDate.toLocaleDateString()}.`,
+    'reservation_fulfilled',
+    reservation._id,
+    'Reservation'
+  );
 
   // Log audits
   await createBookAudit(

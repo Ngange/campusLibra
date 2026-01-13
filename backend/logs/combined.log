@@ -3235,3 +3235,7 @@
 {"level":"info","message":"Socket.IO ready","timestamp":"2026-01-11 21:55:30"}
 {"level":"info","message":"Environment: development","timestamp":"2026-01-11 21:55:30"}
 {"level":"info","message":"SIGINT signal received: closing HTTP server gracefully","timestamp":"2026-01-11 21:55:56"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-13 09:28:14"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-13 09:28:14"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-13 09:28:14"}
+{"level":"info","message":"SIGINT signal received: closing HTTP server gracefully","timestamp":"2026-01-13 09:28:21"}
