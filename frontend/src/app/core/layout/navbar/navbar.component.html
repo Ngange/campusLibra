@@ -212,7 +212,7 @@
   <mat-menu #userMenu="matMenu">
     <button mat-menu-item routerLink="/member/profile">
       <mat-icon>person</mat-icon>
-      <span>Profile</span>
+      <span>{{ currentUser?.name || 'Profile' }}</span>
     </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon>exit_to_app</mat-icon>
