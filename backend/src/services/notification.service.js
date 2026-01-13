@@ -33,6 +33,15 @@ const markAsRead = async (notificationId, userId) => {
   );
 };
 
+// Helper: Mark as unread
+const markAsUnread = async (notificationId, userId) => {
+  return await Notification.findOneAndUpdate(
+    { _id: notificationId, userId },
+    { isRead: false },
+    { new: true }
+  );
+};
+
 // Helper: Get unread count
 const getUnreadCount = async (userId) => {
   return await Notification.countDocuments({ userId, isRead: false });
@@ -51,6 +60,7 @@ const getUserNotifications = async (userId, page = 1, limit = 10) => {
 module.exports = {
   createNotification,
   markAsRead,
+  markAsUnread,
   getUnreadCount,
   getUserNotifications,
 };

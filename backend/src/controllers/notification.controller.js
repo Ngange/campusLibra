@@ -82,4 +82,24 @@ const markAsRead = async (req, res, next) => {
   }
 };
 
-module.exports = { getUserNotifications, markAsRead };
+// Mark a notification as unread for the current user
+const markAsUnread = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const notification = await notificationService.markAsUnread(id, userId);
+    if (!notification) {
+      return res
+        .status(404)
+        .json({ success: false, message: 'Notification not found' });
+    }
+
+    const unreadCount = await notificationService.getUnreadCount(userId);
+    res.json({ success: true, notification, unreadCount });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getUserNotifications, markAsRead, markAsUnread };
