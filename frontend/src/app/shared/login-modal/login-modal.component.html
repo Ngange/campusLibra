@@ -1,0 +1,75 @@
+<div class="login-modal">
+  <div class="modal-header">
+    <h2 mat-dialog-title>Session Expired</h2>
+    <button mat-icon-button (click)="cancel()" class="close-btn">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <mat-dialog-content>
+    <p class="session-message">
+      Your session has expired. Please log in again to continue.
+    </p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Email</mat-label>
+        <input
+          matInput
+          formControlName="email"
+          type="email"
+          autocomplete="email"
+        />
+        <mat-icon matPrefix>email</mat-icon>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('required')">
+          Email is required
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('email')?.hasError('email')">
+          Please enter a valid email
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Password</mat-label>
+        <input
+          matInput
+          formControlName="password"
+          type="password"
+          autocomplete="current-password"
+        />
+        <mat-icon matPrefix>lock</mat-icon>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('required')">
+          Password is required
+        </mat-error>
+        <mat-error *ngIf="loginForm.get('password')?.hasError('minlength')">
+          Password must be at least 6 characters
+        </mat-error>
+      </mat-form-field>
+
+      <div class="error-message" *ngIf="error">
+        <mat-icon>error</mat-icon>
+        <span>{{ error }}</span>
+      </div>
+
+      <mat-dialog-actions align="end">
+        <button
+          mat-button
+          type="button"
+          (click)="cancel()"
+          [disabled]="loading"
+        >
+          Cancel
+        </button>
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="loginForm.invalid || loading"
+        >
+          <span *ngIf="loading">Logging in...</span>
+          <span *ngIf="!loading">Login</span>
+        </button>
+      </mat-dialog-actions>
+    </form>
+  </mat-dialog-content>
+</div>

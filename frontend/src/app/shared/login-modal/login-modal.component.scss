@@ -1,0 +1,79 @@
+.login-modal {
+  min-width: 400px;
+  max-width: 500px;
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px 0;
+
+    h2 {
+      margin: 0;
+      color: #d32f2f;
+      font-size: 24px;
+    }
+
+    .close-btn {
+      margin-top: -8px;
+    }
+  }
+
+  mat-dialog-content {
+    padding: 16px 24px;
+
+    .session-message {
+      color: #666;
+      margin-bottom: 24px;
+      font-size: 14px;
+    }
+
+    form {
+      .full-width {
+        width: 100%;
+        margin-bottom: 16px;
+      }
+
+      mat-icon[matPrefix] {
+        margin-right: 8px;
+        color: rgba(0, 0, 0, 0.54);
+      }
+
+      .error-message {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #ffebee;
+        color: #c62828;
+        padding: 12px;
+        border-radius: 4px;
+        margin-bottom: 16px;
+        font-size: 14px;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      mat-dialog-actions {
+        padding: 0;
+        margin-top: 8px;
+        gap: 8px;
+
+        button {
+          margin: 0 4px;
+        }
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 600px) {
+  .login-modal {
+    min-width: 300px;
+    max-width: 100%;
+  }
+}
