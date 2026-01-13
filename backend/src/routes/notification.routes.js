@@ -3,6 +3,7 @@ const {
   getUserNotifications,
   markAsRead,
   markAsUnread,
+  markAllAsRead,
 } = require('../controllers/notification.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const {
@@ -23,5 +24,6 @@ router.patch(
   handleValidationErrors,
   markAsUnread
 );
+router.patch('/read-all', markAllAsRead);
 
 module.exports = router;

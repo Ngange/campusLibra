@@ -102,4 +102,15 @@ const markAsUnread = async (req, res, next) => {
   }
 };
 
-module.exports = { getUserNotifications, markAsRead, markAsUnread };
+// Mark all notifications as read for the current user
+const markAllAsRead = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const unreadCount = await notificationService.markAllAsRead(userId);
+    res.json({ success: true, unreadCount });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = { getUserNotifications, markAsRead, markAsUnread, markAllAsRead };

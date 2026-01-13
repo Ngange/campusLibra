@@ -156,14 +156,24 @@ export class NotificationService {
   }
 
   markAllAsRead(): void {
-    // For now, just clear locally. Could add backend endpoint if needed.
+    // Persist read-all to backend
+    this.http.patch<{ success: boolean; unreadCount: number }>(`${this.apiUrl}/read-all`, {})
+      .subscribe({
+        next: (res) => {
+          if (typeof res.unreadCount === 'number') {
+            this.unreadCountSubject.next(res.unreadCount);
+          }
+        },
+        error: (error) => {
+          console.error('Failed to mark all notifications as read:', error);
+        }
+      });
+
+    // Update local state
     const currentNotifications = this.notificationsSubject.value;
     const updatedNotifications = currentNotifications.map(notif => ({ ...notif, isRead: true }));
     this.notificationsSubject.next(updatedNotifications);
     this.unreadCountSubject.next(0);
-
-    // TODO: Call backend to mark all as read
-    // this.http.patch(`${environment.apiUrl}/notifications/read-all`, {}).subscribe();
   }
 
   disconnect(): void {
