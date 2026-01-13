@@ -17,6 +17,11 @@ router.use(authMiddleware);
 
 router.get('/', getUserNotifications);
 router.patch('/:id/read', validateMongoId, handleValidationErrors, markAsRead);
-router.patch('/:id/unread', validateMongoId, handleValidationErrors, markAsUnread);
+router.patch(
+  '/:id/unread',
+  validateMongoId,
+  handleValidationErrors,
+  markAsUnread
+);
 
 module.exports = router;

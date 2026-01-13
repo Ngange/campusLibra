@@ -1,6 +1,7 @@
 const User = require('../models/user.model');
 const Role = require('../models/role.model');
-const { generateToken } = require('../utils/jwt.util');
+const RefreshToken = require('../models/refreshToken.model');
+const { generateToken, generateRefreshToken } = require('../utils/jwt.util');
 const { emitNotification } = require('../utils/notification.util');
 const bcrypt = require('bcryptjs');
 
@@ -28,7 +29,19 @@ const registerUser = async (userData) => {
       id: existingUser._id,
       role: existingUser.role.name,
     });
-    return { user: existingUser, token };
+
+    // Generate refresh token
+    const refreshToken = generateRefreshToken();
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+
+    await RefreshToken.create({
+      token: refreshToken,
+      userId: existingUser._id,
+      expiresAt,
+    });
+
+    return { user: existingUser, token, refreshToken };
   }
 
   const user = await User.create({
@@ -52,7 +65,19 @@ const registerUser = async (userData) => {
   }
 
   const token = generateToken({ id: user._id, role });
-  return { user, token };
+
+  // Generate refresh token
+  const refreshToken = generateRefreshToken();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+
+  await RefreshToken.create({
+    token: refreshToken,
+    userId: user._id,
+    expiresAt,
+  });
+
+  return { user, token, refreshToken };
 };
 // User login service
 const loginUser = async (email, password) => {
@@ -74,7 +99,18 @@ const loginUser = async (email, password) => {
     role: user.role.name,
   });
 
-  return { user, token };
+  // Generate refresh token
+  const refreshToken = generateRefreshToken();
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + 7); // 7 days
+
+  await RefreshToken.create({
+    token: refreshToken,
+    userId: user._id,
+    expiresAt,
+  });
+
+  return { user, token, refreshToken };
 };
 
 // Update profile (name, email)

@@ -5,6 +5,10 @@ const {
   updateProfileHandler,
   changePasswordHandler,
 } = require('../controllers/auth.controller');
+const {
+  refreshAccessToken,
+  revokeRefreshToken,
+} = require('../controllers/refreshToken.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const {
   validateUserRegistration,
@@ -24,6 +28,10 @@ router.post(
   register
 );
 router.post('/login', validateUserLogin, handleValidationErrors, login);
+
+// Refresh token routes (public)
+router.post('/refresh', refreshAccessToken);
+router.post('/revoke', revokeRefreshToken);
 
 // Authenticated self-service routes
 router.use(authMiddleware);
