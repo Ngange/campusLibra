@@ -53,4 +53,44 @@ const logUserAuditEvent = async (
   }
 };
 
-module.exports = { createBookAudit, logUserAuditEvent };
+/**
+ * Log a system setting change audit event
+ * @param {string} settingKey - Setting key that was changed
+ * @param {any} oldValue - Previous setting value
+ * @param {any} newValue - New setting value
+ * @param {string} userId - ID of user performing the action
+ * @param {object} details - Additional details about the action
+ */
+const logSettingAuditEvent = async (
+  settingKey,
+  oldValue,
+  newValue,
+  userId,
+  details = {}
+) => {
+  try {
+    const auditLog = new BookAudit({
+      book: null, // Setting events don't reference books
+      bookCopy: null,
+      action: 'SETTING_UPDATED',
+      performedBy: userId,
+      details: {
+        settingKey,
+        oldValue,
+        newValue,
+        eventType: 'SYSTEM_SETTINGS',
+        ...details,
+      },
+    });
+
+    await auditLog.save();
+    logger.info(
+      `Audit log created: SETTING_UPDATED for key ${settingKey} by user ${userId}`
+    );
+  } catch (error) {
+    logger.error('Failed to log setting audit event:', error);
+    // Don't throw - audit logging failure shouldn't break the main action
+  }
+};
+
+module.exports = { createBookAudit, logUserAuditEvent, logSettingAuditEvent };

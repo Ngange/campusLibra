@@ -1,5 +1,6 @@
 const Setting = require('../models/setting.model');
 const { clearSettingsCache } = require('../utils/config.util');
+const { logSettingAuditEvent } = require('../utils/audit.util');
 
 // Get all settings
 const getAllSettings = async (req, res, next) => {
@@ -18,6 +19,10 @@ const updateSetting = async (req, res, next) => {
     const { key } = req.params;
     const { value } = req.body;
 
+    // Get the existing setting to capture old value
+    const existingSetting = await Setting.findOne({ key });
+    const oldValue = existingSetting?.value;
+
     const setting = await Setting.findOneAndUpdate(
       { key },
       { value },
@@ -28,6 +33,16 @@ const updateSetting = async (req, res, next) => {
       return res
         .status(404)
         .json({ success: false, message: 'Setting not found' });
+    }
+
+    // Log the setting change to audit trail
+    if (req.user?._id || req.user?.id) {
+      await logSettingAuditEvent(
+        key,
+        oldValue,
+        value,
+        req.user._id || req.user.id
+      );
     }
 
     // Clear cache so services use new value

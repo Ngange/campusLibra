@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { io, Socket } from 'socket.io-client';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
@@ -27,7 +27,7 @@ export class NotificationService {
   public unreadCount$ = this.unreadCountSubject.asObservable();
   private lastScope: 'user' | 'role' | 'all' | undefined;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private ngZone: NgZone) {
     // Initialize Socket.IO connection
     const socketUrl = environment.socketUrl || environment.apiUrl?.replace(/\/api$/, '') || 'http://localhost:5000';
 
@@ -38,15 +38,18 @@ export class NotificationService {
 
     // Listen for new notifications
     this.socket.on('newNotification', (raw: any) => {
-      const notification = this.normalize(raw);
-      const currentNotifications = this.notificationsSubject.value;
-      const newNotifications = [notification, ...currentNotifications];
-      this.notificationsSubject.next(newNotifications);
+      // Ensure change detection runs for socket events
+      this.ngZone.run(() => {
+        const notification = this.normalize(raw);
+        const currentNotifications = this.notificationsSubject.value;
+        const newNotifications = [notification, ...currentNotifications];
+        this.notificationsSubject.next(newNotifications);
 
-      // Only increment if notification is not already read
-      if (!notification.isRead) {
-        this.unreadCountSubject.next(this.unreadCountSubject.value + 1);
-      }
+        // Only increment if notification is not already read
+        if (!notification.isRead) {
+          this.unreadCountSubject.next(this.unreadCountSubject.value + 1);
+        }
+      });
     });
 
     // Handle connection errors

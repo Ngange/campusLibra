@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Injector } from '@angular/core';
 import {
   HttpRequest,
   HttpHandler,
@@ -11,6 +11,7 @@ import { catchError, filter, take, switchMap } from 'rxjs/operators';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { DialogService } from '../../services/dialog.service';
+import { AuthService } from '../../services/auth.service';
 
 @Injectable()
 export class ErrorHandlerInterceptor implements HttpInterceptor {
@@ -20,7 +21,8 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
   constructor(
     private snackBar: MatSnackBar,
     private router: Router,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private injector: Injector
   ) {}
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
@@ -58,8 +60,18 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
               // Token renewed successfully, notify waiting requests
               this.tokenRefreshedSubject.next(true);
 
-              // Retry the original request
-              next.handle(request).subscribe({
+              // Retry the original request with the new token
+              const authService = this.injector.get(AuthService);
+              const newToken = authService.getToken();
+              const retryRequest = newToken
+                ? request.clone({
+                    setHeaders: {
+                      Authorization: `Bearer ${newToken}`
+                    }
+                  })
+                : request;
+
+              next.handle(retryRequest).subscribe({
                 next: (event) => observer.next(event),
                 error: (err) => observer.error(err),
                 complete: () => observer.complete()
@@ -83,7 +95,19 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
       return this.tokenRefreshedSubject.pipe(
         filter(tokenRefreshed => tokenRefreshed !== false),
         take(1),
-        switchMap(() => next.handle(request))
+        switchMap(() => {
+          const authService = this.injector.get(AuthService);
+          const newToken = authService.getToken();
+          const retryRequest = newToken
+            ? request.clone({
+                setHeaders: {
+                  Authorization: `Bearer ${newToken}`
+                }
+              })
+            : request;
+
+          return next.handle(retryRequest);
+        })
       );
     }
   }
