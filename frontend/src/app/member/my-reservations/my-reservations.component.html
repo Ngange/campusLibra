@@ -32,24 +32,33 @@
       class="reservation-card mat-elevation-z2"
       *ngFor="let reservation of reservations; trackBy: trackByReservationId"
     >
-      <div class="book-info">
-        <h3>{{ reservation.book?.title }}</h3>
-        <p class="author">by {{ reservation.book?.author }}</p>
+      <div class="reservation-header">
+        <h3 class="book-title">
+          {{ reservation.book?.title || "Unknown Book" }}
+        </h3>
         <app-status-badge [status]="reservation.status"></app-status-badge>
       </div>
 
-      <div class="reservation-details">
-        <div class="detail-row">
-          <span>Reserved on:</span>
-          <span>{{ reservation.createdAt | date : "medium" }}</span>
+      <div class="reservation-info">
+        <div class="info-item">
+          <span class="label">Author:</span>
+          <span class="value">{{ reservation.book?.author }}</span>
         </div>
-        <div class="detail-row">
-          <span>Queue Position:</span>
-          <span>#{{ reservation.queuePosition }}</span>
+        <div class="info-item">
+          <span class="label">Reserved:</span>
+          <span class="value">{{
+            reservation.createdAt | date : "MMM dd, yyyy"
+          }}</span>
         </div>
-        <div class="detail-row" *ngIf="reservation.holdUntil">
-          <span>Hold Until:</span>
-          <span>{{ reservation.holdUntil | date : "medium" }}</span>
+        <div class="info-item">
+          <span class="label">Queue Position:</span>
+          <span class="value">#{{ reservation.position }}</span>
+        </div>
+        <div class="info-item" *ngIf="reservation.holdUntil">
+          <span class="label">Hold Until:</span>
+          <span class="value">{{
+            reservation.holdUntil | date : "MMM dd, yyyy"
+          }}</span>
         </div>
       </div>
 

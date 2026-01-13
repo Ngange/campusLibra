@@ -63,43 +63,62 @@
   background: white;
   border-radius: 8px;
   padding: 24px;
+  margin-bottom: 16px;
+  transition: box-shadow 0.3s ease;
 
-  .book-info {
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .reservation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
     margin-bottom: 16px;
 
-    h3 {
-      color: #333;
-      margin-bottom: 4px;
-    }
-
-    .author {
-      color: #666;
-      margin-bottom: 12px;
+    .book-title {
+      margin: 0;
+      flex: 1;
+      font-size: 1.1rem;
     }
   }
 
-  .reservation-details {
+  .reservation-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
     margin-bottom: 16px;
+    padding: 12px;
+    background: #f5f5f5;
+    border-radius: 4px;
 
-    .detail-row {
+    .info-item {
       display: flex;
-      justify-content: space-between;
-      padding: 4px 0;
-      color: #666;
+      flex-direction: column;
 
-      span:last-child {
-        font-weight: bold;
+      .label {
+        font-weight: 500;
+        color: #666;
+        font-size: 0.85rem;
+        margin-bottom: 4px;
+      }
+
+      .value {
         color: #333;
+        font-size: 0.95rem;
       }
     }
   }
 
   .reservation-actions {
-    text-align: center;
+    display: flex;
+    gap: 8px;
 
     button {
-      min-width: 180px;
+      mat-icon {
+        margin-right: 8px;
+      }
     }
   }
 }
-

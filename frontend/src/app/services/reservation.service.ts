@@ -13,7 +13,7 @@ export interface Reservation {
   user?: any;
   createdAt: Date;
   status: 'pending' | 'on_hold' | 'cancelled' | 'fulfilled';
-  queuePosition: number;
+  position: number;
   holdUntil?: Date;
 }
 

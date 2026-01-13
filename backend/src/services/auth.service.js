@@ -55,8 +55,8 @@ const registerUser = async (userData) => {
   try {
     await emitNotification(
       user._id,
-      'Welcome!',
-      'Your account has been created.',
+      'Account Created',
+      'Your account has been successfully created. You can now log in.',
       'registration'
     );
   } catch (err) {

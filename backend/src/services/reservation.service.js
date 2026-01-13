@@ -60,10 +60,10 @@ const createReservation = async (userId, bookId) => {
   // Notify user and staff about new reservation
   await emitNotificationWithStaff(
     userId,
-    'Reservation Created',
-    `You have reserved "${book.title}" by ${book.author}. Position in queue: ${position}`,
-    'New Reservation',
-    `${userName} has reserved "${book.title}" by ${book.author}. Position in queue: ${position}`,
+    'Book Reserved',
+    `You have successfully reserved "${book.title}" by ${book.author}. Position in queue: #${position}.`,
+    'Book Reserved',
+    `${userName} has reserved "${book.title}" by ${book.author}. Position in queue: #${position}.`,
     'reservation_created',
     reservation._id,
     'Reservation'
@@ -122,7 +122,7 @@ const notifyReservationAvailable = async (reservationId) => {
   await emitNotification(
     reservation.user._id,
     'Book Available for Pickup',
-    `Your reserved book "${reservation.book.title}" is now available! Please pick it up within ${holdHours} hours.`,
+    `Your reserved book "${reservation.book.title}" by ${reservation.book.author} is now available. Please pick it up within ${holdHours} hours.`,
     'reservation_available',
     reservation._id,
     'Reservation'
@@ -190,13 +190,13 @@ const fulfillReservationPickup = async (reservationId, librarianId) => {
   await emitNotificationWithStaff(
     reservation.user._id,
     'Book Picked Up',
-    `You have picked up "${
-      reservation.book.title
-    }". Please return by ${dueDate.toLocaleDateString()}.`,
+    `You have picked up "${reservation.book.title}" by ${
+      reservation.book.author
+    }. Please return by ${dueDate.toLocaleDateString()}.`,
     'Book Picked Up',
-    `${reservation.user.name} has picked up "${
-      reservation.book.title
-    }". Due date: ${dueDate.toLocaleDateString()}.`,
+    `${reservation.user.name} has picked up "${reservation.book.title}" by ${
+      reservation.book.author
+    }. Due date: ${dueDate.toLocaleDateString()}.`,
     'reservation_fulfilled',
     reservation._id,
     'Reservation'
@@ -241,7 +241,7 @@ const expireHoldReservations = async () => {
     await emitNotification(
       reservation.user._id,
       'Hold Expired',
-      `Your hold for "${reservation.book.title}" has expired. The book has been offered to the next person.`,
+      `Your hold for "${reservation.book.title}" by ${reservation.book.author} has expired. The book has been offered to the next person.`,
       'hold_expired',
       reservation._id,
       'Reservation'

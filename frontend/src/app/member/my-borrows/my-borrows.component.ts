@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { BorrowService, Borrow } from '../../services/borrow.service';
+import { NotificationService } from '../../services/notification.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -19,17 +20,35 @@ export class MyBorrowsComponent implements OnInit, OnDestroy {
 
   constructor(
     private borrowService: BorrowService,
+    private notificationService: NotificationService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadBorrows();
+    this.subscribeToBorrowUpdates();
   }
 
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+  }
+
+  private subscribeToBorrowUpdates(): void {
+    // Listen for borrow-related notifications and reload
+    this.notificationService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifications) => {
+        // Check if any notification is borrow-related
+        const hasBorrowUpdate = notifications.some((notif) =>
+          ['borrow_confirmed', 'book_returned', 'book_renewed', 'fine_applied', 'fine_paid'].includes(notif.type)
+        );
+        
+        if (hasBorrowUpdate) {
+          this.loadBorrows();
+        }
+      });
   }
 
   loadBorrows(): void {

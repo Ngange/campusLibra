@@ -166,7 +166,7 @@ const blockUser = async (req, res, next) => {
     await emitNotification(
       id,
       'Account Blocked',
-      'Your account has been blocked. Please contact support for assistance.',
+      'Your account has been blocked by library staff. Please contact support for assistance.',
       'user_blocked',
       id,
       'User'
@@ -227,7 +227,7 @@ const unblockUser = async (req, res, next) => {
     await emitNotification(
       id,
       'Account Unblocked',
-      'Your account has been unblocked. You can now access the system.',
+      'Your account has been unblocked by library staff. You can now access the system.',
       'user_unblocked',
       id,
       'User'

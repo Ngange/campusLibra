@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ReservationService } from '../../services/reservation.service';
+import { NotificationService } from '../../services/notification.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-my-reservations',
@@ -13,19 +16,39 @@ export class MyReservationsComponent implements OnInit, OnDestroy {
   reservations: any[] = [];
   loading = false;
   error = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private reservationService: ReservationService,
+    private notificationService: NotificationService,
     private snackBar: MatSnackBar,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadMyReservations();
+    this.subscribeToReservationUpdates();
   }
 
   ngOnDestroy(): void {
-    // Cleanup if needed
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToReservationUpdates(): void {
+    // Listen for reservation-related notifications and reload
+    this.notificationService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifications) => {
+        // Check if any notification is reservation-related
+        const hasReservationUpdate = notifications.some((notif) =>
+          ['reservation_created', 'reservation_available', 'reservation_fulfilled', 'hold_expired'].includes(notif.type)
+        );
+
+        if (hasReservationUpdate) {
+          this.loadMyReservations();
+        }
+      });
   }
 
   loadMyReservations(): void {

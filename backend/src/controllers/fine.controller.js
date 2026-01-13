@@ -68,10 +68,17 @@ const payFineHandler = async (req, res, next) => {
     await fine.save();
 
     // Optional: Notify user with socket emit
+    const borrow = await Borrow.findById(fine.borrow).populate(
+      'book',
+      'title author'
+    );
+    const bookInfo = borrow?.book
+      ? ` for "${borrow.book.title}" by ${borrow.book.author}`
+      : '';
     await emitNotification(
       fine.user,
       'Fine Paid',
-      'Your fine has been marked as paid by library staff.',
+      `Your fine of $${fine.amount}${bookInfo} has been marked as paid.`,
       'fine_paid',
       fine._id,
       'Fine'

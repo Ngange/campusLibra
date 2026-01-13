@@ -1,41 +1,72 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ReservationService } from '../../services/reservation.service';
+import { NotificationService } from '../../services/notification.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DialogService } from '../../services/dialog.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-pending-pickups',
   templateUrl: './pending-pickups.component.html',
-  styleUrls: ['./pending-pickups.component.scss']
+  styleUrls: ['./pending-pickups.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PendingPickupsComponent implements OnInit {
+export class PendingPickupsComponent implements OnInit, OnDestroy {
   pendingReservations: any[] = [];
   loading = false;
   error = '';
+  private destroy$ = new Subject<void>();
 
   constructor(
     private reservationService: ReservationService,
+    private notificationService: NotificationService,
     private snackBar: MatSnackBar,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.loadPendingPickups();
+    this.subscribeToPendingPickupUpdates();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToPendingPickupUpdates(): void {
+    // Listen for reservation-related notifications and reload
+    this.notificationService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notifications) => {
+        // Check if any notification is reservation-related (especially fulfilled)
+        const hasPickupUpdate = notifications.some((notif) =>
+          ['reservation_available', 'reservation_fulfilled'].includes(notif.type)
+        );
+        
+        if (hasPickupUpdate) {
+          this.loadPendingPickups();
+        }
+      });
   }
 
   loadPendingPickups(): void {
     this.loading = true;
     this.error = '';
 
-    this.reservationService.getPendingPickups().subscribe({
+    this.reservationService.getPendingPickups().pipe(takeUntil(this.destroy$)).subscribe({
       next: (reservations) => {
         this.pendingReservations = Array.isArray(reservations) ? reservations : [];
         this.loading = false;
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.error = err.message || 'Failed to load pending pickups.';
         this.loading = false;
         this.pendingReservations = [];
+        this.cdr.markForCheck();
         this.snackBar.open(this.error, 'Close', { duration: 5000 });
       }
     });

@@ -109,7 +109,7 @@ const calculateFine = async (borrowId) => {
   await emitNotification(
     borrow.user,
     'Fine Applied',
-    `A fine of $${amount} has been applied for returning "${borrow.book.title}" ${daysLate} day(s) late.`,
+    `A fine of $${amount} has been applied for returning "${borrow.book.title}" by ${borrow.book.author} ${daysLate} day(s) late.`,
     'fine_applied',
     fine._id,
     'Fine'
@@ -162,9 +162,9 @@ const returnBook = async (borrowId, librarianId) => {
   await emitNotificationWithStaff(
     borrow.user._id,
     'Book Returned',
-    `"${borrow.book.title}" has been successfully returned.`,
+    `You have successfully returned "${borrow.book.title}" by ${borrow.book.author}.`,
     'Book Returned',
-    `${borrow.user.name} has returned "${borrow.book.title}".`,
+    `${borrow.user.name} has returned "${borrow.book.title}" by ${borrow.book.author}.`,
     'book_returned',
     borrowId,
     'Borrow'
@@ -233,13 +233,13 @@ const renewBook = async (borrowId, userId) => {
   await emitNotificationWithStaff(
     userId,
     'Book Renewed',
-    `"${
-      borrow.book.title
-    }" has been renewed. New due date: ${newDueDate.toLocaleDateString()}.`,
+    `You have renewed "${borrow.book.title}" by ${
+      borrow.book.author
+    }. New due date: ${newDueDate.toLocaleDateString()}.`,
     'Book Renewed',
-    `${borrow.user.name} has renewed "${
-      borrow.book.title
-    }". New due date: ${newDueDate.toLocaleDateString()}.`,
+    `${borrow.user.name} has renewed "${borrow.book.title}" by ${
+      borrow.book.author
+    }. New due date: ${newDueDate.toLocaleDateString()}.`,
     'book_renewed',
     borrowId,
     'Borrow'
