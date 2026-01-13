@@ -6,7 +6,10 @@ const { getSetting } = require('../utils/config.util');
 const { createBookAudit } = require('../utils/audit.util');
 const { calculateDueDate } = require('../utils/date.util');
 const { findAvailableBookCopy } = require('./bookCopy.service');
-const { emitNotification, emitNotificationWithStaff } = require('../utils/notification.util');
+const {
+  emitNotification,
+  emitNotificationWithStaff,
+} = require('../utils/notification.util');
 const { fulfillNextReservation } = require('./reservation.service');
 
 const borrowBook = async (userId, bookId) => {
@@ -38,7 +41,9 @@ const borrowBook = async (userId, bookId) => {
   await bookCopy.save();
 
   // Populate user for notification
-  const populatedUser = await require('../models/user.model').findById(userId).select('name');
+  const populatedUser = await require('../models/user.model')
+    .findById(userId)
+    .select('name');
   const userName = populatedUser?.name || 'A user';
 
   // Send in-app notification with socket emit

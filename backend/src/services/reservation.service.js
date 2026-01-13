@@ -6,7 +6,10 @@ const { getSetting } = require('../utils/config.util');
 const { createBookAudit } = require('../utils/audit.util');
 const { calculateDueDate } = require('../utils/date.util');
 const { findAvailableBookCopy } = require('./bookCopy.service');
-const { emitNotification, emitNotificationWithStaff } = require('../utils/notification.util');
+const {
+  emitNotification,
+  emitNotificationWithStaff,
+} = require('../utils/notification.util');
 
 // Service to create a new reservation
 const createReservation = async (userId, bookId) => {
@@ -188,9 +191,13 @@ const fulfillReservationPickup = async (reservationId, librarianId) => {
   await emitNotificationWithStaff(
     reservation.user._id,
     'Book Picked Up',
-    `You have picked up "${reservation.book.title}". Please return by ${dueDate.toLocaleDateString()}.`,
+    `You have picked up "${
+      reservation.book.title
+    }". Please return by ${dueDate.toLocaleDateString()}.`,
     'Book Picked Up',
-    `${reservation.user.name} has picked up "${reservation.book.title}". Due date: ${dueDate.toLocaleDateString()}.`,
+    `${reservation.user.name} has picked up "${
+      reservation.book.title
+    }". Due date: ${dueDate.toLocaleDateString()}.`,
     'reservation_fulfilled',
     reservation._id,
     'Reservation'
