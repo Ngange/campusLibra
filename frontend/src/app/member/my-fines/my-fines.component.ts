@@ -44,7 +44,7 @@ export class MyFinesComponent implements OnInit, OnDestroy {
         const hasFineUpdate = notifications.some((notif) =>
           ['fine_applied', 'fine_paid'].includes(notif.type)
         );
-        
+
         if (hasFineUpdate) {
           this.loadMyFines();
         }

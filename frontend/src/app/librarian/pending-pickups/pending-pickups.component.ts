@@ -45,7 +45,7 @@ export class PendingPickupsComponent implements OnInit, OnDestroy {
         const hasPickupUpdate = notifications.some((notif) =>
           ['reservation_available', 'reservation_fulfilled'].includes(notif.type)
         );
-        
+
         if (hasPickupUpdate) {
           this.loadPendingPickups();
         }

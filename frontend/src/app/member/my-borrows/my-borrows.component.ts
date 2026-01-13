@@ -44,7 +44,7 @@ export class MyBorrowsComponent implements OnInit, OnDestroy {
         const hasBorrowUpdate = notifications.some((notif) =>
           ['borrow_confirmed', 'book_returned', 'book_renewed', 'fine_applied', 'fine_paid'].includes(notif.type)
         );
-        
+
         if (hasBorrowUpdate) {
           this.loadBorrows();
         }
