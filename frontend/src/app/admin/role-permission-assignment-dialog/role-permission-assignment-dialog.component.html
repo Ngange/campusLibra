@@ -1,0 +1,79 @@
+<h2 mat-dialog-title>
+  Assign Permissions to <strong>{{ role.name }}</strong>
+</h2>
+
+<mat-dialog-content>
+  <div class="dialog-header">
+    <p class="info-text">
+      Select permissions to assign to this role.
+      <strong>{{ getAssignedCount() }} of {{ getTotalCount() }}</strong>
+      permissions selected.
+    </p>
+    <div class="quick-actions">
+      <button mat-stroked-button (click)="selectAll()" size="small">
+        <mat-icon>check_circle</mat-icon>
+        Select All
+      </button>
+      <button mat-stroked-button (click)="clearAll()" size="small">
+        <mat-icon>cancel</mat-icon>
+        Clear All
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="loading-container">
+    <mat-progress-spinner
+      diameter="40"
+      mode="indeterminate"
+    ></mat-progress-spinner>
+  </div>
+
+  <div *ngIf="!isLoading" class="permissions-list">
+    <div
+      *ngFor="let category of categories"
+      [ngIf]="permissionsByCategory.has(category)"
+      class="category-group"
+    >
+      <h3 class="category-title">{{ category | titlecase }} Permissions</h3>
+      <mat-list>
+        <mat-list-item
+          *ngFor="let permission of permissionsByCategory.get(category)"
+          class="permission-item"
+        >
+          <mat-checkbox
+            [checked]="isPermissionAssigned(permission._id)"
+            (change)="togglePermission(permission._id)"
+            [attr.aria-label]="permission.name"
+          ></mat-checkbox>
+          <div class="permission-info">
+            <strong>{{ permission.name }}</strong>
+            <p class="description">{{ permission.description }}</p>
+          </div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+
+    <div *ngIf="allPermissions.length === 0" class="no-permissions">
+      <mat-icon>info</mat-icon>
+      <p>No permissions available</p>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="cancel()">Cancel</button>
+  <button
+    mat-raised-button
+    color="primary"
+    (click)="saveChanges()"
+    [disabled]="isSaving"
+  >
+    <mat-icon *ngIf="!isSaving">save</mat-icon>
+    <mat-progress-spinner
+      *ngIf="isSaving"
+      diameter="20"
+      mode="indeterminate"
+    ></mat-progress-spinner>
+    Save Changes
+  </button>
+</mat-dialog-actions>

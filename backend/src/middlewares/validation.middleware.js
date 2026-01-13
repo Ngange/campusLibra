@@ -245,6 +245,45 @@ const handleValidationErrors = (req, res, next) => {
   next();
 };
 
+// Permission validation
+const validatePermission = [
+  body('name')
+    .trim()
+    .notEmpty()
+    .withMessage('Permission name is required')
+    .matches(/^[a-zA-Z0-9_]+$/)
+    .withMessage('Permission name must contain only letters, numbers, and underscores')
+    .isLength({ min: 3, max: 50 })
+    .withMessage('Permission name must be between 3 and 50 characters'),
+  body('description')
+    .trim()
+    .notEmpty()
+    .withMessage('Description is required')
+    .isLength({ min: 10, max: 500 })
+    .withMessage('Description must be between 10 and 500 characters'),
+  body('category')
+    .trim()
+    .notEmpty()
+    .withMessage('Category is required')
+    .isIn(['book', 'user', 'borrow', 'reservation', 'fine', 'role', 'system'])
+    .withMessage('Category must be one of: book, user, borrow, reservation, fine, role, system'),
+  handleValidationErrors,
+];
+
+const validatePermissionUpdate = [
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ min: 10, max: 500 })
+    .withMessage('Description must be between 10 and 500 characters'),
+  body('category')
+    .optional()
+    .trim()
+    .isIn(['book', 'user', 'borrow', 'reservation', 'fine', 'role', 'system'])
+    .withMessage('Category must be one of: book, user, borrow, reservation, fine, role, system'),
+  handleValidationErrors,
+];
+
 module.exports = {
   validateBorrow,
   validateReservation,
@@ -259,5 +298,7 @@ module.exports = {
   validateRoleUpdate,
   validateMongoId,
   validatePagination,
+  validatePermission,
+  validatePermissionUpdate,
   handleValidationErrors,
 };

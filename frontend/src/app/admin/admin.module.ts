@@ -51,3 +51,4 @@ import { CreateBookDialogComponent } from './books-manage/create-book-dialog/cre
   ]
 })
 export class AdminModule { }
+

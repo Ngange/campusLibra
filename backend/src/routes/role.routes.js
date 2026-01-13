@@ -5,6 +5,10 @@ const {
   createRole,
   updateRole,
   deleteRole,
+  getRolePermissions,
+  assignPermissionToRole,
+  removePermissionFromRole,
+  assignPermissionsToRole,
 } = require('../controllers/role.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const authorizeRoles = require('../middlewares/role.middleware');
@@ -31,5 +35,31 @@ router.put(
   updateRole
 );
 router.delete('/:id', validateMongoId, handleValidationErrors, deleteRole);
+
+// Permission management routes
+router.get(
+  '/:id/permissions',
+  validateMongoId,
+  handleValidationErrors,
+  getRolePermissions
+);
+router.post(
+  '/:id/permissions/:permId',
+  validateMongoId,
+  handleValidationErrors,
+  assignPermissionToRole
+);
+router.delete(
+  '/:id/permissions/:permId',
+  validateMongoId,
+  handleValidationErrors,
+  removePermissionFromRole
+);
+router.post(
+  '/:id/permissions/bulk/assign',
+  validateMongoId,
+  handleValidationErrors,
+  assignPermissionsToRole
+);
 
 module.exports = router;
