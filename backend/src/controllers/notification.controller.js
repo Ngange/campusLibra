@@ -62,13 +62,17 @@ const getUserNotifications = async (req, res, next) => {
   }
 };
 
-// Mark a notification as read for the current user
+// Mark a notification as read
 const markAsRead = async (req, res, next) => {
   try {
     const userId = req.user.id;
+    const role = req.user.role;
     const { id } = req.params;
 
-    const notification = await notificationService.markAsRead(id, userId);
+    const isStaff = role === 'admin' || role === 'librarian';
+    const userFilter = isStaff ? undefined : userId;
+
+    const notification = await notificationService.markAsRead(id, userFilter);
     if (!notification) {
       return res
         .status(404)
@@ -82,13 +86,17 @@ const markAsRead = async (req, res, next) => {
   }
 };
 
-// Mark a notification as unread for the current user
+// Mark a notification as unread
 const markAsUnread = async (req, res, next) => {
   try {
     const userId = req.user.id;
+    const role = req.user.role;
     const { id } = req.params;
 
-    const notification = await notificationService.markAsUnread(id, userId);
+    const isStaff = role === 'admin' || role === 'librarian';
+    const userFilter = isStaff ? undefined : userId;
+
+    const notification = await notificationService.markAsUnread(id, userFilter);
     if (!notification) {
       return res
         .status(404)

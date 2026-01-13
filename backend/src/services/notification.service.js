@@ -24,19 +24,27 @@ const createNotification = async (
   return notification;
 };
 
-// Helper: Mark as read
+// Helper: Mark as read (optionally restricted to user)
 const markAsRead = async (notificationId, userId) => {
+  const filter = { _id: notificationId };
+  if (userId) {
+    filter.userId = userId;
+  }
   return await Notification.findOneAndUpdate(
-    { _id: notificationId, userId },
+    filter,
     { isRead: true },
     { new: true }
   );
 };
 
-// Helper: Mark as unread
+// Helper: Mark as unread (optionally restricted to user)
 const markAsUnread = async (notificationId, userId) => {
+  const filter = { _id: notificationId };
+  if (userId) {
+    filter.userId = userId;
+  }
   return await Notification.findOneAndUpdate(
-    { _id: notificationId, userId },
+    filter,
     { isRead: false },
     { new: true }
   );
