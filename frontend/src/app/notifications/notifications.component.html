@@ -43,6 +43,14 @@
       >
         Mark as read
       </button>
+      <button
+        mat-button
+        color="accent"
+        *ngIf="notification.isRead && notification.userId === currentUserId"
+        (click)="markAsUnread(notification.id)"
+      >
+        Mark as unread
+      </button>
     </div>
   </div>
 </div>

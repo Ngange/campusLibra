@@ -26,13 +26,9 @@ export class NavbarComponent implements OnInit {
     private notificationService: NotificationService
   ) {
     this.notifications$ = this.notificationService.notifications$;
-    // Filter unread notifications to only show those owned by current user
+    // Show all unread notifications (scope may include role/all, not just user-owned)
     this.unreadNotifications$ = this.notifications$.pipe(
-      map((notifications) => {
-        const user = this.authService.getCurrentUser();
-        const userId = user ? (user._id || (user as any).id || null) : null;
-        return notifications.filter((n) => !n.isRead && n.userId === userId);
-      })
+      map((notifications) => notifications.filter((n) => !n.isRead))
     );
 
     // Subscribe to unread notification count

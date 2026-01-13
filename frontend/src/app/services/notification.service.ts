@@ -130,6 +130,31 @@ export class NotificationService {
     // this.http.patch(`${environment.apiUrl}/notifications/${notificationId}/read`, {}).subscribe();
   }
 
+  markAsUnread(notificationId: string): void {
+    // Persist unread state to backend
+    this.http.patch<{ success: boolean; unreadCount: number }>(`${this.apiUrl}/${notificationId}/unread`, {})
+      .subscribe({
+        next: (res) => {
+          if (typeof res.unreadCount === 'number') {
+            this.unreadCountSubject.next(res.unreadCount);
+          }
+        },
+        error: (error) => {
+          console.error('Failed to mark notification as unread:', error);
+        }
+      });
+
+    // Update local state
+    const currentNotifications = this.notificationsSubject.value;
+    const updatedNotifications = currentNotifications.map(notif =>
+      notif.id === notificationId ? { ...notif, isRead: false } : notif
+    );
+    this.notificationsSubject.next(updatedNotifications);
+
+    // Increase unread count
+    this.unreadCountSubject.next(this.unreadCountSubject.value + 1);
+  }
+
   markAllAsRead(): void {
     // For now, just clear locally. Could add backend endpoint if needed.
     const currentNotifications = this.notificationsSubject.value;

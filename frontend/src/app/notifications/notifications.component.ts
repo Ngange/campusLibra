@@ -41,6 +41,10 @@ export class NotificationsComponent implements OnInit {
     this.notificationService.markAsRead(notificationId);
   }
 
+  markAsUnread(notificationId: string): void {
+    this.notificationService.markAsUnread(notificationId);
+  }
+
   onScopeChange(scope: 'user' | 'role' | 'all'): void {
     this.scope = scope;
     this.notificationService.loadNotifications(scope);
