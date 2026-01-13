@@ -3264,3 +3264,10 @@
 {"level":"info","message":"Server running on port 5000","timestamp":"2026-01-13 15:26:09"}
 {"level":"info","message":"Socket.IO ready","timestamp":"2026-01-13 15:26:09"}
 {"level":"info","message":"Environment: development","timestamp":"2026-01-13 15:26:09"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-13 15:53:10"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-13 15:53:10"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-13 15:53:10"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-13 15:54:16"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-13 15:54:16"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-13 15:54:16"}
+{"level":"info","message":"SIGINT signal received: closing HTTP server gracefully","timestamp":"2026-01-13 15:56:19"}
