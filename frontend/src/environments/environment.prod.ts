@@ -9,6 +9,7 @@ export const environment = {
   apiUrl: 'https://campuslibra.onrender.com/api',
   apiTimeout: 30000, // API request timeout (ms)
   tokenKey: 'auth_token',
+  refreshTokenKey: 'refresh_token',
   userKey: 'current_user',
   jwtExpiryHours: 3, // JWT expiration time (hours)
 

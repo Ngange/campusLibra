@@ -50,43 +50,43 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
       this.isRefreshingToken = true;
       this.tokenRefreshedSubject.next(false);
 
-      // Open login modal to renew token
+      const authService = this.injector.get(AuthService);
+
+      // Skip refresh attempt if no refresh token or if this IS a refresh request
+      if (!authService.getRefreshToken() || request.url.includes('/auth/refresh')) {
+        return this.showLoginModalAndRetry(request, next);
+      }
+
+      // Attempt to refresh token automatically
       return new Observable(observer => {
-        this.dialogService.openLoginModal().subscribe({
-          next: (success) => {
+        authService.refreshToken().subscribe({
+          next: (response) => {
             this.isRefreshingToken = false;
+            this.tokenRefreshedSubject.next(true);
 
-            if (success) {
-              // Token renewed successfully, notify waiting requests
-              this.tokenRefreshedSubject.next(true);
+            // Retry the original request with the new token
+            const retryRequest = request.clone({
+              setHeaders: {
+                Authorization: `Bearer ${response.token}`
+              }
+            });
 
-              // Retry the original request with the new token
-              const authService = this.injector.get(AuthService);
-              const newToken = authService.getToken();
-              const retryRequest = newToken
-                ? request.clone({
-                    setHeaders: {
-                      Authorization: `Bearer ${newToken}`
-                    }
-                  })
-                : request;
-
-              next.handle(retryRequest).subscribe({
-                next: (event) => observer.next(event),
-                error: (err) => observer.error(err),
-                complete: () => observer.complete()
-              });
-            } else {
-              // User cancelled login, navigate to home
-              this.tokenRefreshedSubject.next(false);
-              this.router.navigate(['/']);
-              observer.error(new Error('Authentication cancelled'));
-            }
+            next.handle(retryRequest).subscribe({
+              next: (event) => observer.next(event),
+              error: (err) => observer.error(err),
+              complete: () => observer.complete()
+            });
           },
-          error: (err) => {
+          error: (refreshError) => {
+            // Refresh failed, show login modal
             this.isRefreshingToken = false;
             this.tokenRefreshedSubject.next(false);
-            observer.error(err);
+
+            this.showLoginModalAndRetry(request, next).subscribe({
+              next: (event) => observer.next(event),
+              error: (err) => observer.error(err),
+              complete: () => observer.complete()
+            });
           }
         });
       });
@@ -110,6 +110,48 @@ export class ErrorHandlerInterceptor implements HttpInterceptor {
         })
       );
     }
+  }
+
+  private showLoginModalAndRetry(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+    return new Observable(observer => {
+      this.dialogService.openLoginModal().subscribe({
+        next: (success) => {
+          this.isRefreshingToken = false;
+
+          if (success) {
+            // Token renewed successfully, notify waiting requests
+            this.tokenRefreshedSubject.next(true);
+
+            // Retry the original request with the new token
+            const authService = this.injector.get(AuthService);
+            const newToken = authService.getToken();
+            const retryRequest = newToken
+              ? request.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${newToken}`
+                  }
+                })
+              : request;
+
+            next.handle(retryRequest).subscribe({
+              next: (event) => observer.next(event),
+              error: (err) => observer.error(err),
+              complete: () => observer.complete()
+            });
+          } else {
+            // User cancelled login, navigate to home
+            this.tokenRefreshedSubject.next(false);
+            this.router.navigate(['/']);
+            observer.error(new Error('Authentication cancelled'));
+          }
+        },
+        error: (err) => {
+          this.isRefreshingToken = false;
+          this.tokenRefreshedSubject.next(false);
+          observer.error(err);
+        }
+      });
+    });
   }
 
   private handleError(error: HttpErrorResponse): Observable<never> {

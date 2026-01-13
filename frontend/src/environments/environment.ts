@@ -6,6 +6,7 @@ export const environment = {
   apiUrl: 'https://campuslibra.onrender.com/api',
   apiTimeout: 30000,
   tokenKey: 'auth_token',
+  refreshTokenKey: 'refresh_token',
   userKey: 'current_user',
   jwtExpiryHours: 1,
   socketUrl: 'https://campuslibra.onrender.com',

@@ -41,7 +41,7 @@ export class AuthService {
   login(credentials: LoginRequest): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials).pipe(
       tap(response => {
-        this.setSession(response.token, response.user);
+        this.setSession(response.token, response.user, response.refreshToken);
         // Connect to notifications after successful login
         const userId = response.user._id || response.user.id;
         if (userId) {
@@ -60,6 +60,7 @@ export class AuthService {
   // Clears token, user data, and redirects to home
   logout(): void {
     localStorage.removeItem(environment.tokenKey);
+    localStorage.removeItem(environment.refreshTokenKey);
     localStorage.removeItem(environment.userKey);
     this.currentUserSubject.next(null);
     // Disconnect notifications and clear notification state
@@ -84,6 +85,28 @@ export class AuthService {
     return localStorage.getItem(environment.tokenKey);
   }
 
+  // Get refresh token from localStorage
+  getRefreshToken(): string | null {
+    return localStorage.getItem(environment.refreshTokenKey);
+  }
+
+  // Refresh access token using refresh token
+  refreshToken(): Observable<AuthResponse> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, { refreshToken }).pipe(
+      tap(response => {
+        // Update tokens without reconnecting notifications
+        localStorage.setItem(environment.tokenKey, response.token);
+        if (response.refreshToken) {
+          localStorage.setItem(environment.refreshTokenKey, response.refreshToken);
+        }
+      })
+    );
+  }
+
   // Update profile (name/email) and refresh stored user
   updateProfile(payload: UpdateProfileRequest): Observable<ProfileResponse> {
     return this.http.put<ProfileResponse>(`${this.apiUrl}/profile`, payload).pipe(
@@ -101,8 +124,11 @@ export class AuthService {
   }
 
   // Stores token and user in localStorage, updates currentUser$ observable
-  private setSession(token: string, user: User): void {
+  private setSession(token: string, user: User, refreshToken?: string): void {
     localStorage.setItem(environment.tokenKey, token);
+    if (refreshToken) {
+      localStorage.setItem(environment.refreshTokenKey, refreshToken);
+    }
     localStorage.setItem(environment.userKey, JSON.stringify(user));
     this.currentUserSubject.next(user);
   }

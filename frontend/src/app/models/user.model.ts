@@ -10,6 +10,7 @@ export interface AuthResponse {
   success: boolean;
   user: User;
   token: string;
+  refreshToken?: string;
 }
 
 export interface LoginRequest {
