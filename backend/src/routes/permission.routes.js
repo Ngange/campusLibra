@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middlewares/auth.middleware');
-const roleMiddleware = require('../middlewares/role.middleware');
+const authorizeRoles = require('../middlewares/role.middleware');
 const validationMiddleware = require('../middlewares/validation.middleware');
 const {
   getAllPermissionsHandler,
@@ -14,7 +14,7 @@ const {
 
 // All permission routes require authentication and admin role
 router.use(authMiddleware);
-router.use(roleMiddleware.authorize('admin'));
+router.use(authorizeRoles('admin'));
 
 // Get all permissions (with optional filtering by category or name)
 router.get('/', getAllPermissionsHandler);
