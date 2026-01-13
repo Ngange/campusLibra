@@ -7,10 +7,11 @@ import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './core/layout/layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
 import { NotificationsComponent } from './notifications/notifications.component';
+import { GuestGuard } from './core/guards/guest.guard';
 
 const routes: Routes = [
   // Public routes (no layout)
-  { path: '', component: LandingComponent },
+  { path: '', component: LandingComponent, canActivate: [GuestGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
 
