@@ -252,7 +252,9 @@ const validatePermission = [
     .notEmpty()
     .withMessage('Permission name is required')
     .matches(/^[a-zA-Z0-9_]+$/)
-    .withMessage('Permission name must contain only letters, numbers, and underscores')
+    .withMessage(
+      'Permission name must contain only letters, numbers, and underscores'
+    )
     .isLength({ min: 3, max: 50 })
     .withMessage('Permission name must be between 3 and 50 characters'),
   body('description')
@@ -266,7 +268,9 @@ const validatePermission = [
     .notEmpty()
     .withMessage('Category is required')
     .isIn(['book', 'user', 'borrow', 'reservation', 'fine', 'role', 'system'])
-    .withMessage('Category must be one of: book, user, borrow, reservation, fine, role, system'),
+    .withMessage(
+      'Category must be one of: book, user, borrow, reservation, fine, role, system'
+    ),
   handleValidationErrors,
 ];
 
@@ -280,7 +284,9 @@ const validatePermissionUpdate = [
     .optional()
     .trim()
     .isIn(['book', 'user', 'borrow', 'reservation', 'fine', 'role', 'system'])
-    .withMessage('Category must be one of: book, user, borrow, reservation, fine, role, system'),
+    .withMessage(
+      'Category must be one of: book, user, borrow, reservation, fine, role, system'
+    ),
   handleValidationErrors,
 ];
 
