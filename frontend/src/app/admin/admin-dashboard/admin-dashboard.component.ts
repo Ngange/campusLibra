@@ -115,4 +115,49 @@ export class AdminDashboardComponent implements OnInit, OnDestroy {
     const percentage = (this.stats.overdueBooks / this.stats.totalBooks) * 100;
     return (percentage / 100) * 360;
   }
+
+  // SVG donut chart calculations (circumference = 2 * PI * radius = 2 * 3.14159 * 80 ≈ 502.65)
+  calculateIssuedDash(): string {
+    const circumference = 502.65;
+    const total = this.stats.issuedBooks + this.stats.reservedBooks + this.stats.overdueBooks;
+    if (total === 0) return '0 502.65';
+    const percentage = this.stats.issuedBooks / total;
+    const dash = circumference * percentage;
+    return `${dash} ${circumference - dash}`;
+  }
+
+  calculateReservedDash(): string {
+    const circumference = 502.65;
+    const total = this.stats.issuedBooks + this.stats.reservedBooks + this.stats.overdueBooks;
+    if (total === 0) return '0 502.65';
+    const percentage = this.stats.reservedBooks / total;
+    const dash = circumference * percentage;
+    return `${dash} ${circumference - dash}`;
+  }
+
+  calculateOverdueDash(): string {
+    const circumference = 502.65;
+    const total = this.stats.issuedBooks + this.stats.reservedBooks + this.stats.overdueBooks;
+    if (total === 0) return '0 502.65';
+    const percentage = this.stats.overdueBooks / total;
+    const dash = circumference * percentage;
+    return `${dash} ${circumference - dash}`;
+  }
+
+  calculateReservedOffset(): number {
+    const circumference = 502.65;
+    const total = this.stats.issuedBooks + this.stats.reservedBooks + this.stats.overdueBooks;
+    if (total === 0) return 25;
+    const issuedPercentage = this.stats.issuedBooks / total;
+    return 25 - (circumference * issuedPercentage);
+  }
+
+  calculateOverdueOffset(): number {
+    const circumference = 502.65;
+    const total = this.stats.issuedBooks + this.stats.reservedBooks + this.stats.overdueBooks;
+    if (total === 0) return 25;
+    const issuedPercentage = this.stats.issuedBooks / total;
+    const reservedPercentage = this.stats.reservedBooks / total;
+    return 25 - (circumference * (issuedPercentage + reservedPercentage));
+  }
 }

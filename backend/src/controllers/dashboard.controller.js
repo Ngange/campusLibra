@@ -160,9 +160,11 @@ const getBookCirculation = async (req, res, next) => {
 
 const getPendingReturns = async (req, res, next) => {
   try {
-    const returns = await Borrow.find({ status: 'overdue' })
+    const returns = await Borrow.find({
+      status: { $in: ['active', 'overdue'] },
+    })
       .populate('user', 'name email')
-      .populate('book', 'title author publisher')
+      .populate('book', 'title author category')
       .sort({ dueDate: 1 });
 
     res.json({
@@ -178,7 +180,7 @@ const getPendingPickups = async (req, res, next) => {
   try {
     const pickups = await Reservation.find({ status: 'on_hold' })
       .populate('user', 'name email')
-      .populate('book', 'title author publisher')
+      .populate('book', 'title author category')
       .sort({ createdAt: 1 });
 
     res.json({

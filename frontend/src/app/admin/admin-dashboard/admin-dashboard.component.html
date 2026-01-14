@@ -77,8 +77,64 @@
         </div>
 
         <div class="donut-chart">
+          <svg viewBox="0 0 200 200" class="donut-svg">
+            <!-- Background circle -->
+            <circle
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="#f0f0f0"
+              stroke-width="40"
+            ></circle>
+
+            <!-- Issued books segment (blue) -->
+            <circle
+              *ngIf="stats.issuedBooks > 0"
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="#00c7e9"
+              stroke-width="40"
+              [attr.stroke-dasharray]="calculateIssuedDash()"
+              [attr.stroke-dashoffset]="25"
+              transform="rotate(-90 100 100)"
+            ></circle>
+
+            <!-- Reserved books segment (gold) -->
+            <circle
+              *ngIf="stats.reservedBooks > 0"
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="#ffd700"
+              stroke-width="40"
+              [attr.stroke-dasharray]="calculateReservedDash()"
+              [attr.stroke-dashoffset]="calculateReservedOffset()"
+              transform="rotate(-90 100 100)"
+            ></circle>
+
+            <!-- Overdue books segment (red) -->
+            <circle
+              *ngIf="stats.overdueBooks > 0"
+              cx="100"
+              cy="100"
+              r="80"
+              fill="none"
+              stroke="#ff4500"
+              stroke-width="40"
+              [attr.stroke-dasharray]="calculateOverdueDash()"
+              [attr.stroke-dashoffset]="calculateOverdueOffset()"
+              transform="rotate(-90 100 100)"
+            ></circle>
+          </svg>
+
           <div class="donut-center">
-            <div class="percentage">{{ stats.circulationPercentage }}%</div>
+            <div class="percentage">
+              {{ stats.circulationPercentage || 0 }}%
+            </div>
             <div class="label">CIRCULATION RATE</div>
           </div>
         </div>

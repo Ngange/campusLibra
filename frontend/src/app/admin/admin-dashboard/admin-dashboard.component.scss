@@ -162,12 +162,19 @@
       display: flex;
       justify-content: center;
       align-items: center;
+
+      .donut-svg {
+        width: 100%;
+        height: 100%;
+        transform: scale(0.85);
+      }
     }
 
     .donut-center {
       position: absolute;
       text-align: center;
       z-index: 10;
+      pointer-events: none;
 
       .percentage {
         font-size: 2.5rem;
