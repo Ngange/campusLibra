@@ -3472,3 +3472,9 @@
 {"level":"info","message":"::ffff:127.0.0.1 - - [13/Jan/2026:17:25:23 +0000] \"POST /api/roles/69667224310ab844319bd2a0/permissions/bulk/assign HTTP/1.1\" 200 459 \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0\"","timestamp":"2026-01-13 17:25:23"}
 {"level":"info","message":"::ffff:127.0.0.1 - - [13/Jan/2026:17:25:24 +0000] \"GET /api/roles HTTP/1.1\" 200 2032 \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0\"","timestamp":"2026-01-13 17:25:24"}
 {"level":"info","message":"::ffff:127.0.0.1 - - [13/Jan/2026:17:25:30 +0000] \"GET /api/users HTTP/1.1\" 304 - \"http://localhost:4200/\" \"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:146.0) Gecko/20100101 Firefox/146.0\"","timestamp":"2026-01-13 17:25:30"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-14 08:41:52"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-14 08:41:52"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-14 08:41:52"}
+{"level":"info","message":"Server running on port 5000","timestamp":"2026-01-14 08:43:02"}
+{"level":"info","message":"Socket.IO ready","timestamp":"2026-01-14 08:43:02"}
+{"level":"info","message":"Environment: development","timestamp":"2026-01-14 08:43:02"}

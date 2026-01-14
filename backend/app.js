@@ -12,6 +12,10 @@ const app = express();
 // CORS - Must be configured FIRST before other middleware
 const allowedOrigins = [
   'http://localhost:4200',
+  'http://localhost:5000',
+  'http://localhost:3000',
+  'https://campuslibra.netlify.app',
+  'https://campuslibra.onrender.com',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
