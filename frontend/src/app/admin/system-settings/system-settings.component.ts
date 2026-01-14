@@ -22,6 +22,7 @@ export class SystemSettingsComponent implements OnInit {
   ) {
     this.settingsForm = this.fb.group({
       LOAN_PERIOD_DAYS: ['', [Validators.required, Validators.min(1), Validators.max(365)]],
+      LOAN_PERIOD_UNIT: ['', Validators.required],
       FINE_RATE_PER_DAY: ['', [Validators.required, Validators.min(0.01), Validators.max(10)]],
       RESERVATION_HOLD_HOURS: ['', [Validators.required, Validators.min(1), Validators.max(168)]]
     });
@@ -45,6 +46,7 @@ export class SystemSettingsComponent implements OnInit {
 
         this.settingsForm.patchValue({
           LOAN_PERIOD_DAYS: settingsMap['LOAN_PERIOD_DAYS'] || 14,
+          LOAN_PERIOD_UNIT: settingsMap['LOAN_PERIOD_UNIT'] || 'days',
           FINE_RATE_PER_DAY: settingsMap['FINE_RATE_PER_DAY'] || 0.50,
           RESERVATION_HOLD_HOURS: settingsMap['RESERVATION_HOLD_HOURS'] || 48
         });
@@ -64,6 +66,9 @@ export class SystemSettingsComponent implements OnInit {
     const formData = this.settingsForm.value;
 
     this.settingService.updateSetting('LOAN_PERIOD_DAYS', formData.LOAN_PERIOD_DAYS)
+      .subscribe(() => {}, () => {});
+
+    this.settingService.updateSetting('LOAN_PERIOD_UNIT', formData.LOAN_PERIOD_UNIT)
       .subscribe(() => {}, () => {});
 
     this.settingService.updateSetting('FINE_RATE_PER_DAY', formData.FINE_RATE_PER_DAY)
@@ -90,6 +95,7 @@ export class SystemSettingsComponent implements OnInit {
       if (confirmed) {
         this.settingsForm.patchValue({
           LOAN_PERIOD_DAYS: 14,
+          LOAN_PERIOD_UNIT: 'days',
           FINE_RATE_PER_DAY: 0.50,
           RESERVATION_HOLD_HOURS: 48
         });

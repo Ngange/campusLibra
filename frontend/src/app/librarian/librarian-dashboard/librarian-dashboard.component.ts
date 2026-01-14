@@ -108,19 +108,16 @@ export class LibrarianDashboardComponent implements OnInit, OnDestroy {
   }
 
   processReturn(borrow: any): void {
-    console.log('Processing return:', borrow._id);
     this.snackBar.open('Return processed successfully!', 'Close', { duration: 3000 });
     this.loadPendingReturns();
   }
 
   fulfillPickup(reservation: any): void {
-    console.log('Fulfilling pickup:', reservation._id);
     this.snackBar.open('Pickup fulfilled successfully!', 'Close', { duration: 3000 });
     this.loadPendingPickups();
   }
 
   viewDetails(item: any): void {
-    console.log('Viewing details:', item._id);
   }
 
   logout(): void {

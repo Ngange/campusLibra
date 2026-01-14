@@ -71,14 +71,30 @@ app.use((req, res, next) => {
 });
 
 // Rate limiting - prevent brute force attacks
+// General limiter for non-authenticated endpoints
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 500, // Higher limit for development
+  max: process.env.NODE_ENV === 'production' ? 1000 : 2000, // Much higher limits
   message: 'Too many requests from this IP, please try again later',
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// More lenient limiter for authenticated API endpoints
+const apiLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: process.env.NODE_ENV === 'production' ? 500 : 1000, // Per-minute limits for authenticated users
+  message: 'Too many requests, please try again later',
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Skip rate limiting for authenticated requests
+  skip: (req) => {
+    return req.headers.authorization !== undefined;
+  },
+});
+
 app.use('/api/', limiter);
+app.use('/api/', apiLimiter);
 
 // Request ID tracking
 app.use((req, res, next) => {

@@ -118,15 +118,15 @@ const getMemberStats = async (req, res, next) => {
 
 const getBookCirculation = async (req, res, next) => {
   try {
+    // Get all-time circulation (all borrows, regardless of status)
     const circulation = await Borrow.aggregate([
-      { $match: { status: { $in: ['active', 'overdue'] } } },
       {
         $group: {
           _id: '$book',
-          count: { $sum: 1 },
+          totalBorrows: { $sum: 1 },
         },
       },
-      { $sort: { count: -1 } },
+      { $sort: { totalBorrows: -1 } },
       { $limit: 10 },
       {
         $lookup: {
@@ -139,6 +139,9 @@ const getBookCirculation = async (req, res, next) => {
       { $unwind: '$bookData' },
     ]);
 
+    // Calculate max borrows for percentage calculation
+    const maxBorrows = circulation.length > 0 ? circulation[0].totalBorrows : 1;
+
     const data = circulation.map((item) => ({
       book: {
         _id: item._id,
@@ -146,7 +149,8 @@ const getBookCirculation = async (req, res, next) => {
         author: item.bookData.author,
         category: item.bookData.category,
       },
-      progress: item.count,
+      totalBorrows: item.totalBorrows,
+      progress: Math.round((item.totalBorrows / maxBorrows) * 100),
     }));
 
     res.json({

@@ -3,6 +3,11 @@ const Setting = require('../models/setting.model');
 const defaultSettings = [
   { key: 'LOAN_PERIOD_DAYS', value: 14, description: 'Loan period in days' },
   {
+    key: 'LOAN_PERIOD_UNIT',
+    value: 'days',
+    description: 'Unit for loan period: days, hours, or minutes (for testing)',
+  },
+  {
     key: 'FINE_RATE_PER_DAY',
     value: 0.5,
     description: 'Fine per overdue day (USD)',

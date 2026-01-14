@@ -23,6 +23,7 @@ export interface BookCirculationItem {
     author: string;
     category?: string;
   };
+  totalBorrows: number;
   progress: number;
 }
 
@@ -47,7 +48,6 @@ export class DashboardService {
     // Listen for dashboard updates
     this.socket.on('dashboardUpdate', (data: any) => {
       this.ngZone.run(() => {
-        console.log('Dashboard update received:', data);
         this.dashboardUpdateSubject.next();
       });
     });
@@ -63,7 +63,6 @@ export class DashboardService {
       this.socket.connect();
     }
     this.socket.emit('joinDashboard', { userId, role });
-    console.log(`Joined dashboard room for role: ${role}`);
   }
 
   // Disconnect from dashboard updates

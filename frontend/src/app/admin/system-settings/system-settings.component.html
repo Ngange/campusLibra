@@ -87,6 +87,20 @@
         </mat-form-field>
 
         <mat-form-field appearance="outline">
+          <mat-label>Loan Period Unit</mat-label>
+          <mat-select formControlName="LOAN_PERIOD_UNIT">
+            <mat-option value="days">Days</mat-option>
+            <mat-option value="hours">Hours (for testing)</mat-option>
+            <mat-option value="minutes">Minutes (for testing)</mat-option>
+          </mat-select>
+          <mat-hint>Unit for loan period duration</mat-hint>
+          <mat-error
+            *ngIf="settingsForm.get('LOAN_PERIOD_UNIT')?.hasError('required')"
+            >Required</mat-error
+          >
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
           <mat-label>Fine Rate (Per Day)</mat-label>
           <input
             matInput

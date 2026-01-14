@@ -177,8 +177,15 @@
             </td>
           </ng-container>
 
+          <ng-container matColumnDef="borrows">
+            <th mat-header-cell *matHeaderCellDef>Total Borrows</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.totalBorrows }}
+            </td>
+          </ng-container>
+
           <ng-container matColumnDef="progress">
-            <th mat-header-cell *matHeaderCellDef>Progress</th>
+            <th mat-header-cell *matHeaderCellDef>Popularity</th>
             <td mat-cell *matCellDef="let row">
               <div class="progress-bar">
                 <div
@@ -194,7 +201,7 @@
             mat-row
             *matRowDef="
               let row;
-              columns: ['bookName', 'author', 'publication', 'progress']
+              columns: ['bookName', 'author', 'publication', 'borrows', 'progress']
             "
           ></tr>
         </table>
