@@ -1,1 +1,3 @@
 /backend-old/
+backend/logs/
+*.log
