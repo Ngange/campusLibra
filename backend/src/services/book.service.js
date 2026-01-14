@@ -142,10 +142,19 @@ const deleteBook = async (id, performedBy) => {
   return book;
 };
 
+// Get distinct categories from existing books
+const getDistinctCategories = async () => {
+  const categories = await Book.distinct('category', {
+    category: { $exists: true, $ne: '' },
+  });
+  return categories.sort();
+};
+
 module.exports = {
   createBook,
   getAllBooks,
   getBookById,
   updateBook,
   deleteBook,
+  getDistinctCategories,
 };

@@ -4,6 +4,7 @@ const {
   getBookById,
   updateBook,
   deleteBook,
+  getDistinctCategories,
 } = require('../services/book.service');
 
 // POST /api/books
@@ -75,10 +76,21 @@ const deleteBookHandler = async (req, res, next) => {
   }
 };
 
+// GET /api/books/categories
+const getBookCategoriesHandler = async (req, res, next) => {
+  try {
+    const categories = await getDistinctCategories();
+    res.json({ success: true, categories });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports = {
   createBookHandler,
   getAllBooksHandler,
   getBookByIdHandler,
   updateBookHandler,
   deleteBookHandler,
+  getBookCategoriesHandler,
 };

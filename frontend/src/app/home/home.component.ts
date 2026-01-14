@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   // Search & filter state
   searchQuery: string = '';
   selectedCategories: string[] = [];
-  categories: string[] = ['Fiction', 'Technology', 'Science', 'History', 'Biography', 'Mystery', 'Romance', 'Fantasy'];
+  categories: string[] = [];
 
   // Books data
   featuredBooks: Book[] = [];
@@ -35,7 +35,20 @@ export class HomeComponent implements OnInit {
     const rawRole = this.currentUser?.role;
     // Normalize role to a string to avoid TitleCase pipe errors when role is an object
     this.userRole = typeof rawRole === 'string' ? rawRole : rawRole?.name || rawRole?.role || 'member';
+    this.loadCategories();
     this.loadFeaturedBooks();
+  }
+
+  // Load distinct categories from backend
+  loadCategories(): void {
+    this.bookService.getCategories().subscribe({
+      next: (cats) => {
+        this.categories = cats;
+      },
+      error: (err) => {
+        console.error('Failed to load categories:', err);
+      }
+    });
   }
 
   // Load books based on current filters

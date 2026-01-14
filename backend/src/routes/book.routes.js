@@ -5,6 +5,7 @@ const {
   getBookByIdHandler,
   updateBookHandler,
   deleteBookHandler,
+  getBookCategoriesHandler,
 } = require('../controllers/book.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 const { authorizePermission } = require('../middlewares/permission.middleware');
@@ -47,6 +48,7 @@ router.delete(
 
 // Read access: any authenticated user (members can browse)
 router.get('/', validatePagination, handleValidationErrors, getAllBooksHandler);
+router.get('/categories', getBookCategoriesHandler);
 router.get('/:id', validateMongoId, handleValidationErrors, getBookByIdHandler);
 
 module.exports = router;

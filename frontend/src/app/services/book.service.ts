@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
 import { Book } from '../models/book.model';
 import { environment } from '../../environments/environment';
 
@@ -25,6 +25,11 @@ interface CreateBookResponse {
 interface DeleteBookResponse {
   success: boolean;
   message: string;
+}
+
+interface CategoriesResponse {
+  success: boolean;
+  categories: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -72,5 +77,12 @@ export class BookService {
   // Delete a book (admin)
   deleteBook(id: string): Observable<DeleteBookResponse> {
     return this.http.delete<DeleteBookResponse>(`${this.apiUrl}/${id}`);
+  }
+
+  // Fetch distinct categories from backend
+  getCategories(): Observable<string[]> {
+    return this.http.get<CategoriesResponse>(`${this.apiUrl}/categories`).pipe(
+      map((res) => res.categories || [])
+    );
   }
 }
