@@ -9,20 +9,28 @@ const Reservation = require('../models/reservation.model');
 
 const getAdminStats = async (req, res, next) => {
   try {
-    const [totalBooks, totalMembers, issuedBooks, reservedBooks, overdueBooks, totalFines] = await Promise.all([
+    const [
+      totalBooks,
+      totalMembers,
+      issuedBooks,
+      reservedBooks,
+      overdueBooks,
+      totalFines,
+    ] = await Promise.all([
       Book.countDocuments(),
       User.countDocuments({ role: 'member' }),
       Borrow.countDocuments({ status: 'active' }),
       Reservation.countDocuments({ status: { $in: ['pending', 'on_hold'] } }),
       Borrow.countDocuments({ status: 'overdue' }),
-      Fine.aggregate([
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-      ])
+      Fine.aggregate([{ $group: { _id: null, total: { $sum: '$amount' } } }]),
     ]);
 
     const totalFinesAmount = totalFines[0]?.total || 0;
-    const circulationPercentage = totalBooks > 0 ? Math.round((issuedBooks / totalBooks) * 100) : 0;
-    const activeUsers = await User.countDocuments({ lastLogin: { $exists: true } });
+    const circulationPercentage =
+      totalBooks > 0 ? Math.round((issuedBooks / totalBooks) * 100) : 0;
+    const activeUsers = await User.countDocuments({
+      lastLogin: { $exists: true },
+    });
 
     res.json({
       success: true,
@@ -34,8 +42,8 @@ const getAdminStats = async (req, res, next) => {
         overdueBooks,
         totalFines: totalFinesAmount,
         circulationPercentage,
-        activeUsers
-      }
+        activeUsers,
+      },
     });
   } catch (error) {
     next(error);
@@ -44,12 +52,13 @@ const getAdminStats = async (req, res, next) => {
 
 const getLibrarianStats = async (req, res, next) => {
   try {
-    const [totalBooks, issuedBooks, reservedBooks, overdueBooks] = await Promise.all([
-      Book.countDocuments(),
-      Borrow.countDocuments({ status: 'active' }),
-      Reservation.countDocuments({ status: { $in: ['pending', 'on_hold'] } }),
-      Borrow.countDocuments({ status: 'overdue' })
-    ]);
+    const [totalBooks, issuedBooks, reservedBooks, overdueBooks] =
+      await Promise.all([
+        Book.countDocuments(),
+        Borrow.countDocuments({ status: 'active' }),
+        Reservation.countDocuments({ status: { $in: ['pending', 'on_hold'] } }),
+        Borrow.countDocuments({ status: 'overdue' }),
+      ]);
 
     res.json({
       success: true,
@@ -57,8 +66,8 @@ const getLibrarianStats = async (req, res, next) => {
         totalBooks,
         issuedBooks,
         reservedBooks,
-        overdueBooks
-      }
+        overdueBooks,
+      },
     });
   } catch (error) {
     next(error);
@@ -68,15 +77,19 @@ const getLibrarianStats = async (req, res, next) => {
 const getMemberStats = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const [totalBooks, issuedBooks, reservedBooks, outstandingFines] = await Promise.all([
-      Book.countDocuments(),
-      Borrow.countDocuments({ user: userId, status: 'active' }),
-      Reservation.countDocuments({ user: userId, status: { $in: ['pending', 'on_hold'] } }),
-      Fine.aggregate([
-        { $match: { user: userId, isPaid: false } },
-        { $group: { _id: null, total: { $sum: '$amount' } } }
-      ])
-    ]);
+    const [totalBooks, issuedBooks, reservedBooks, outstandingFines] =
+      await Promise.all([
+        Book.countDocuments(),
+        Borrow.countDocuments({ user: userId, status: 'active' }),
+        Reservation.countDocuments({
+          user: userId,
+          status: { $in: ['pending', 'on_hold'] },
+        }),
+        Fine.aggregate([
+          { $match: { user: userId, isPaid: false } },
+          { $group: { _id: null, total: { $sum: '$amount' } } },
+        ]),
+      ]);
 
     const finesAmount = outstandingFines[0]?.total || 0;
 
@@ -87,8 +100,8 @@ const getMemberStats = async (req, res, next) => {
         issuedBooks,
         reservedBooks,
         overdueBooks: 0, // Member doesn't see this in their dashboard
-        totalFines: finesAmount
-      }
+        totalFines: finesAmount,
+      },
     });
   } catch (error) {
     next(error);
@@ -104,8 +117,8 @@ const getBookCirculation = async (req, res, next) => {
       {
         $group: {
           _id: '$book',
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
       { $sort: { count: -1 } },
       { $limit: 10 },
@@ -114,25 +127,25 @@ const getBookCirculation = async (req, res, next) => {
           from: 'books',
           localField: '_id',
           foreignField: '_id',
-          as: 'bookData'
-        }
+          as: 'bookData',
+        },
       },
-      { $unwind: '$bookData' }
+      { $unwind: '$bookData' },
     ]);
 
-    const data = circulation.map(item => ({
+    const data = circulation.map((item) => ({
       book: {
         _id: item._id,
         title: item.bookData.title,
         author: item.bookData.author,
-        publisher: item.bookData.publisher
+        publisher: item.bookData.publisher,
       },
-      progress: item.count
+      progress: item.count,
     }));
 
     res.json({
       success: true,
-      data
+      data,
     });
   } catch (error) {
     next(error);
@@ -148,7 +161,7 @@ const getPendingReturns = async (req, res, next) => {
 
     res.json({
       success: true,
-      data: returns
+      data: returns,
     });
   } catch (error) {
     next(error);
@@ -164,7 +177,7 @@ const getPendingPickups = async (req, res, next) => {
 
     res.json({
       success: true,
-      data: pickups
+      data: pickups,
     });
   } catch (error) {
     next(error);
@@ -174,13 +187,16 @@ const getPendingPickups = async (req, res, next) => {
 const getMyBorrows = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const borrows = await Borrow.find({ user: userId, status: { $in: ['active', 'overdue'] } })
+    const borrows = await Borrow.find({
+      user: userId,
+      status: { $in: ['active', 'overdue'] },
+    })
       .populate('book', 'title author publisher')
       .sort({ dueDate: 1 });
 
     res.json({
       success: true,
-      data: borrows
+      data: borrows,
     });
   } catch (error) {
     next(error);
@@ -190,13 +206,16 @@ const getMyBorrows = async (req, res, next) => {
 const getMyReservations = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const reservations = await Reservation.find({ user: userId, status: { $in: ['pending', 'on_hold'] } })
+    const reservations = await Reservation.find({
+      user: userId,
+      status: { $in: ['pending', 'on_hold'] },
+    })
       .populate('book', 'title author publisher')
       .sort({ createdAt: 1 });
 
     res.json({
       success: true,
-      data: reservations
+      data: reservations,
     });
   } catch (error) {
     next(error);

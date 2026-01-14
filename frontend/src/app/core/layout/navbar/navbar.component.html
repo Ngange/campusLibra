@@ -101,7 +101,12 @@
   </div>
 
   <!-- Dashboard Link (Desktop) -->
-  <button mat-button (click)="goToDashboard()" class="desktop-nav" *ngIf="currentUser">
+  <button
+    mat-button
+    (click)="goToDashboard()"
+    class="desktop-nav"
+    *ngIf="currentUser"
+  >
     <mat-icon>dashboard</mat-icon>
     Dashboard
   </button>
