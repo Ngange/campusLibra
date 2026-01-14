@@ -142,6 +142,22 @@
   }
 }
 
+.dashboard-button {
+  text-align: center;
+  margin-bottom: 2rem;
+
+  button {
+    min-width: 250px;
+    height: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
 .action-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

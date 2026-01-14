@@ -75,6 +75,13 @@
   <div class="quick-actions">
     <h2>Quick Actions</h2>
 
+    <!-- Dashboard Button (Universal) -->
+    <div class="dashboard-button">
+      <button mat-raised-button color="warn" (click)="goToDashboard()">
+        <mat-icon>dashboard</mat-icon> Go to Dashboard
+      </button>
+    </div>
+
     <!-- Member Actions -->
     <div *ngIf="userRole === 'member'" class="action-grid">
       <button mat-raised-button color="primary" routerLink="/books">

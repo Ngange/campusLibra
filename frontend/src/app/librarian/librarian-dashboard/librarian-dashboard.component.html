@@ -1,0 +1,158 @@
+<div class="librarian-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>Library Management System</h1>
+    <div class="user-actions">
+      <span>{{ currentUser?.name }} (Librarian)</span>
+      <button mat-icon-button (click)="logout()" matTooltip="Logout">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-primary">
+      <mat-icon>menu_book</mat-icon>
+      <div class="stat-value">{{ stats.totalBooks }}</div>
+      <div class="stat-label">Total Books</div>
+    </div>
+
+    <div class="stat-card stat-card-info">
+      <mat-icon>book</mat-icon>
+      <div class="stat-value">{{ stats.issuedBooks }}</div>
+      <div class="stat-label">Issued Books</div>
+    </div>
+
+    <div class="stat-card stat-card-warning">
+      <mat-icon>event_seat</mat-icon>
+      <div class="stat-value">{{ stats.reservedBooks }}</div>
+      <div class="stat-label">Reserved Books</div>
+    </div>
+
+    <div class="stat-card stat-card-danger">
+      <mat-icon>local_library</mat-icon>
+      <div class="stat-value">{{ stats.overdueBooks }}</div>
+      <div class="stat-label">Overdue Books</div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Left: Pending Returns -->
+    <div class="pending-returns-section">
+      <div class="section-header">
+        <h2>Pending Returns</h2>
+        <button mat-icon-button [matMenuTriggerFor]="returnsMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #returnsMenu="matMenu">
+          <button mat-menu-item>Export</button>
+          <button mat-menu-item>Refresh</button>
+        </mat-menu>
+      </div>
+
+      <div class="pending-returns-list" *ngIf="!isLoadingReturns">
+        <div class="return-item" *ngFor="let borrow of pendingReturns">
+          <div class="book-info">
+            <div class="book-title">{{ borrow.book.title }}</div>
+            <div class="book-author">by {{ borrow.book.author }}</div>
+            <div class="borrow-details">
+              <span
+                ><mat-icon>event</mat-icon> Borrowed:
+                {{ borrow.borrowDate | date : "short" }}</span
+              >
+              <span
+                ><mat-icon>event</mat-icon> Due:
+                {{ borrow.dueDate | date : "short" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="processReturn(borrow)"
+            >
+              <mat-icon>check</mat-icon> Process
+            </button>
+            <button mat-stroked-button (click)="viewDetails(borrow)">
+              <mat-icon>info</mat-icon> Details
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="pendingReturns.length === 0" class="no-pending">
+          <mat-icon>check_circle</mat-icon>
+          <p>No pending returns</p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingReturns" class="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+
+    <!-- Right: Pending Pickups -->
+    <div class="pending-pickups-section">
+      <div class="section-header">
+        <h2>Pending Pickups</h2>
+        <button mat-icon-button [matMenuTriggerFor]="pickupsMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #pickupsMenu="matMenu">
+          <button mat-menu-item>Export</button>
+          <button mat-menu-item>Refresh</button>
+        </mat-menu>
+      </div>
+
+      <div class="pending-pickups-list" *ngIf="!isLoadingPickups">
+        <div class="pickup-item" *ngFor="let reservation of pendingPickups">
+          <div class="reservation-info">
+            <div class="book-title">{{ reservation.book.title }}</div>
+            <div class="book-author">by {{ reservation.book.author }}</div>
+            <div class="reservation-details">
+              <span
+                ><mat-icon>person</mat-icon> Reserved by:
+                {{ reservation.user?.name }}</span
+              >
+              <span
+                ><mat-icon>event</mat-icon> Hold until:
+                {{ reservation.holdUntil | date : "short" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="fulfillPickup(reservation)"
+            >
+              <mat-icon>check</mat-icon> Fulfill
+            </button>
+            <button mat-stroked-button (click)="viewDetails(reservation)">
+              <mat-icon>info</mat-icon> Details
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="pendingPickups.length === 0" class="no-pending">
+          <mat-icon>check_circle</mat-icon>
+          <p>No pending pickups</p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingPickups" class="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Software designed by CampusLibra Team</span>
+    <span>© {{ currentYear }} University of The Gambia</span>
+  </div>
+</div>

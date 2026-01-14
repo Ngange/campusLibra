@@ -6,14 +6,38 @@ import { RegisterComponent } from './auth/register/register.component';
 import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './core/layout/layout.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { RoleGuard } from './core/guards/role.guard';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { GuestGuard } from './core/guards/guest.guard';
+import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
+import { LibrarianDashboardComponent } from './librarian/librarian-dashboard/librarian-dashboard.component';
+import { MemberDashboardComponent } from './member/member-dashboard/member-dashboard.component';
 
 const routes: Routes = [
   // Public routes (no layout)
   { path: '', component: LandingComponent, canActivate: [GuestGuard] },
   { path: 'login', component: LoginComponent },
   { path: 'register', component: RegisterComponent },
+
+  // Role-specific dashboards (standalone, no layout)
+  {
+    path: 'admin-dashboard',
+    component: AdminDashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin'] }
+  },
+  {
+    path: 'librarian-dashboard',
+    component: LibrarianDashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['librarian'] }
+  },
+  {
+    path: 'member-dashboard',
+    component: MemberDashboardComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['member'] }
+  },
 
   // Protected routes (with layout)
   {

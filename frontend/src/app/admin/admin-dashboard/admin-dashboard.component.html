@@ -1,0 +1,166 @@
+<div class="admin-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>Library Management System</h1>
+    <div class="user-actions">
+      <span>{{ currentUser?.name }} (Admin)</span>
+      <button mat-icon-button (click)="logout()" matTooltip="Logout">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-primary">
+      <mat-icon>menu_book</mat-icon>
+      <div class="stat-value">{{ stats.totalBooks }}</div>
+      <div class="stat-label">Total Books</div>
+    </div>
+
+    <div class="stat-card stat-card-success">
+      <mat-icon>people</mat-icon>
+      <div class="stat-value">{{ stats.totalMembers }}</div>
+      <div class="stat-label">Total Members</div>
+    </div>
+
+    <div class="stat-card stat-card-info">
+      <mat-icon>book</mat-icon>
+      <div class="stat-value">{{ stats.issuedBooks }}</div>
+      <div class="stat-label">Issued Books</div>
+    </div>
+
+    <div class="stat-card stat-card-warning">
+      <mat-icon>event_seat</mat-icon>
+      <div class="stat-value">{{ stats.reservedBooks }}</div>
+      <div class="stat-label">Reserved Books</div>
+    </div>
+
+    <div class="stat-card stat-card-danger">
+      <mat-icon>local_library</mat-icon>
+      <div class="stat-value">{{ stats.overdueBooks }}</div>
+      <div class="stat-label">Overdue Books</div>
+    </div>
+
+    <div class="stat-card stat-card-finance">
+      <mat-icon>attach_money</mat-icon>
+      <div class="stat-value">{{ stats.totalFines || 0 | currency }}</div>
+      <div class="stat-label">Total Fines</div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Left: Books Circulation Chart -->
+    <div class="chart-section">
+      <div class="section-header">
+        <h2>Books Circulation</h2>
+        <button mat-icon-button [matMenuTriggerFor]="chartMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #chartMenu="matMenu">
+          <button mat-menu-item>Export</button>
+          <button mat-menu-item>Refresh</button>
+        </mat-menu>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-legend">
+          <span
+            ><mat-icon style="color: #00c7e9">lens</mat-icon> Issued Books</span
+          >
+          <span
+            ><mat-icon style="color: #ffd700">lens</mat-icon> Reserved
+            Books</span
+          >
+          <span
+            ><mat-icon style="color: #ff4500">lens</mat-icon> Overdue
+            Books</span
+          >
+        </div>
+
+        <div class="donut-chart">
+          <div class="donut-center">
+            <div class="percentage">{{ stats.circulationPercentage }}%</div>
+            <div class="label">CIRCULATION RATE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right: Books Circulation Table -->
+    <div class="table-section">
+      <div class="section-header">
+        <h2>Top Circulated Books</h2>
+        <button mat-icon-button [matMenuTriggerFor]="tableMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #tableMenu="matMenu">
+          <button mat-menu-item>Export</button>
+          <button mat-menu-item>Sort</button>
+        </mat-menu>
+      </div>
+
+      <div class="books-table" *ngIf="!isLoading">
+        <table
+          mat-table
+          [dataSource]="circulationBooks"
+          class="full-width-table"
+        >
+          <ng-container matColumnDef="bookName">
+            <th mat-header-cell *matHeaderCellDef>Book Name</th>
+            <td mat-cell *matCellDef="let row">{{ row.book.title }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="author">
+            <th mat-header-cell *matHeaderCellDef>Author</th>
+            <td mat-cell *matCellDef="let row">{{ row.book.author }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="publication">
+            <th mat-header-cell *matHeaderCellDef>Publication</th>
+            <td mat-cell *matCellDef="let row">
+              {{ row.book.publisher || "N/A" }}
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="progress">
+            <th mat-header-cell *matHeaderCellDef>Progress</th>
+            <td mat-cell *matCellDef="let row">
+              <div class="progress-bar">
+                <div
+                  class="progress-fill"
+                  [style.width]="row.progress + '%'"
+                ></div>
+              </div>
+              <span class="progress-text">{{ row.progress }}%</span>
+            </td>
+          </ng-container>
+
+          <tr
+            mat-row
+            *matRowDef="
+              let row;
+              columns: ['bookName', 'author', 'publication', 'progress']
+            "
+          ></tr>
+        </table>
+
+        <div *ngIf="circulationBooks.length === 0" class="no-data">
+          <mat-icon>inbox</mat-icon>
+          <p>No circulation data available</p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoading" class="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Software designed by CampusLibra Team</span>
+    <span>© {{ currentYear }} University of The Gambia</span>
+  </div>
+</div>

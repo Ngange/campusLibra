@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { BookService } from '../services/book.service';
 import { Book } from '../models/book.model';
@@ -25,7 +26,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
-    private bookService: BookService
+    private bookService: BookService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -91,6 +93,22 @@ export class HomeComponent implements OnInit {
     this.searchQuery = '';
     this.selectedCategories = [];
     this.loadFeaturedBooks();
+  }
+
+  // Navigate to role-specific dashboard
+  goToDashboard(): void {
+    const role = this.userRole.toLowerCase();
+    switch(role) {
+      case 'admin':
+        this.router.navigate(['/admin-dashboard']);
+        break;
+      case 'librarian':
+        this.router.navigate(['/librarian-dashboard']);
+        break;
+      default:
+        this.router.navigate(['/member-dashboard']);
+        break;
+    }
   }
 
   logout(): void {

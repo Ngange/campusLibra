@@ -1,0 +1,178 @@
+<div class="member-dashboard">
+  <!-- Header -->
+  <div class="dashboard-header">
+    <h1>Library Management System</h1>
+    <div class="user-actions">
+      <span>{{ currentUser?.name }} (Member)</span>
+      <button mat-icon-button (click)="logout()" matTooltip="Logout">
+        <mat-icon>exit_to_app</mat-icon>
+      </button>
+    </div>
+  </div>
+
+  <!-- Statistics Cards -->
+  <div class="stats-grid">
+    <div class="stat-card stat-card-primary">
+      <mat-icon>menu_book</mat-icon>
+      <div class="stat-value">{{ stats.totalBooks }}</div>
+      <div class="stat-label">Total Books</div>
+    </div>
+
+    <div class="stat-card stat-card-info">
+      <mat-icon>book</mat-icon>
+      <div class="stat-value">{{ stats.issuedBooks }}</div>
+      <div class="stat-label">My Borrows</div>
+    </div>
+
+    <div class="stat-card stat-card-warning">
+      <mat-icon>event_seat</mat-icon>
+      <div class="stat-value">{{ stats.reservedBooks }}</div>
+      <div class="stat-label">My Reservations</div>
+    </div>
+
+    <div class="stat-card stat-card-danger">
+      <mat-icon>attach_money</mat-icon>
+      <div class="stat-value">{{ stats.overdueBooks || 0 | currency }}</div>
+      <div class="stat-label">Outstanding Fines</div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="main-content">
+    <!-- Left: My Borrows -->
+    <div class="my-borrows-section">
+      <div class="section-header">
+        <h2>My Borrows</h2>
+        <button mat-icon-button [matMenuTriggerFor]="borrowsMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #borrowsMenu="matMenu">
+          <button mat-menu-item>Export</button>
+          <button mat-menu-item>Refresh</button>
+        </mat-menu>
+      </div>
+
+      <div class="borrows-list" *ngIf="!isLoadingBorrows">
+        <div class="borrow-item" *ngFor="let borrow of myBorrows">
+          <div class="book-info">
+            <div class="book-title">{{ borrow.book.title }}</div>
+            <div class="book-author">by {{ borrow.book.author }}</div>
+            <div class="borrow-details">
+              <span
+                ><mat-icon>event</mat-icon> Borrowed:
+                {{ borrow.borrowDate | date : "short" }}</span
+              >
+              <span
+                ><mat-icon>event</mat-icon> Due:
+                {{ borrow.dueDate | date : "short" }}</span
+              >
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              mat-raised-button
+              color="primary"
+              (click)="renewBorrow(borrow)"
+              [disabled]="borrow.status === 'overdue'"
+            >
+              <mat-icon>refresh</mat-icon> Renew
+            </button>
+            <button mat-stroked-button (click)="viewDetails(borrow)">
+              <mat-icon>info</mat-icon> Details
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="myBorrows.length === 0" class="no-data">
+          <mat-icon>check_circle</mat-icon>
+          <p>No active borrows</p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingBorrows" class="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+
+    <!-- Right: My Reservations -->
+    <div class="my-reservations-section">
+      <div class="section-header">
+        <h2>My Reservations</h2>
+        <button mat-icon-button [matMenuTriggerFor]="reservationsMenu">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #reservationsMenu="matMenu">
+          <button mat-menu-item>Export</button>
+          <button mat-menu-item>Refresh</button>
+        </mat-menu>
+      </div>
+
+      <div class="reservations-list" *ngIf="!isLoadingReservations">
+        <div
+          class="reservation-item"
+          *ngFor="let reservation of myReservations"
+        >
+          <div class="reservation-info">
+            <div class="book-title">{{ reservation.book.title }}</div>
+            <div class="book-author">by {{ reservation.book.author }}</div>
+            <div class="reservation-details">
+              <span
+                ><mat-icon>event</mat-icon> Reserved on:
+                {{ reservation.createdAt | date : "short" }}</span
+              >
+              <span
+                ><mat-icon>queue</mat-icon> Queue Position: #{{
+                  reservation.queuePosition || 1
+                }}</span
+              >
+              <span
+                class="status"
+                [class.on-hold]="reservation.status === 'on_hold'"
+              >
+                <mat-icon>info</mat-icon> Status:
+                {{ reservation.status | titlecase }}
+              </span>
+            </div>
+          </div>
+
+          <div class="actions">
+            <button
+              mat-raised-button
+              color="accent"
+              (click)="confirmPickup(reservation)"
+              *ngIf="reservation.status === 'on_hold'"
+            >
+              <mat-icon>check</mat-icon> Confirm
+            </button>
+            <button
+              mat-stroked-button
+              (click)="cancelReservation(reservation)"
+              *ngIf="reservation.status === 'pending'"
+            >
+              <mat-icon>close</mat-icon> Cancel
+            </button>
+            <button mat-stroked-button (click)="viewDetails(reservation)">
+              <mat-icon>info</mat-icon> Details
+            </button>
+          </div>
+        </div>
+
+        <div *ngIf="myReservations.length === 0" class="no-data">
+          <mat-icon>check_circle</mat-icon>
+          <p>No active reservations</p>
+        </div>
+      </div>
+
+      <div *ngIf="isLoadingReservations" class="loading">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <span>Software designed by CampusLibra Team</span>
+    <span>© {{ currentYear }} University of The Gambia</span>
+  </div>
+</div>

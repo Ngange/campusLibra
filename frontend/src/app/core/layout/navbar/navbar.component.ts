@@ -83,6 +83,25 @@ export class NavbarComponent implements OnInit {
   }
 
   /**
+   * Navigate to role-specific dashboard
+   */
+  goToDashboard(): void {
+    const role = this.userRole.toLowerCase();
+    switch(role) {
+      case 'admin':
+        this.router.navigate(['/admin-dashboard']);
+        break;
+      case 'librarian':
+        this.router.navigate(['/librarian-dashboard']);
+        break;
+      default:
+        this.router.navigate(['/member-dashboard']);
+        break;
+    }
+    this.closeMobileMenu();
+  }
+
+  /**
    * Handle window resize - close menu on desktop view
    */
   @HostListener('window:resize', ['$event'])

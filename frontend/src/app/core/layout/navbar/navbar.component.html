@@ -100,6 +100,12 @@
     </ng-container>
   </div>
 
+  <!-- Dashboard Link (Desktop) -->
+  <button mat-button (click)="goToDashboard()" class="desktop-nav" *ngIf="currentUser">
+    <mat-icon>dashboard</mat-icon>
+    Dashboard
+  </button>
+
   <!-- User Section (desktop) -->
   <div class="user-section desktop-user" *ngIf="currentUser">
     <!-- Notification Badge with Dropdown -->

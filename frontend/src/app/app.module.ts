@@ -15,6 +15,11 @@ import { LandingComponent } from './auth/landing/landing.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 
+// Dashboard Components
+import { AdminDashboardComponent } from './admin/admin-dashboard/admin-dashboard.component';
+import { LibrarianDashboardComponent } from './librarian/librarian-dashboard/librarian-dashboard.component';
+import { MemberDashboardComponent } from './member/member-dashboard/member-dashboard.component';
+
 // Shared Module
 import { SharedModule } from './shared/shared.module';
 
@@ -33,6 +38,10 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatTableModule } from '@angular/material/table';
+import { MatGridListModule } from '@angular/material/grid-list';
+import { MatBadgeModule } from '@angular/material/badge';
+import { MatListModule } from '@angular/material/list';
+import { MatTabsModule } from '@angular/material/tabs';
 import { LayoutModule } from './core/layout/layout.module';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.component';
@@ -47,7 +56,10 @@ import { LoginModalComponent } from './shared/login-modal/login-modal.component'
     HomeComponent,
     NotificationsComponent,
     ConfirmDialogComponent,
-    LoginModalComponent
+    LoginModalComponent,
+    AdminDashboardComponent,
+    LibrarianDashboardComponent,
+    MemberDashboardComponent
   ],
   imports: [
     BrowserModule,
@@ -72,6 +84,10 @@ import { LoginModalComponent } from './shared/login-modal/login-modal.component'
     MatSnackBarModule,
     MatDialogModule,
     MatTableModule,
+    MatGridListModule,
+    MatBadgeModule,
+    MatListModule,
+    MatTabsModule,
     LayoutModule
   ],
   providers: [
