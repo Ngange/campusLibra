@@ -201,7 +201,13 @@
             mat-row
             *matRowDef="
               let row;
-              columns: ['bookName', 'author', 'publication', 'borrows', 'progress']
+              columns: [
+                'bookName',
+                'author',
+                'publication',
+                'borrows',
+                'progress'
+              ]
             "
           ></tr>
         </table>
