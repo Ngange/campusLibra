@@ -16,6 +16,7 @@ const allowedOrigins = [
   'http://localhost:3000',
   'https://campuslibra.netlify.app',
   'https://campuslibra.onrender.com',
+  'https://campus-libra.vercel.app',
   process.env.FRONTEND_URL,
 ].filter(Boolean);
 
