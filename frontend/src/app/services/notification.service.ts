@@ -125,9 +125,6 @@ export class NotificationService {
 
     // Decrease unread count
     this.unreadCountSubject.next(Math.max(0, this.unreadCountSubject.value - 1));
-
-    // TODO: Call backend to mark as read
-    // this.http.patch(`${environment.apiUrl}/notifications/${notificationId}/read`, {}).subscribe();
   }
 
   markAsUnread(notificationId: string): void {

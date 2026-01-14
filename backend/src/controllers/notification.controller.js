@@ -66,17 +66,17 @@ const getUserNotifications = async (req, res, next) => {
 const markAsRead = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const role = req.user.role;
     const { id } = req.params;
 
-    const isStaff = role === 'admin' || role === 'librarian';
-    const userFilter = isStaff ? undefined : userId;
-
-    const notification = await notificationService.markAsRead(id, userFilter);
+    // Always mark as read for the current user only (no cross-user marking)
+    const notification = await notificationService.markAsRead(id, userId);
     if (!notification) {
       return res
         .status(404)
-        .json({ success: false, message: 'Notification not found' });
+        .json({
+          success: false,
+          message: 'Notification not found or does not belong to you',
+        });
     }
 
     const unreadCount = await notificationService.getUnreadCount(userId);
@@ -90,17 +90,17 @@ const markAsRead = async (req, res, next) => {
 const markAsUnread = async (req, res, next) => {
   try {
     const userId = req.user.id;
-    const role = req.user.role;
     const { id } = req.params;
 
-    const isStaff = role === 'admin' || role === 'librarian';
-    const userFilter = isStaff ? undefined : userId;
-
-    const notification = await notificationService.markAsUnread(id, userFilter);
+    // Always mark as unread for the current user only
+    const notification = await notificationService.markAsUnread(id, userId);
     if (!notification) {
       return res
         .status(404)
-        .json({ success: false, message: 'Notification not found' });
+        .json({
+          success: false,
+          message: 'Notification not found or does not belong to you',
+        });
     }
 
     const unreadCount = await notificationService.getUnreadCount(userId);
