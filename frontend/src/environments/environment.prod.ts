@@ -6,7 +6,7 @@ export const environment = {
   appVersion: '1.0.0',
 
 // Backend API endpoint, request timeout (ms)
-  apiUrl: 'https://campuslibra.onrender.com/',
+  apiUrl: 'https://campuslibra.onrender.com/api',
   apiTimeout: 30000, // API request timeout (ms)
   tokenKey: 'auth_token',
   refreshTokenKey: 'refresh_token',
