@@ -4,11 +4,15 @@ const User = require('../models/user.model');
 const Book = require('../models/book.model');
 const BookAudit = require('../models/bookAudit.model');
 const Reservation = require('../models/reservation.model');
+const Role = require('../models/role.model');
 
 // ============ STATS ENDPOINTS ============
 
 const getAdminStats = async (req, res, next) => {
   try {
+    // Get member role ID
+    const memberRole = await Role.findOne({ name: 'member' });
+    
     const [
       totalBooks,
       totalMembers,
@@ -18,7 +22,7 @@ const getAdminStats = async (req, res, next) => {
       totalFines,
     ] = await Promise.all([
       Book.countDocuments(),
-      User.countDocuments({ role: 'member' }),
+      memberRole ? User.countDocuments({ role: memberRole._id }) : User.countDocuments(),
       Borrow.countDocuments({ status: 'active' }),
       Reservation.countDocuments({ status: { $in: ['pending', 'on_hold'] } }),
       Borrow.countDocuments({ status: 'overdue' }),
