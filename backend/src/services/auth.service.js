@@ -22,7 +22,7 @@ const registerUser = async (userData) => {
   if (!roleDoc) throw new Error('Invalid role');
 
   // 2. CREATE USER (password will be hashed by pre-save hook)
-  const existingUser = await User.findOne({ email });
+  const existingUser = await User.findOne({ email }).populate('role', 'name');
   if (existingUser) {
     // Idempotency: If user exists, return success (don't fail!)
     const token = generateToken({
@@ -64,7 +64,7 @@ const registerUser = async (userData) => {
     console.error('Failed to send welcome notification:', err.message);
   }
 
-  const token = generateToken({ id: user._id, role });
+  const token = generateToken({ id: user._id, role: role });
 
   // Generate refresh token
   const refreshToken = generateRefreshToken();

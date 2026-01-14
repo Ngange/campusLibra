@@ -1,10 +1,16 @@
 // Middleware to authorize user roles
 const authorizeRoles = (...allowedRoles) => {
   return (req, res, next) => {
-    // If the user's role is not in the allowed roles, deny access
-    if (!allowedRoles.includes(req.user.role)) {
+    // req.user.role is the role name (string) from the JWT token
+    const userRole = req.user.role;
+    
+    // Check if user's role is in the allowed roles
+    if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({
+        success: false,
         message: 'Access denied: insufficient permissions',
+        requiredRoles: allowedRoles,
+        userRole: userRole
       });
     }
     next();
