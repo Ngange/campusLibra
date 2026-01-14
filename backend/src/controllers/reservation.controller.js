@@ -14,6 +14,12 @@ const createReservationHandler = async (req, res, next) => {
     }
 
     const reservation = await createReservation(userId, bookId);
+
+    // Emit dashboard update to all roles
+    if (global.emitDashboardUpdate) {
+      global.emitDashboardUpdate(['admin', 'librarian', 'member']);
+    }
+
     res.status(201).json({ success: true, reservation });
   } catch (error) {
     next(error);
@@ -26,6 +32,12 @@ const fulfillPickupHandler = async (req, res, next) => {
     const librarianId = req.user.id; // Librarian confirming pickup
 
     const result = await fulfillReservationPickup(id, librarianId);
+
+    // Emit dashboard update to all roles
+    if (global.emitDashboardUpdate) {
+      global.emitDashboardUpdate(['admin', 'librarian', 'member']);
+    }
+
     res.json({ success: true, data: result });
   } catch (error) {
     next(error);

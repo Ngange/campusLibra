@@ -144,7 +144,7 @@ const getBookCirculation = async (req, res, next) => {
         _id: item._id,
         title: item.bookData.title,
         author: item.bookData.author,
-        publisher: item.bookData.publisher,
+        category: item.bookData.category,
       },
       progress: item.count,
     }));

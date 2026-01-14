@@ -57,10 +57,12 @@ connectDB().then(async () => {
   });
 
   // Setup Socket.IO
-  const { emitNotification } = require('./src/sockets/notification.socket')(io);
+  const { emitNotification, emitDashboardUpdate } =
+    require('./src/sockets/notification.socket')(io);
 
-  // Make emitNotification globally available
+  // Make emitNotification and emitDashboardUpdate globally available
   global.emitNotification = emitNotification;
+  global.emitDashboardUpdate = emitDashboardUpdate;
 
   // Start server
   const server = httpServer.listen(PORT, () => {

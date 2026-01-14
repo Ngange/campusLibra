@@ -1,17 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DashboardService, DashboardStats, BookCirculationItem } from '../../services/dashboard.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenu } from '@angular/material/menu';
+import { MatTableDataSource } from '@angular/material/table';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-admin-dashboard',
   templateUrl: './admin-dashboard.component.html',
-  styleUrls: ['./admin-dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./admin-dashboard.component.scss']
 })
-export class AdminDashboardComponent implements OnInit {
+export class AdminDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('chartMenu') chartMenu!: MatMenu;
   @ViewChild('tableMenu') tableMenu!: MatMenu;
 
@@ -27,9 +28,10 @@ export class AdminDashboardComponent implements OnInit {
     activeUsers: 0
   };
 
-  circulationBooks: BookCirculationItem[] = [];
+  circulationBooks = new MatTableDataSource<BookCirculationItem>([]);
   currentYear = new Date().getFullYear();
   isLoading = true;
+  private dashboardSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -42,6 +44,24 @@ export class AdminDashboardComponent implements OnInit {
     this.currentUser = this.authService.getCurrentUser();
     this.loadStats();
     this.loadCirculationBooks();
+
+    // Connect to real-time dashboard updates
+    this.dashboardService.connectDashboard(this.currentUser.id, 'admin');
+
+    // Subscribe to dashboard updates
+    this.dashboardSubscription = this.dashboardService.dashboardUpdate$.subscribe(() => {
+      console.log('Refreshing admin dashboard due to update...');
+      this.loadStats();
+      this.loadCirculationBooks();
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscription and disconnect socket
+    if (this.dashboardSubscription) {
+      this.dashboardSubscription.unsubscribe();
+    }
+    this.dashboardService.disconnectDashboard();
   }
 
   loadStats(): void {
@@ -62,7 +82,7 @@ export class AdminDashboardComponent implements OnInit {
   loadCirculationBooks(): void {
     this.dashboardService.getBookCirculation().subscribe({
       next: (books) => {
-        this.circulationBooks = books;
+        this.circulationBooks.data = books;
         this.isLoading = false;
       },
       error: (err) => {
@@ -70,6 +90,12 @@ export class AdminDashboardComponent implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+  refresh(): void {
+    this.loadStats();
+    this.loadCirculationBooks();
+    this.snackBar.open('Dashboard refreshed', 'Close', { duration: 2000 });
   }
 
   calculateIssuedAngle(): number {
@@ -88,10 +114,5 @@ export class AdminDashboardComponent implements OnInit {
     if (!this.stats.totalBooks) return 0;
     const percentage = (this.stats.overdueBooks / this.stats.totalBooks) * 100;
     return (percentage / 100) * 360;
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/']);
   }
 }

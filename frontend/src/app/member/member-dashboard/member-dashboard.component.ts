@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DashboardService, DashboardStats } from '../../services/dashboard.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenu } from '@angular/material/menu';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-member-dashboard',
   templateUrl: './member-dashboard.component.html',
-  styleUrls: ['./member-dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./member-dashboard.component.scss']
 })
-export class MemberDashboardComponent implements OnInit {
+export class MemberDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('borrowsMenu') borrowsMenu!: MatMenu;
   @ViewChild('reservationsMenu') reservationsMenu!: MatMenu;
 
@@ -28,6 +28,7 @@ export class MemberDashboardComponent implements OnInit {
   currentYear = new Date().getFullYear();
   isLoadingBorrows = true;
   isLoadingReservations = true;
+  private dashboardSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -41,6 +42,25 @@ export class MemberDashboardComponent implements OnInit {
     this.loadStats();
     this.loadMyBorrows();
     this.loadMyReservations();
+
+    // Connect to real-time dashboard updates
+    this.dashboardService.connectDashboard(this.currentUser.id, 'member');
+
+    // Subscribe to dashboard updates
+    this.dashboardSubscription = this.dashboardService.dashboardUpdate$.subscribe(() => {
+      console.log('Refreshing member dashboard due to update...');
+      this.loadStats();
+      this.loadMyBorrows();
+      this.loadMyReservations();
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscription and disconnect socket
+    if (this.dashboardSubscription) {
+      this.dashboardSubscription.unsubscribe();
+    }
+    this.dashboardService.disconnectDashboard();
   }
 
   loadStats(): void {
@@ -65,6 +85,13 @@ export class MemberDashboardComponent implements OnInit {
         this.isLoadingBorrows = false;
       }
     });
+  }
+
+  refresh(): void {
+    this.loadStats();
+    this.loadMyBorrows();
+    this.loadMyReservations();
+    this.snackBar.open('Dashboard refreshed', 'Close', { duration: 2000 });
   }
 
   loadMyReservations(): void {

@@ -15,6 +15,12 @@ const borrowBookHandler = async (req, res, next) => {
     }
 
     const borrow = await borrowBook(userId, bookId);
+
+    // Emit dashboard update to all roles
+    if (global.emitDashboardUpdate) {
+      global.emitDashboardUpdate(['admin', 'librarian', 'member']);
+    }
+
     res.status(201).json({ success: true, borrow });
   } catch (error) {
     next(error);
@@ -27,6 +33,12 @@ const returnBookHandler = async (req, res, next) => {
     const librarianId = req.user.id; // Librarian or admin processes return
 
     const result = await returnBook(id, librarianId);
+
+    // Emit dashboard update to all roles
+    if (global.emitDashboardUpdate) {
+      global.emitDashboardUpdate(['admin', 'librarian', 'member']);
+    }
+
     res.json({ success: true, borrow: result.borrow, fine: result.fine });
   } catch (error) {
     next(error);
@@ -39,6 +51,12 @@ const renewBookHandler = async (req, res, next) => {
     const userId = req.user.id;
 
     const borrow = await renewBook(id, userId);
+
+    // Emit dashboard update to member and admin roles
+    if (global.emitDashboardUpdate) {
+      global.emitDashboardUpdate(['admin', 'member']);
+    }
+
     res.json({ success: true, borrow });
   } catch (error) {
     next(error);

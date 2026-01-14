@@ -1,17 +1,17 @@
-import { Component, OnInit, ChangeDetectionStrategy, ViewChild } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
 import { DashboardService, DashboardStats } from '../../services/dashboard.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatMenu } from '@angular/material/menu';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-librarian-dashboard',
   templateUrl: './librarian-dashboard.component.html',
-  styleUrls: ['./librarian-dashboard.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./librarian-dashboard.component.scss']
 })
-export class LibrarianDashboardComponent implements OnInit {
+export class LibrarianDashboardComponent implements OnInit, OnDestroy {
   @ViewChild('returnsMenu') returnsMenu!: MatMenu;
   @ViewChild('pickupsMenu') pickupsMenu!: MatMenu;
 
@@ -28,6 +28,7 @@ export class LibrarianDashboardComponent implements OnInit {
   currentYear = new Date().getFullYear();
   isLoadingReturns = true;
   isLoadingPickups = true;
+  private dashboardSubscription?: Subscription;
 
   constructor(
     private authService: AuthService,
@@ -41,6 +42,25 @@ export class LibrarianDashboardComponent implements OnInit {
     this.loadStats();
     this.loadPendingReturns();
     this.loadPendingPickups();
+
+    // Connect to real-time dashboard updates
+    this.dashboardService.connectDashboard(this.currentUser.id, 'librarian');
+
+    // Subscribe to dashboard updates
+    this.dashboardSubscription = this.dashboardService.dashboardUpdate$.subscribe(() => {
+      console.log('Refreshing librarian dashboard due to update...');
+      this.loadStats();
+      this.loadPendingReturns();
+      this.loadPendingPickups();
+    });
+  }
+
+  ngOnDestroy(): void {
+    // Clean up subscription and disconnect socket
+    if (this.dashboardSubscription) {
+      this.dashboardSubscription.unsubscribe();
+    }
+    this.dashboardService.disconnectDashboard();
   }
 
   loadStats(): void {
@@ -65,6 +85,13 @@ export class LibrarianDashboardComponent implements OnInit {
         this.isLoadingReturns = false;
       }
     });
+  }
+
+  refresh(): void {
+    this.loadStats();
+    this.loadPendingReturns();
+    this.loadPendingPickups();
+    this.snackBar.open('Dashboard refreshed', 'Close', { duration: 2000 });
   }
 
   loadPendingPickups(): void {

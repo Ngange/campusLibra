@@ -46,6 +46,7 @@ import { LayoutModule } from './core/layout/layout.module';
 import { NotificationsComponent } from './notifications/notifications.component';
 import { ConfirmDialogComponent } from './shared/confirm-dialog/confirm-dialog.component';
 import { LoginModalComponent } from './shared/login-modal/login-modal.component';
+import { DashboardRedirectComponent } from './dashboard-redirect.component';
 
 @NgModule({
   declarations: [
@@ -57,6 +58,7 @@ import { LoginModalComponent } from './shared/login-modal/login-modal.component'
     NotificationsComponent,
     ConfirmDialogComponent,
     LoginModalComponent,
+    DashboardRedirectComponent,
     AdminDashboardComponent,
     LibrarianDashboardComponent,
     MemberDashboardComponent

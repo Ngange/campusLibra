@@ -10,6 +10,14 @@ const setupSocketIO = (io) => {
       console.log(`User ${userId} joined their room`);
     });
 
+    // Join dashboard room for real-time updates
+    socket.on('joinDashboard', (data) => {
+      const { userId, role } = data;
+      socket.join('dashboard-all'); // All users get general updates
+      socket.join(`dashboard-${role}`); // Role-specific updates
+      console.log(`User ${userId} joined dashboard rooms: all, ${role}`);
+    });
+
     socket.on('disconnect', () => {
       console.log('User disconnected:', socket.id);
     });
@@ -37,7 +45,23 @@ const setupSocketIO = (io) => {
     }
   };
 
-  return { emitNotification };
+  // Helper function to emit dashboard updates
+  const emitDashboardUpdate = (roles = ['admin', 'librarian', 'member']) => {
+    try {
+      const timestamp = new Date().toISOString();
+      // Emit to all dashboard rooms
+      io.to('dashboard-all').emit('dashboardUpdate', { timestamp });
+      // Emit to specific role rooms
+      roles.forEach((role) => {
+        io.to(`dashboard-${role}`).emit('dashboardUpdate', { timestamp, role });
+      });
+      console.log('Dashboard update emitted to roles:', roles);
+    } catch (error) {
+      console.error('Dashboard update emit error:', error);
+    }
+  };
+
+  return { emitNotification, emitDashboardUpdate };
 };
 
 module.exports = setupSocketIO;

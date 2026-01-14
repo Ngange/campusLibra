@@ -4,9 +4,6 @@
     <h1>Library Management System</h1>
     <div class="user-actions">
       <span>{{ currentUser?.name }} (Librarian)</span>
-      <button mat-icon-button (click)="logout()" matTooltip="Logout">
-        <mat-icon>exit_to_app</mat-icon>
-      </button>
     </div>
   </div>
 
@@ -48,7 +45,7 @@
         </button>
         <mat-menu #returnsMenu="matMenu">
           <button mat-menu-item>Export</button>
-          <button mat-menu-item>Refresh</button>
+          <button mat-menu-item (click)="refresh()">Refresh</button>
         </mat-menu>
       </div>
 
@@ -103,7 +100,7 @@
         </button>
         <mat-menu #pickupsMenu="matMenu">
           <button mat-menu-item>Export</button>
-          <button mat-menu-item>Refresh</button>
+          <button mat-menu-item (click)="refresh()">Refresh</button>
         </mat-menu>
       </div>
 
