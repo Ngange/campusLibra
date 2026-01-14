@@ -33,6 +33,11 @@ connectDB().then(async () => {
   // Allow both local dev and deployed frontend for websockets
   const socketAllowedOrigins = [
     'http://localhost:4200',
+    'http://localhost:5000',
+    'http://localhost:3000',
+    'https://campuslibra.netlify.app',
+    'https://campuslibra.onrender.com',
+    'https://campus-libra.vercel.app',
     process.env.FRONTEND_URL,
   ].filter(Boolean);
 
