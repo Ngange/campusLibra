@@ -4,6 +4,7 @@ import {
   ChangeDetectionStrategy,
   ViewChild,
   OnDestroy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -78,7 +79,8 @@ export class PermissionManagementComponent implements OnInit, OnDestroy {
     private notificationService: NotificationService,
     private fb: FormBuilder,
     private snackBar: MatSnackBar,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {
     this.permissionForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
@@ -99,6 +101,7 @@ export class PermissionManagementComponent implements OnInit, OnDestroy {
 
   loadPermissions(): void {
     this.isLoading = true;
+    this.cdr.markForCheck();
     this.permissionService
       .getAllPermissions()
       .pipe(takeUntil(this.destroy$))
@@ -109,11 +112,13 @@ export class PermissionManagementComponent implements OnInit, OnDestroy {
             this.applyFilters();
           }
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
         error: (error: any) => {
           console.error('Error loading permissions:', error);
           this.snackBar.open('Failed to load permissions', 'Close', { duration: 5000 });
           this.isLoading = false;
+          this.cdr.markForCheck();
         },
       });
   }

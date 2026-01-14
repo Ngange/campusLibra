@@ -6,7 +6,7 @@ const SettingSchema = new Schema(
     book: {
       type: Schema.Types.ObjectId,
       ref: 'Book',
-      required: [true, 'Audit must reference a book'],
+      default: null, // Allow non-book audit events
     },
     bookCopy: {
       type: Schema.Types.ObjectId,

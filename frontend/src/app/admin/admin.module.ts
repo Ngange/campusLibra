@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -12,6 +13,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
+import { MatDividerModule } from '@angular/material/divider';
 
 import { SharedModule } from '../shared/shared.module';
 import { AdminRoutingModule } from './admin-routing.module';
@@ -35,6 +37,7 @@ import { CreateBookDialogComponent } from './books-manage/create-book-dialog/cre
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterModule,
     MatCardModule,
     MatButtonModule,
     MatIconModule,
@@ -46,6 +49,7 @@ import { CreateBookDialogComponent } from './books-manage/create-book-dialog/cre
     MatMenuModule,
     MatDialogModule,
     MatAutocompleteModule,
+    MatDividerModule,
     SharedModule,
     AdminRoutingModule
   ]

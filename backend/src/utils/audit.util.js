@@ -1,6 +1,51 @@
 const BookAudit = require('../models/bookAudit.model');
 const logger = require('../config/logger');
 
+// Generic audit creator for non-book events (e.g., permissions, roles)
+const createAuditLog = async (
+  action,
+  performedBy,
+  details = {},
+  { bookId = null, bookCopyId = null } = {}
+) => {
+  try {
+    await BookAudit.create({
+      book: bookId,
+      bookCopy: bookCopyId,
+      action,
+      performedBy,
+      details,
+      timestamp: new Date(),
+    });
+  } catch (error) {
+    logger.error('Failed to create audit log:', error);
+  }
+};
+
+// Structured audit logger for arbitrary entities
+const logAudit = async ({
+  userId,
+  action,
+  entityType,
+  entityId,
+  changes = {},
+  details = '',
+  bookId = null,
+  bookCopyId = null,
+}) => {
+  await createAuditLog(
+    action,
+    userId,
+    {
+      entityType,
+      entityId,
+      changes,
+      details,
+    },
+    { bookId, bookCopyId }
+  );
+};
+
 const createBookAudit = async (
   bookId,
   bookCopyId,
@@ -93,4 +138,10 @@ const logSettingAuditEvent = async (
   }
 };
 
-module.exports = { createBookAudit, logUserAuditEvent, logSettingAuditEvent };
+module.exports = {
+  createBookAudit,
+  createAuditLog,
+  logAudit,
+  logUserAuditEvent,
+  logSettingAuditEvent,
+};

@@ -1,6 +1,54 @@
 <div class="settings-container">
   <h1>System Settings</h1>
 
+  <!-- Quick Access Navigation -->
+  <div class="quick-access-section">
+    <h2>Security & Access Management</h2>
+    <div class="quick-access-cards">
+      <mat-card class="nav-card" routerLink="/admin/permissions">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="primary">security</mat-icon>
+          <mat-card-title>Permissions</mat-card-title>
+          <mat-card-subtitle>Manage system permissions</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Create and manage granular permissions for different system actions
+          </p>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="primary">
+            Manage Permissions
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+
+      <mat-card class="nav-card" routerLink="/admin/roles">
+        <mat-card-header>
+          <mat-icon mat-card-avatar color="accent"
+            >admin_panel_settings</mat-icon
+          >
+          <mat-card-title>Roles</mat-card-title>
+          <mat-card-subtitle>Manage user roles</mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p>
+            Define roles and assign permissions to control user access levels
+          </p>
+        </mat-card-content>
+        <mat-card-actions align="end">
+          <button mat-button color="accent">
+            Manage Roles
+            <mat-icon>arrow_forward</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  </div>
+
+  <mat-divider style="margin: 2rem 0"></mat-divider>
+
   <div *ngIf="loading" class="loading">
     <mat-spinner></mat-spinner>
     <p>Loading settings...</p>

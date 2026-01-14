@@ -29,29 +29,27 @@
   </div>
 
   <div *ngIf="!isLoading" class="permissions-list">
-    <div
-      *ngFor="let category of categories"
-      [ngIf]="permissionsByCategory.has(category)"
-      class="category-group"
-    >
-      <h3 class="category-title">{{ category | titlecase }} Permissions</h3>
-      <mat-list>
-        <mat-list-item
-          *ngFor="let permission of permissionsByCategory.get(category)"
-          class="permission-item"
-        >
-          <mat-checkbox
-            [checked]="isPermissionAssigned(permission._id)"
-            (change)="togglePermission(permission._id)"
-            [attr.aria-label]="permission.name"
-          ></mat-checkbox>
-          <div class="permission-info">
-            <strong>{{ permission.name }}</strong>
-            <p class="description">{{ permission.description }}</p>
-          </div>
-        </mat-list-item>
-      </mat-list>
-    </div>
+    <ng-container *ngFor="let category of categories">
+      <div *ngIf="permissionsByCategory.has(category)" class="category-group">
+        <h3 class="category-title">{{ category | titlecase }} Permissions</h3>
+        <mat-list>
+          <mat-list-item
+            *ngFor="let permission of permissionsByCategory.get(category)"
+            class="permission-item"
+          >
+            <mat-checkbox
+              [checked]="isPermissionAssigned(permission._id)"
+              (change)="togglePermission(permission._id)"
+              [attr.aria-label]="permission.name"
+            ></mat-checkbox>
+            <div class="permission-info">
+              <strong>{{ permission.name }}</strong>
+              <p class="description">{{ permission.description }}</p>
+            </div>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </ng-container>
 
     <div *ngIf="allPermissions.length === 0" class="no-permissions">
       <mat-icon>info</mat-icon>
