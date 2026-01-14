@@ -12,7 +12,7 @@ const getAdminStats = async (req, res, next) => {
   try {
     // Get member role ID
     const memberRole = await Role.findOne({ name: 'member' });
-    
+
     const [
       totalBooks,
       totalMembers,
@@ -22,7 +22,9 @@ const getAdminStats = async (req, res, next) => {
       totalFines,
     ] = await Promise.all([
       Book.countDocuments(),
-      memberRole ? User.countDocuments({ role: memberRole._id }) : User.countDocuments(),
+      memberRole
+        ? User.countDocuments({ role: memberRole._id })
+        : User.countDocuments(),
       Borrow.countDocuments({ status: 'active' }),
       Reservation.countDocuments({ status: { $in: ['pending', 'on_hold'] } }),
       Borrow.countDocuments({ status: 'overdue' }),
