@@ -6,7 +6,7 @@ export const environment = {
   appVersion: '1.0.0',
 
 // Backend API endpoint, request timeout (ms)
-  apiUrl: 'https://campuslibra.onrender.com/api',
+  apiUrl: 'https://YOUR_BACKEND_URL/api',
   apiTimeout: 30000, // API request timeout (ms)
   tokenKey: 'auth_token',
   refreshTokenKey: 'refresh_token',
@@ -14,7 +14,7 @@ export const environment = {
   jwtExpiryHours: 3, // JWT expiration time (hours)
 
   // Socket.IO server and Reconnection delay (ms)
-  socketUrl: 'https://campuslibra.onrender.com',
+  socketUrl: 'https://YOUR_BACKEND_URL',
 
   socketReconnectDelay: 1000,
   itemsPerPage: 10, // Default pagination size
