@@ -1,0 +1,460 @@
+# 📚 CampusLibra - Library Management System
+
+[![Angular](https://img.shields.io/badge/Angular-16+-DD0031?style=flat&logo=angular&logoColor=white)](https://angular.io/)
+[![Node.js](https://img.shields.io/badge/Node.js-18+-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=flat&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5+-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-4.8-010101?style=flat&logo=socket.io&logoColor=white)](https://socket.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+CampusLibra is a full-stack library management system designed for university libraries, built with Angular (frontend), Node.js/Express (backend), and MongoDB (database). It features role-based access control for three user types—Admins, Librarians, and Members—each with tailored dashboards and permissions. The system supports core library operations including book borrowing, reservations, automatic fine calculation for overdue items, and real-time notifications via Socket.IO. With a responsive Angular Material UI, comprehensive audit trails, and analytics dashboards, CampusLibra streamlines library workflows while ensuring security, scalability, and an intuitive user experience.
+
+---
+
+## 🌐 Live Demo
+
+- **Frontend (Vercel):** [https://campus-libra.vercel.app](https://campus-libra.vercel.app)
+- **Frontend (Netlify):** [https://campuslibra.netlify.app](https://campuslibra.netlify.app)
+- **Backend API:** [https://campuslibra.onrender.com/api](https://campuslibra.onrender.com/api)
+
+> **Note:** Backend may require 30-60 seconds to wake up on first request (Render free tier).
+
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication & Authorization
+- JWT-based authentication with secure refresh token rotation
+- Role-based access control (RBAC) with three user roles: Admin, Librarian, Member
+- Fine-grained permission system for resource-level access control
+- bcrypt password hashing with salt rounds for security
+- HTTP-only cookies for refresh token storage
+
+### 📖 Book Management
+- Complete CRUD operations with audit trail logging
+- Book copy tracking with real-time availability status
+- Google Books API integration for automated metadata retrieval
+- Dynamic category system with 13 normalized categories
+- ISBN-based book identification
+- Multi-copy inventory management per book title
+- Advanced search by title, author, ISBN, and category
+
+### 🔄 Borrowing & Returns
+- Streamlined checkout process with automated due date calculation
+- Configurable loan periods (minutes/hours/days for testing flexibility)
+- Real-time book availability updates via Socket.IO
+- Book renewal system with configurable limits
+- Damage marking capability for returned book copies
+- Overdue detection with automatic status updates
+- Librarian-managed return processing
+
+### 🎫 Reservation System
+- Queue-based reservation management with position tracking
+- Automated hold expiration using node-cron jobs
+- Priority notifications when reserved books become available
+- Configurable hold periods for pickup
+- Automatic reservation cancellation for overdue pickups
+- Member waitlist management
+
+### 💰 Fine Management
+- Automated overdue fine calculation based on configurable rates
+- Real-time fine tracking and accumulation
+- Payment processing with transaction history
+- Fine waiver functionality for authorized staff
+- Per-day fine rate configuration via system settings
+- Unpaid fine enforcement (blocks new borrowing)
+
+### 📊 Interactive Dashboards
+- **Admin Dashboard:** System-wide analytics including total books, members, circulation statistics, and revenue metrics
+- **Librarian Dashboard:** Operational metrics with pending returns, overdue items, and pickup queues
+- **Member Dashboard:** Personalized view of active borrows, reservations, fines, and borrowing history
+- Real-time updates via Socket.IO for all role-based dashboards
+- SVG donut chart visualizations for book circulation popularity
+- All-time circulation analytics with percentage breakdowns
+
+### 🔔 Real-Time Notifications
+- Socket.IO-powered instant notifications across all user sessions
+- In-app notification center with badge counters
+- Persistent read/unread state across page reloads
+- Notification categories: due reminders, overdue alerts, reservation updates, fine notifications
+- User-scoped notification filtering (users only see their own notifications)
+
+### 🛡️ Security Features
+- Helmet.js for secure HTTP headers (XSS, clickjacking protection)
+- Express rate limiting (1000 req/15min general, 500 req/min API)
+- NoSQL injection prevention with input sanitization
+- CORS protection with origin whitelist
+- MongoDB query sanitization
+- Express-validator for input validation
+- Winston logger for security audit trails
+
+### ⚙️ System Administration
+- **User Management:** Create, update, deactivate users; assign roles
+- **Role Management:** Define custom roles with specific permission sets
+- **Permission Management:** Granular access control at resource level
+- **System Settings:** Configure loan periods, fine rates, hold durations
+- **Audit Trail:** Complete activity logging with timestamps, users, and actions
+- **Book Audit:** Track all book-related operations (additions, updates, deletions)
+- Automated overdue fine calculation
+- Multiple payment methods support
+- Fine waiver functionality for staff
+- Payment history tracking
+
+### 📊 Admin Dashboard
+- Real-time statistics with Socket.IO updates
+- Role-specific dashboards (Admin, Librarian, Member)
+- SVG donut chart visualizations
+- Comprehensive audit trail
+- System settings management
+
+### 🔔 Real-Time Notifications
+- Socket.IO-powered instant notifications
+- In-app notification center with read/unread tracking
+- Email notifications for critical events
+- Persistent notification state across sessions
+
+### 🎨 Responsive UI
+- Modern Angular Material Design
+- Mobile-first responsive design (480px/768px/1024px breakpoints)
+- Intuitive navigation and user experience
+- Progressive padding and font-size scaling
+
+---
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** 18+ and npm
+- **MongoDB** Atlas account or local MongoDB instance
+- **Git** for version control
+
+### Backend Setup
+
+```bash
+# Clone the repository
+git clone <repository-url>
+cd campusLibra/backend
+
+# Install dependencies
+npm install
+
+# Create .env file in the backend directory with these variables:
+PORT=5000
+MONGODB_URI=your_mongodb_connection_string
+JWT_SECRET=your_secure_jwt_secret_key
+JWT_REFRESH_SECRET=your_secure_refresh_secret_key
+JWT_EXPIRES_IN=1d
+JWT_REFRESH_EXPIRES_IN=7d
+NODE_ENV=development
+FRONTEND_URL=http://localhost:4200
+
+# Seed the database with sample data (creates 3 admins, 7 librarians, 15 members, and 200+ books)
+node scripts/seed.js
+
+# Start the development server
+npm run dev
+```
+
+The backend server will start on `http://localhost:5000`
+
+### Frontend Setup
+
+```bash
+# Navigate to frontend directory
+cd campusLibra/frontend
+
+# Install dependencies
+npm install
+
+# Update environment.ts file (src/environments/environment.ts)
+# Set apiUrl to your backend URL:
+export const environment = {
+  production: false,
+  apiUrl: 'http://localhost:5000/api',
+  socketUrl: 'http://localhost:5000'
+};
+
+# Start the development server
+ng serve
+
+# Or use npm
+npm start
+```
+
+The application will open at `http://localhost:4200`
+
+---
+
+## 🔑 Test Credentials
+
+After running the seed script, you can login with these test accounts:
+
+### 👤 Librarian Accounts
+- **Email:** `librarian1@campuslibra.test` to `librarian7@campuslibra.test`
+- **Password:** `Password123!`
+- **Access:** Book management, borrowing operations, returns, fine waivers, member management
+
+### 👥 Member Accounts
+- **Email:** `member1@campuslibra.test` to `member15@campuslibra.test`
+- **Password:** `Password123!`
+- **Access:** Browse books, borrow/reserve books, view personal history, pay fines
+
+> **Note:** For security reasons, admin credentials are not published. Contact the system administrator for admin access.
+
+---
+
+## 📁 Project Structure
+
+```
+campusLibra/
+│
+├── backend/                         # Node.js/Express backend
+│   ├── src/
+│   │   ├── config/                 # Configuration files
+│   │   │   ├── db.js              # MongoDB connection
+│   │   │   ├── logger.js          # Winston logger setup
+│   │   │   └── env.validator.js   # Environment validation
+│   │   │
+│   │   ├── models/                 # Mongoose schemas (12 models)
+│   │   │   ├── user.model.js
+│   │   │   ├── role.model.js
+│   │   │   ├── permission.model.js
+│   │   │   ├── book.model.js
+│   │   │   ├── bookCopy.model.js
+│   │   │   ├── borrow.model.js
+│   │   │   ├── reservation.model.js
+│   │   │   ├── fine.model.js
+│   │   │   ├── notification.model.js
+│   │   │   ├── bookAudit.model.js
+│   │   │   ├── setting.model.js
+│   │   │   └── refreshToken.model.js
+│   │   │
+│   │   ├── controllers/            # Route handlers (12 controllers)
+│   │   │   ├── auth.controller.js
+│   │   │   ├── user.controller.js
+│   │   │   ├── book.controller.js
+│   │   │   ├── borrow.controller.js
+│   │   │   ├── reservation.controller.js
+│   │   │   ├── fine.controller.js
+│   │   │   ├── notification.controller.js
+│   │   │   ├── role.controller.js
+│   │   │   ├── permission.controller.js
+│   │   │   ├── dashboard.controller.js
+│   │   │   ├── audit.controller.js
+│   │   │   └── setting.controller.js
+│   │   │
+│   │   ├── routes/                 # Express routes
+│   │   │   └── [12 route files]
+│   │   │
+│   │   ├── services/               # Business logic
+│   │   │   ├── auth.service.js
+│   │   │   ├── book.service.js
+│   │   │   ├── bookCopy.service.js
+│   │   │   ├── borrow.service.js
+│   │   │   ├── reservation.service.js
+│   │   │   └── notification.service.js
+│   │   │
+│   │   ├── middlewares/            # Express middlewares
+│   │   │   ├── auth.middleware.js
+│   │   │   ├── role.middleware.js
+│   │   │   ├── permission.middleware.js
+│   │   │   ├── validation.middleware.js
+│   │   │   └── error.middleware.js
+│   │   │
+│   │   ├── utils/                  # Helper utilities
+│   │   │   ├── jwt.util.js
+│   │   │   ├── date.util.js
+│   │   │   ├── audit.util.js
+│   │   │   ├── notification.util.js
+│   │   │   ├── setting.util.js
+│   │   │   ├── role.util.js
+│   │   │   ├── permission.util.js
+│   │   │   └── config.util.js
+│   │   │
+│   │   ├── sockets/                # Socket.IO handlers
+│   │   │   └── notification.socket.js
+│   │   │
+│   │   └── jobs/                   # Scheduled jobs
+│   │       └── expiredHolds.job.js
+│   │
+│   ├── scripts/
+│   │   ├── seed.js                 # Database seeding
+│   │   └── normalizeCategories.js # Category normalization
+│   │
+│   ├── logs/                       # Winston logs
+│   ├── app.js                      # Express setup
+│   ├── server.js                   # Entry point
+│   └── package.json
+│
+└── frontend/                        # Angular frontend
+    └── src/
+        ├── app/
+        │   ├── core/               # Core services & guards
+        │   │   ├── guards/
+        │   │   └── interceptors/
+        │   │
+        │   ├── models/             # TypeScript interfaces
+        │   │
+        │   ├── services/           # HTTP & Socket services
+        │   │   ├── auth.service.ts
+        │   │   ├── book.service.ts
+        │   │   ├── borrow.service.ts
+        │   │   ├── reservation.service.ts
+        │   │   ├── fine.service.ts
+        │   │   ├── notification.service.ts
+        │   │   ├── dashboard.service.ts
+        │   │   └── socket.service.ts
+        │   │
+        │   ├── shared/             # Shared components
+        │   │
+        │   ├── auth/               # Authentication
+        │   │   ├── login/
+        │   │   └── register/
+        │   │
+        │   ├── home/               # Public home
+        │   │
+        │   ├── books/              # Book browsing
+        │   │   ├── book-list/
+        │   │   └── book-detail/
+        │   │
+        │   ├── notifications/      # Notification center
+        │   │
+        │   ├── admin/              # Admin module
+        │   │   ├── admin-dashboard/
+        │   │   ├── users-manage/
+        │   │   ├── books-manage/
+        │   │   ├── role-management/
+        │   │   ├── permission-management/
+        │   │   ├── system-settings/
+        │   │   └── audit-trail/
+        │   │
+        │   ├── librarian/          # Librarian module
+        │   │   ├── librarian-dashboard/
+        │   │   ├── member-management/
+        │   │   ├── process-returns/
+        │   │   └── pending-pickups/
+        │   │
+        │   └── member/             # Member module
+        │       ├── member-dashboard/
+        │       ├── my-borrows/
+        │       ├── my-reservations/
+        │       ├── my-fines/
+        │       └── profile/
+        │
+        ├── assets/images/
+        ├── environments/
+        ├── styles.scss
+        └── index.html
+```
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend Technologies
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Angular** | 16.2+ | SPA framework with TypeScript |
+| **Angular Material** | 16.2+ | Material Design UI components |
+| **RxJS** | 7.8+ | Reactive programming library |
+| **Socket.IO Client** | 4.8+ | Real-time bidirectional events |
+| **TypeScript** | 5.1+ | Static type checking |
+
+### Backend Technologies
+| Technology | Version | Purpose |
+|-----------|---------|---------|
+| **Node.js** | 18+ | JavaScript runtime environment |
+| **Express.js** | 5.2+ | Web application framework |
+| **MongoDB** | Latest | NoSQL database |
+| **Mongoose** | 9.1+ | MongoDB object modeling |
+| **Socket.IO** | 4.8+ | Real-time communication |
+| **JWT** | 9.0+ | Token-based authentication |
+| **bcryptjs** | 3.0+ | Password hashing |
+| **Winston** | 3.19+ | Logging framework |
+| **Helmet** | 8.1+ | Security headers |
+| **express-rate-limit** | 8.2+ | Rate limiting middleware |
+| **express-validator** | 7.3+ | Input validation |
+| **node-cron** | 4.2+ | Task scheduling |
+
+### Database Models (12 Total)
+1. **User** - User accounts with role references
+2. **Role** - Role definitions (Admin, Librarian, Member)
+3. **Permission** - Granular permissions
+4. **Book** - Book metadata
+5. **BookCopy** - Physical book copies
+6. **Borrow** - Borrowing transactions
+7. **Reservation** - Book reservations
+8. **Fine** - Overdue fines
+9. **Notification** - User notifications
+10. **BookAudit** - Book operation history
+11. **Setting** - System configuration
+12. **RefreshToken** - JWT refresh tokens
+
+### Deployment Stack
+- **Frontend:** Vercel & Netlify (CI/CD from Git)
+- **Backend:** Render (Node.js service with auto-deploy)
+- **Database:** MongoDB Atlas (Cloud cluster)
+
+---
+
+## 🔒 Security Implementation
+
+### Authentication & Authorization
+- ✅ **JWT Access Tokens** - 1 day expiration
+- ✅ **Refresh Token Rotation** - 7 day expiration with HTTP-only cookies
+- ✅ **bcrypt Password Hashing** - 10 salt rounds
+- ✅ **Role-Based Access Control (RBAC)** - Admin, Librarian, Member roles
+- ✅ **Permission-Based Protection** - Granular resource access control
+- ✅ **Route Guards** - Frontend and backend endpoint protection
+
+### Input Protection & Validation
+- ✅ **Express-Validator** - Comprehensive input validation
+- ✅ **NoSQL Injection Prevention** - $ and . character sanitization
+- ✅ **MongoDB Query Parameterization** - Safe database queries
+- ✅ **CORS with Whitelist** - Restricted cross-origin requests
+- ✅ **XSS Prevention** - Input sanitization and Angular protections
+
+### Security Middleware
+- ✅ **Helmet.js** - Secure HTTP headers
+- ✅ **Rate Limiting:**
+  - General: 1000 requests per 15 minutes
+  - API: 500 requests per minute (unauthenticated)
+  - Authenticated requests bypass limits
+- ✅ **Error Handling** - Sanitized error messages (no stack traces in production)
+
+### Monitoring & Audit
+- ✅ **Winston Logger** - File rotation with error/info levels
+- ✅ **Audit Trail** - Complete operation logging
+- ✅ **Request Logging** - Morgan HTTP request logger
+- ✅ **BookAudit Model** - Track all book-related changes
+
+
+---
+
+## 📸 Screenshots
+
+### Landing Page
+![Landing Page](./screenshots/landing.png)
+*Browse books with advanced search and category filtering*
+
+### Role-Based Dashboards
+![Admin Dashboard](./screenshots/admin-dashboard.png)
+*Real-time analytics and system-wide statistics*
+
+### Book Management
+![Book Management](./screenshots/book-management.png)
+*Complete CRUD operations with Google Books API integration*
+
+### Borrowing Workflow
+![Borrowing Process](./screenshots/borrowing.png)
+*Seamless checkout, returns, and renewal process*
+
+
+
+---
+
+## 👨‍💻 Developer
+
+**Ngange Baboucarr Sallah**  
+
