@@ -37,3 +37,38 @@
   color: #777;
   margin-top: 12px;
 }
+
+// Responsive breakpoints
+@media (max-width: 768px) {
+  .notifications-page {
+    padding: 0 12px;
+  }
+
+  .notification-item {
+    padding: 10px 12px;
+  }
+
+  .meta {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .notifications-page {
+    padding: 0 8px;
+    margin: 16px auto;
+  }
+
+  .notification-item {
+    padding: 8px;
+  }
+
+  .title {
+    font-size: 0.95rem;
+  }
+
+  .message {
+    font-size: 0.9rem;
+  }
+}

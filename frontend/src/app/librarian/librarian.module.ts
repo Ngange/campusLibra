@@ -9,6 +9,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 import { SharedModule } from '../shared/shared.module';
 import { LibrarianRoutingModule } from './librarian-routing.module';
@@ -36,6 +37,7 @@ import { ReturnBookModalComponent } from './return-book-modal/return-book-modal.
     MatInputModule,
     MatSelectModule,
     MatDialogModule,
+    MatCheckboxModule,
     SharedModule,
     LibrarianRoutingModule
   ]

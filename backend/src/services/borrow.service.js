@@ -118,7 +118,7 @@ const calculateFine = async (borrowId) => {
   return fine;
 };
 
-const returnBook = async (borrowId, librarianId) => {
+const returnBook = async (borrowId, librarianId, markAsDamaged = false) => {
   // Fetch borrow with related data
   const borrow = await Borrow.findById(borrowId)
     .populate('book', 'title')
@@ -147,9 +147,9 @@ const returnBook = async (borrowId, librarianId) => {
   }
   await borrow.save();
 
-  // Update book copy status
+  // Update book copy status - mark as damaged if requested, otherwise available
   const bookCopy = borrow.bookCopy;
-  bookCopy.status = 'available';
+  bookCopy.status = markAsDamaged ? 'damaged' : 'available';
   await bookCopy.save();
 
   // Calculate fine (if overdue)
@@ -174,9 +174,9 @@ const returnBook = async (borrowId, librarianId) => {
   await createBookAudit(
     borrow.book._id,
     bookCopy._id,
-    'returned',
+    markAsDamaged ? 'returned_damaged' : 'returned',
     librarianId,
-    { borrowId, fineId: fine?._id }
+    { borrowId, fineId: fine?._id, damaged: markAsDamaged }
   );
 
   // Check if this book has pending reservations

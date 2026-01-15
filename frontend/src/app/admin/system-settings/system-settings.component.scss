@@ -101,7 +101,58 @@ mat-card {
     gap: 8px;
   }
 }
+// Responsive breakpoints
+@media (max-width: 1024px) {
+  .quick-access-cards {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
 
+@media (max-width: 768px) {
+  .settings-container {
+    padding: 16px;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .quick-access-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-container {
+    padding: 12px;
+
+    h1 {
+      font-size: 1.25rem;
+    }
+
+    h2 {
+      font-size: 1.1rem;
+    }
+  }
+
+  .nav-card {
+    mat-card-header {
+      mat-icon[mat-card-avatar] {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+      }
+    }
+  }
+}
 .info-card {
   .config-item {
     display: flex;

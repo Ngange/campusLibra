@@ -116,3 +116,43 @@
     }
   }
 }
+
+// Responsive breakpoints
+@media (max-width: 768px) {
+  .pending-pickups-container {
+    padding: 16px;
+  }
+
+  .pickup-card {
+    padding: 16px;
+
+    .reservation-details .detail-row {
+      flex-direction: column;
+      gap: 4px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .pending-pickups-container {
+    padding: 12px;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .pickup-card {
+    padding: 12px;
+
+    .member-info h3,
+    .book-info h4 {
+      font-size: 1rem;
+    }
+
+    .actions button {
+      width: 100%;
+      min-width: unset;
+    }
+  }
+}

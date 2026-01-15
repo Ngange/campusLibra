@@ -97,3 +97,54 @@
     color: #ccc;
   }
 }
+
+// Responsive breakpoints
+@media (max-width: 1024px) {
+  .books-list {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .books-manage-container {
+    padding: 16px;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+
+    h1 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .book-form {
+    grid-template-columns: 1fr;
+  }
+
+  .books-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .books-manage-container {
+    padding: 12px;
+  }
+
+  .header-actions h1 {
+    font-size: 1.25rem;
+  }
+
+  .book-item mat-card-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    button {
+      width: 100%;
+    }
+  }
+}

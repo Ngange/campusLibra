@@ -50,8 +50,8 @@ export class BorrowService {
       );
   }
 
-  returnBorrow(borrowId: string): Observable<{ borrow: Borrow; fine: any }> {
-    return this.http.patch<{ success: boolean; borrow: Borrow; fine: any }>(`${this.apiUrl}/${borrowId}/return`, {})
+  returnBorrow(borrowId: string, markAsDamaged: boolean = false): Observable<{ borrow: Borrow; fine: any }> {
+    return this.http.patch<{ success: boolean; borrow: Borrow; fine: any }>(`${this.apiUrl}/${borrowId}/return`, { markAsDamaged })
       .pipe(
         map(response => ({ borrow: response.borrow, fine: response.fine })),
         catchError(this.handleError)

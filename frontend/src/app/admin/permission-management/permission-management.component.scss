@@ -161,6 +161,18 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .permission-management-container {
+    padding: 20px;
+
+    .filters {
+      .search-field {
+        min-width: 250px;
+      }
+    }
+  }
+}
+
 @media (max-width: 768px) {
   .permission-management-container {
     padding: 16px;
@@ -194,6 +206,34 @@
 
         .description-text {
           max-width: 150px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .permission-management-container {
+    padding: 12px;
+
+    .header {
+      h1 {
+        font-size: 1.25rem;
+      }
+
+      button {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+      }
+    }
+
+    .permissions-table {
+      td {
+        padding: 6px 8px;
+        font-size: 0.85rem;
+
+        .description-text {
+          max-width: 100px;
         }
       }
     }

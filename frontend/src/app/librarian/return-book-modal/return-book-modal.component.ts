@@ -16,6 +16,7 @@ export class ReturnBookModalComponent {
   processing = false;
   error = '';
   today = new Date();
+  markAsDamaged = false;
 
   constructor(
     public dialogRef: MatDialogRef<ReturnBookModalComponent>,
@@ -43,7 +44,7 @@ export class ReturnBookModalComponent {
     this.processing = true;
     this.error = '';
 
-    this.borrowService.returnBorrow(this.data.borrow._id).subscribe({
+    this.borrowService.returnBorrow(this.data.borrow._id, this.markAsDamaged).subscribe({
       next: (response) => {
         this.processing = false;
         this.snackBar.open('Book returned successfully!', 'Close', {

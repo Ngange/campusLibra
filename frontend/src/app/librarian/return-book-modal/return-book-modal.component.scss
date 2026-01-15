@@ -60,6 +60,37 @@
   }
 }
 
+.damage-check {
+  margin: 24px 0;
+  padding: 16px;
+  background: #fff3e0;
+  border-radius: 4px;
+
+  mat-checkbox {
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .damage-note {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0 0 0;
+    padding: 8px;
+    background: #ffe0b2;
+    border-left: 4px solid #ff9800;
+    color: #e65100;
+    font-size: 0.9rem;
+
+    mat-icon {
+      color: #ff6f00;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
 .error-message {
   color: #f44336;
   text-align: center;

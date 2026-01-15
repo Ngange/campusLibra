@@ -31,8 +31,9 @@ const returnBookHandler = async (req, res, next) => {
   try {
     const { id } = req.params;
     const librarianId = req.user.id; // Librarian or admin processes return
+    const { markAsDamaged = false } = req.body;
 
-    const result = await returnBook(id, librarianId);
+    const result = await returnBook(id, librarianId, markAsDamaged);
 
     // Emit dashboard update to all roles
     if (global.emitDashboardUpdate) {

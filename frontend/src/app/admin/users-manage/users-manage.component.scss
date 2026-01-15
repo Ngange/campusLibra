@@ -104,10 +104,23 @@
   button { min-width: 80px; }
 }
 
+@media (max-width: 1024px) {
+  .users-manage-container { padding: 16px; }
+  .edit-form { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+}
+
 @media (max-width: 768px) {
   .users-manage-container { padding: 12px; }
   .users-table { font-size: 0.85rem; }
   .users-table th, .users-table td { padding: 8px 12px; }
   .edit-form { grid-template-columns: 1fr; }
   .actions-cell { flex-wrap: wrap; }
+}
+
+@media (max-width: 480px) {
+  .users-manage-container { padding: 8px; }
+  h1 { font-size: 1.25rem; }
+  .users-table { font-size: 0.75rem; }
+  .users-table th, .users-table td { padding: 6px 8px; }
+  .actions-cell button { padding: 4px 8px; font-size: 0.85rem; }
 }

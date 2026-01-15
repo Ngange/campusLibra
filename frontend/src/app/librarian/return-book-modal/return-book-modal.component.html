@@ -27,6 +27,16 @@
     </div>
   </div>
 
+  <div class="damage-check">
+    <mat-checkbox [(ngModel)]="markAsDamaged" color="warn">
+      Mark book copy as damaged
+    </mat-checkbox>
+    <p class="damage-note" *ngIf="markAsDamaged">
+      <mat-icon>warning</mat-icon>
+      This book copy will be marked as damaged and removed from circulation.
+    </p>
+  </div>
+
   <div *ngIf="error" class="error-message">
     {{ error }}
   </div>

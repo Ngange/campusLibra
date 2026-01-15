@@ -122,3 +122,41 @@
     }
   }
 }
+
+// Responsive breakpoints
+@media (max-width: 768px) {
+  .reservations-container {
+    padding: 16px;
+  }
+
+  .reservation-card {
+    padding: 16px;
+
+    .reservation-header {
+      flex-direction: column;
+    }
+
+    .reservation-info {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .reservations-container {
+    padding: 12px;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .reservation-card {
+    padding: 12px;
+
+    .book-title {
+      font-size: 1rem;
+    }
+  }
+}
