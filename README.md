@@ -121,7 +121,200 @@ CampusLibra is a full-stack library management system designed for university li
 
 ---
 
-## 🚀 Quick Start
+## 🏗️ System Architecture & Design
+
+### Architecture Overview
+CampusLibra follows a **client-server architecture** with a clear separation of concerns:
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                         Frontend (Angular)                           │
+│  ┌─────────────────────────────────────────────────────────────┐     │
+│  │ Components & Routing │ Services │ State Management (RxJS)   │     │
+│  │ Auth Guards │ Interceptors │ Material UI │ Socket.IO Client │     │
+│  └─────────────────────────────────────────────────────────────┘     │
+│                              ↕ REST API + WebSocket                  │
+├──────────────────────────────────────────────────────────────────────┤
+│                    Backend (Node.js/Express)                         │
+│  ┌──────────────────────────────────────────────────────────┐        │
+│  │ Controllers │ Routes │ Middlewares │ Error Handling      │        │
+│  │ Auth Middleware │ Rate Limiter │ Validators │ Security   │        │
+│  │              Services (Business Logic)                   │        │
+│  │      Sockets (Real-time Broadcasting)                    │        │
+│  │            Cron Jobs (Scheduled Tasks)                   │        │
+│  └──────────────────────────────────────────────────────────┘        │
+│                              ↕ Mongoose ODM                          │
+├──────────────────────────────────────────────────────────────────────┤
+│               Database (MongoDB Atlas Cloud)                         │
+│  ┌──────────────────────────────────────────────────────────┐        │
+│  │ 12 Collections │ Aggregation Pipelines │ Indexes         │        │
+│  │ User │ Role │ Permission │ Book │ BookCopy │ Borrow      │        │
+│  │ Reservation │ Fine │ Notification │ Setting │ Audit      │        │
+│  └──────────────────────────────────────────────────────────┘        │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### Data Flow
+1. **Client Request** → Angular component sends HTTP/WebSocket request via service
+2. **Authentication** → JWT token verified in auth middleware
+3. **Authorization** → Role & permission checks via middleware
+4. **Validation** → Input sanitization and express-validator rules
+5. **Business Logic** → Service layer processes request
+6. **Database Query** → Mongoose model executes MongoDB query
+7. **Real-time Update** → Socket.IO broadcasts changes to connected clients
+8. **Response** → Formatted JSON response sent back to client
+
+### Key Design Patterns
+- **MVC (Model-View-Controller)** - Clear separation in both frontend and backend
+- **Service Layer** - Business logic isolated from routes/controllers
+- **Dependency Injection** - Angular's built-in DI for services
+- **Observer Pattern** - RxJS Observables for reactive data flow
+- **Middleware Pipeline** - Express middleware chain for cross-cutting concerns
+- **Repository Pattern** - Mongoose models as data access layer
+
+---
+
+## 🔌 API Endpoints Summary
+
+### Authentication Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/auth/register` | Register new user account |
+| POST | `/api/auth/login` | Login with email & password |
+| POST | `/api/auth/refresh` | Refresh JWT access token |
+| POST | `/api/auth/logout` | Logout and clear session |
+
+### Book Management Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/books` | Get all books with pagination |
+| GET | `/api/books/:id` | Get book details |
+| GET | `/api/books/categories` | Get distinct book categories |
+| POST | `/api/books` | Create new book (Admin/Librarian) |
+| PUT | `/api/books/:id` | Update book details |
+| DELETE | `/api/books/:id` | Delete book (Admin only) |
+
+### Borrowing Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/borrows` | Get user's borrow history |
+| POST | `/api/borrows` | Create new borrow (checkout) |
+| PUT | `/api/borrows/:id/return` | Return borrowed book |
+| PUT | `/api/borrows/:id/renew` | Renew book borrowing period |
+
+### Reservation Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/reservations` | Get user's reservations |
+| POST | `/api/reservations` | Create book reservation |
+| DELETE | `/api/reservations/:id` | Cancel reservation |
+
+### Fine Management Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/fines` | Get user's fines |
+| POST | `/api/fines/:id/pay` | Record fine payment |
+| PUT | `/api/fines/:id/waive` | Waive fine (Librarian) |
+
+### Notification Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/notifications` | Get user notifications |
+| PUT | `/api/notifications/:id/read` | Mark notification as read |
+| PUT | `/api/notifications/:id/unread` | Mark notification as unread |
+
+### Dashboard Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/dashboard/admin/stats` | Admin dashboard statistics |
+| GET | `/api/dashboard/admin/circulation` | Book circulation analytics |
+| GET | `/api/dashboard/librarian/stats` | Librarian operational stats |
+| GET | `/api/dashboard/member/stats` | Member personal statistics |
+
+### Admin Management Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/users` | Get all users (Admin) |
+| POST | `/api/users` | Create new user (Admin) |
+| PUT | `/api/users/:id` | Update user details |
+| DELETE | `/api/users/:id` | Deactivate user (Admin) |
+| GET | `/api/roles` | Get all roles |
+| GET | `/api/permissions` | Get all permissions |
+| GET | `/api/audit` | Get audit trail logs |
+
+### System Settings Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/settings` | Get system configuration |
+| PUT | `/api/settings` | Update system settings (Admin) |
+
+> **Note:** All endpoints except `/auth/register` and `/auth/login` require valid JWT token. Admin/Librarian endpoints include role authorization checks.
+
+---
+
+## 📸 Screenshots of Major Pages
+
+### 1. Landing Page / Home
+![Home Page](./screenshots/home.png)
+*Public-facing home page with featured books, dynamic category filter, and search functionality. Members and guests can browse the library catalog.*
+
+### 2. Login & Authentication
+![Login](./screenshots/login.png)
+*Secure login interface with email and password validation. Links to registration and password recovery.*
+
+### 3. Admin Dashboard
+![Admin Dashboard](./screenshots/admin-dashboard.png)
+*System-wide analytics displaying total books, active members, issued books count, reserved books, overdue items, total fines collected, and real-time circulation percentage. SVG donut chart shows book popularity distribution.*
+
+### 4. Book Management (Admin/Librarian)
+![Book Management](./screenshots/books-manage.png)
+*Complete book inventory management interface. Add new books from Google Books API, edit metadata, manage book copies, track copy status (available, loaned, damaged), and delete books. Real-time availability updates.*
+
+### 5. Borrowing & Checkout
+![Borrowing](./screenshots/borrowing.png)
+*Seamless book checkout workflow showing available books, automatic due date calculation, configurable loan periods. Librarians process checkouts and manage active borrows.*
+
+### 6. Book Returns & Damage Marking
+![Returns](./screenshots/returns.png)
+*Return processing interface for librarians. Mark books as returned with optional damage indication. Track condition and generate damage reports for returned copies.*
+
+### 7. Reservation Queue
+![Reservations](./screenshots/reservations.png)
+*Members can reserve unavailable books. Shows reservation queue position, hold dates, and automatic notifications when books become available. Librarians manage pickup queues.*
+
+### 8. Fine Management
+![Fines](./screenshots/fines.png)
+*Track overdue fines with automatic calculation based on configurable daily rates. Pay fines through the system, view payment history. Librarians can waive fines for members.*
+
+### 9. Notification Center
+![Notifications](./screenshots/notifications.png)
+*Real-time notification center showing due reminders, overdue alerts, reservation ready notifications, and fine notifications. Mark as read/unread, persistent state across sessions.*
+
+### 10. Member Profile
+![Member Profile](./screenshots/profile.png)
+*Member personal profile page showing active borrows, due dates, total fines, reservation count, borrowing history. Update account information and manage preferences.*
+
+### 11. Librarian Dashboard
+![Librarian Dashboard](./screenshots/librarian-dashboard.png)
+*Operational dashboard for librarians. Displays pending returns, overdue items, upcoming reservation pickups, member check-in queue, and quick actions for common tasks.*
+
+### 12. Audit Trail
+![Audit Trail](./screenshots/audit-trail.png)
+*Complete audit trail for admin. Filter by user, action type, date range, and resource. View who did what and when with detailed metadata.*
+
+### 13. User Management (Admin)
+![Users Manage](./screenshots/users-manage.png)
+*Admin interface to manage users. Create new users, assign roles (Admin, Librarian, Member), update user information, deactivate accounts, and view user activity.*
+
+### 14. Role & Permission Management (Admin)
+![Role Management](./screenshots/role-management.png)
+*Role and permission configuration for admins. Define custom roles with specific permissions like create:books, update:users, manage:fines, etc.*
+
+### 15. System Settings (Admin)
+![System Settings](./screenshots/system-settings.png)
+*Configure system parameters including loan period duration, fine rate per day, reservation hold period, renewal limits, and notification preferences.*
+
+---
 
 ### Prerequisites
 
@@ -428,29 +621,6 @@ campusLibra/
 - ✅ **Audit Trail** - Complete operation logging
 - ✅ **Request Logging** - Morgan HTTP request logger
 - ✅ **BookAudit Model** - Track all book-related changes
-
-
----
-
-## 📸 Screenshots
-
-### Landing Page
-![Landing Page](./screenshots/landing.png)
-*Browse books with advanced search and category filtering*
-
-### Role-Based Dashboards
-![Admin Dashboard](./screenshots/admin-dashboard.png)
-*Real-time analytics and system-wide statistics*
-
-### Book Management
-![Book Management](./screenshots/book-management.png)
-*Complete CRUD operations with Google Books API integration*
-
-### Borrowing Workflow
-![Borrowing Process](./screenshots/borrowing.png)
-*Seamless checkout, returns, and renewal process*
-
-
 
 ---
 
